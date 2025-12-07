@@ -1,8 +1,19 @@
 import { Ship, Bomb } from '../types/game';
 import { CellType } from '../types/cell';
 
-export const COLUMNS = ['А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ж', 'З', 'И', 'К'];
-export const ROWS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+export const ALL_COLUMNS = ['А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ж', 'З', 'И', 'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф'];
+
+export function generateColumns(count: number): string[] {
+  return ALL_COLUMNS.slice(0, count);
+}
+
+export function generateRows(count: number): number[] {
+  return Array.from({ length: count }, (_, i) => i + 1);
+}
+
+// Default values for backward compatibility
+export const COLUMNS = generateColumns(10);
+export const ROWS = generateRows(10);
 
 export function getCellType(
   coordinate: string,
@@ -27,17 +38,17 @@ export function getCellType(
   return { type: 'empty' };
 }
 
-export function generateAllCoordinates(): string[] {
+export function generateAllCoordinates(columns: string[] = COLUMNS, rows: number[] = ROWS): string[] {
   const coordinates: string[] = [];
-  for (const col of COLUMNS) {
-    for (const row of ROWS) {
+  for (const col of columns) {
+    for (const row of rows) {
       coordinates.push(`${col}${row}`);
     }
   }
   return coordinates;
 }
 
-export function isGameOver(clickedCells: string[]): boolean {
-  // Game is over when all 100 cells are clicked
-  return clickedCells.length >= 100;
+export function isGameOver(clickedCells: string[], totalCells: number = 100): boolean {
+  // Game is over when all cells are clicked
+  return clickedCells.length >= totalCells;
 }

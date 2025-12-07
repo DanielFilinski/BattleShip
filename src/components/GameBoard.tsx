@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useGameState } from '../hooks/useGameState';
 import { useSound } from '../hooks/useSound';
+import { useFieldSettings } from '../hooks/useFieldSettings';
 import { ScoreBoard } from './ScoreBoard';
 import { Cell } from './Cell';
 import { QuestionModal } from './QuestionModal';
-import { COLUMNS, ROWS, getCellType } from '../utils/gameLogic';
+import { SettingsMenu } from './SettingsMenu';
+import { FieldSettingsModal } from './FieldSettingsModal';
+import { generateColumns, generateRows, getCellType } from '../utils/gameLogic';
 import { Question } from '../types/question';
 import { Ship, Bomb } from '../types/game';
 import { CellStatus } from '../types/cell';
@@ -16,12 +19,19 @@ interface GameBoardProps {
 }
 
 export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
-  const { clickedCells, clickCell, answerCorrect, answerWrong, resetGame } =
+  const { clickedCells, clickCell, answerCorrect, answerWrong, resetGame, team1, team2, currentTurn } =
     useGameState();
   const { playHit, playMiss, playCorrect, playWrong } = useSound();
+  const { columns: fieldColumns, rows: fieldRows, cellSize, setFieldSize, setCellSize } = useFieldSettings();
 
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isFieldSettingsOpen, setIsFieldSettingsOpen] = useState(false);
+
+  // Generate columns and rows based on settings
+  const COLUMNS = useMemo(() => generateColumns(fieldColumns), [fieldColumns]);
+  const ROWS = useMemo(() => generateRows(fieldRows), [fieldRows]);
 
   const handleCellClick = (coordinate: string) => {
     // Mark cell as clicked
@@ -107,21 +117,48 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-ocean-900 via-ocean-700 to-ocean-500 p-6">
-      <div className="max-w-7xl mx-auto">
+      <div className={isFullscreen ? 'h-screen flex flex-col' : 'max-w-7xl mx-auto'}>
+        {/* View Mode Toggle and Compact Score */}
+        <div className="flex justify-between items-center mb-4">
+          {/* Compact Score for Fullscreen */}
+          {isFullscreen && (
+            <div className="flex items-center gap-4 bg-white/90 backdrop-blur-sm rounded-xl px-4 py-2 shadow-lg">
+              <div className={`flex items-center gap-2 px-3 py-1 rounded-lg transition-all ${currentTurn === 1 ? 'bg-emerald-100' : ''}`}>
+                <span className="font-bold text-ocean-700">{team1.name}</span>
+                <span className="text-2xl font-black text-emerald-600">{team1.score}</span>
+              </div>
+              <div className="text-ocean-400 font-bold">VS</div>
+              <div className={`flex items-center gap-2 px-3 py-1 rounded-lg transition-all ${currentTurn === 2 ? 'bg-emerald-100' : ''}`}>
+                <span className="font-bold text-ocean-700">{team2.name}</span>
+                <span className="text-2xl font-black text-emerald-600">{team2.score}</span>
+              </div>
+            </div>
+          )}
+
+          <div className="ml-auto">
+            <SettingsMenu
+              onToggleFullscreen={() => setIsFullscreen(!isFullscreen)}
+              onOpenFieldSettings={() => setIsFieldSettingsOpen(true)}
+              isFullscreen={isFullscreen}
+            />
+          </div>
+        </div>
+
         {/* Score Board */}
-        <ScoreBoard />
+        {!isFullscreen && <ScoreBoard />}
 
         {/* Game Grid */}
-        <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8">
-          <div className="overflow-x-auto">
-            <div className="inline-block min-w-full">
+        <div className={`bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 ${isFullscreen ? 'flex-1 flex flex-col overflow-hidden' : ''}`}>
+          <div className={`${isFullscreen ? 'flex-1 flex items-center justify-center' : 'overflow-x-auto'}`}>
+            <div className={`${isFullscreen ? 'w-full h-full flex flex-col justify-center' : 'inline-block min-w-full'}`}>
               {/* Column headers */}
               <div className="flex mb-2">
-                <div className="w-12"></div>
+                <div className={isFullscreen ? 'w-8 sm:w-12' : 'w-12'}></div>
                 {COLUMNS.map((col) => (
                   <div
                     key={col}
-                    className="flex-1 min-w-[60px] text-center font-bold text-2xl text-ocean-700"
+                    className={`flex-1 text-center font-bold text-ocean-700 ${isFullscreen ? 'text-lg sm:text-xl' : 'min-w-[60px] text-2xl'}`}
+                    style={isFullscreen ? { maxWidth: `${cellSize}px` } : undefined}
                   >
                     {col}
                   </div>
@@ -132,7 +169,7 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
               {ROWS.map((row) => (
                 <div key={row} className="flex mb-2">
                   {/* Row header */}
-                  <div className="w-12 flex items-center justify-center font-bold text-2xl text-ocean-700">
+                  <div className={`flex items-center justify-center font-bold text-ocean-700 ${isFullscreen ? 'w-8 sm:w-12 text-lg sm:text-xl' : 'w-12 text-2xl'}`}>
                     {row}
                   </div>
 
@@ -142,7 +179,8 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
                     return (
                       <div
                         key={coordinate}
-                        className="flex-1 min-w-[60px] px-1"
+                        className={`flex-1 ${isFullscreen ? 'px-0.5' : 'min-w-[60px] px-1'}`}
+                        style={isFullscreen ? { maxWidth: `${cellSize}px` } : undefined}
                       >
                         <Cell
                           coordinate={coordinate}
@@ -159,22 +197,26 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
           </div>
 
           {/* Reset Button */}
-          <div className="mt-8 flex justify-center">
-            <button
-              onClick={handleReset}
-              className="bg-gradient-to-r from-red-600 to-red-500 text-white text-lg font-semibold py-3 px-8 rounded-xl hover:from-red-700 hover:to-red-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
-            >
-              🔄 Новая игра
-            </button>
-          </div>
+          {!isFullscreen && (
+            <div className="mt-8 flex justify-center">
+              <button
+                onClick={handleReset}
+                className="bg-gradient-to-r from-red-600 to-red-500 text-white text-lg font-semibold py-3 px-8 rounded-xl hover:from-red-700 hover:to-red-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+              >
+                🔄 Новая игра
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Game Stats */}
-        <div className="mt-6 text-center text-white/80 text-sm">
-          <p>
-            Кликнуто ячеек: {clickedCells.length} / 100
-          </p>
-        </div>
+        {!isFullscreen && (
+          <div className="mt-6 text-center text-white/80 text-sm">
+            <p>
+              Кликнуто ячеек: {clickedCells.length} / {fieldColumns * fieldRows}
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Question Modal */}
@@ -186,6 +228,22 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
           onSkip={handleSkip}
           onTransfer={handleTransfer}
           onClose={() => setIsModalOpen(false)}
+        />
+      )}
+
+      {/* Field Settings Modal */}
+      {isFieldSettingsOpen && (
+        <FieldSettingsModal
+          currentColumns={fieldColumns}
+          currentRows={fieldRows}
+          currentCellSize={cellSize}
+          onSave={(columns, rows, newCellSize) => {
+            setFieldSize(columns, rows);
+            setCellSize(newCellSize);
+            // Show confirmation message
+            alert(`Настройки сохранены: ${columns}×${rows}, размер ячейки ${newCellSize}px. Начните новую игру для применения изменений.`);
+          }}
+          onClose={() => setIsFieldSettingsOpen(false)}
         />
       )}
     </div>
