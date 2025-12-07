@@ -7,6 +7,7 @@ import { Cell } from './Cell';
 import { QuestionModal } from './QuestionModal';
 import { SettingsMenu } from './SettingsMenu';
 import { FieldSettingsModal } from './FieldSettingsModal';
+import { VictoryAnimation } from './VictoryAnimation';
 import { generateColumns, generateRows, getCellType } from '../utils/gameLogic';
 import { Question } from '../types/question';
 import { Ship, Bomb } from '../types/game';
@@ -29,10 +30,23 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isFieldSettingsOpen, setIsFieldSettingsOpen] = useState(false);
+  const [showVictory, setShowVictory] = useState(false);
 
   // Generate columns and rows based on settings
   const COLUMNS = useMemo(() => generateColumns(fieldColumns), [fieldColumns]);
   const ROWS = useMemo(() => generateRows(fieldRows), [fieldRows]);
+
+  // Calculate all ship and bomb cells
+  const allTargetCells = useMemo(() => {
+    const shipCells = ships.flatMap(ship => ship.cells);
+    const bombCells = bombs.map(bomb => bomb.cell);
+    return [...shipCells, ...bombCells];
+  }, [ships, bombs]);
+
+  // Check if game is completed (all ships and bombs found)
+  const isGameCompleted = useMemo(() => {
+    return allTargetCells.every(cell => clickedCells.includes(cell));
+  }, [allTargetCells, clickedCells]);
 
   const handleCellClick = (coordinate: string) => {
     // Mark cell as clicked
@@ -73,6 +87,13 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
     }
     setIsModalOpen(false);
     setCurrentQuestion(null);
+
+    // Check if game is completed after a short delay
+    setTimeout(() => {
+      if (isGameCompleted) {
+        setShowVictory(true);
+      }
+    }, 500);
   };
 
   const handleWrongAnswer = () => {
@@ -80,6 +101,13 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
     answerWrong();
     setIsModalOpen(false);
     setCurrentQuestion(null);
+
+    // Check if game is completed after a short delay
+    setTimeout(() => {
+      if (isGameCompleted) {
+        setShowVictory(true);
+      }
+    }, 500);
   };
 
   const handleSkip = () => {
@@ -118,7 +146,13 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
       )
     ) {
       resetGame();
+      setShowVictory(false);
     }
+  };
+
+  const handleVictoryClose = () => {
+    setShowVictory(false);
+    // Optionally reset the game or show final scores
   };
 
   return (
@@ -250,6 +284,17 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
             alert(`Настройки сохранены: ${columns}×${rows}, размер ячейки ${newCellSize}px. Начните новую игру для применения изменений.`);
           }}
           onClose={() => setIsFieldSettingsOpen(false)}
+        />
+      )}
+
+      {/* Victory Animation */}
+      {showVictory && (
+        <VictoryAnimation
+          winnerName={team1.score > team2.score ? team1.name : team2.name}
+          winnerScore={Math.max(team1.score, team2.score)}
+          loserName={team1.score > team2.score ? team2.name : team1.name}
+          loserScore={Math.min(team1.score, team2.score)}
+          onClose={handleVictoryClose}
         />
       )}
     </div>
