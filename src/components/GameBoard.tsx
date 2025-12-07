@@ -69,6 +69,20 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
     setCurrentQuestion(null);
   };
 
+  const handleSkip = () => {
+    // Пропустить вопрос - закрыть модал без начисления очков
+    // Ход остается у текущей команды
+    setIsModalOpen(false);
+    setCurrentQuestion(null);
+  };
+
+  const handleTransfer = () => {
+    // Передать вопрос другой команде - переключить ход
+    answerWrong(); // Используем answerWrong для переключения хода
+    setIsModalOpen(false);
+    setCurrentQuestion(null);
+  };
+
   const getCellStatus = (coordinate: string): CellStatus => {
     if (!clickedCells.includes(coordinate)) {
       return 'untouched';
@@ -169,6 +183,8 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
           question={currentQuestion}
           onCorrect={handleCorrectAnswer}
           onWrong={handleWrongAnswer}
+          onSkip={handleSkip}
+          onTransfer={handleTransfer}
           onClose={() => setIsModalOpen(false)}
         />
       )}

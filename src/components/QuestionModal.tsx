@@ -6,6 +6,8 @@ interface QuestionModalProps {
   question: Question;
   onCorrect: () => void;
   onWrong: () => void;
+  onSkip: () => void;
+  onTransfer: () => void;
   onClose: () => void;
 }
 
@@ -13,6 +15,8 @@ export function QuestionModal({
   question,
   onCorrect,
   onWrong,
+  onSkip,
+  onTransfer,
   onClose,
 }: QuestionModalProps) {
   const [showAnswer, setShowAnswer] = useState(false);
@@ -34,6 +38,16 @@ export function QuestionModal({
       onWrong();
       onClose();
     }, 2000);
+  };
+
+  const handleSkip = () => {
+    onSkip();
+    onClose();
+  };
+
+  const handleTransfer = () => {
+    onTransfer();
+    onClose();
   };
 
   const getCategoryIcon = () => {
@@ -132,19 +146,38 @@ export function QuestionModal({
 
           {/* Host Controls */}
           {!answered && (
-            <div className="flex gap-4">
-              <button
-                onClick={handleCorrect}
-                className="flex-1 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white text-2xl font-bold py-6 px-8 rounded-xl hover:from-emerald-700 hover:to-emerald-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
-              >
-                ✓ Правильно
-              </button>
-              <button
-                onClick={handleWrong}
-                className="flex-1 bg-gradient-to-r from-red-600 to-red-500 text-white text-2xl font-bold py-6 px-8 rounded-xl hover:from-red-700 hover:to-red-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
-              >
-                ✗ Неправильно
-              </button>
+            <div className="space-y-4">
+              {/* Row 1: Correct and Wrong */}
+              <div className="flex gap-4">
+                <button
+                  onClick={handleCorrect}
+                  className="flex-1 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white text-2xl font-bold py-6 px-8 rounded-xl hover:from-emerald-700 hover:to-emerald-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+                >
+                  ✓ Правильно
+                </button>
+                <button
+                  onClick={handleWrong}
+                  className="flex-1 bg-gradient-to-r from-red-600 to-red-500 text-white text-2xl font-bold py-6 px-8 rounded-xl hover:from-red-700 hover:to-red-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+                >
+                  ✗ Неправильно
+                </button>
+              </div>
+
+              {/* Row 2: Skip and Transfer */}
+              <div className="flex gap-4">
+                <button
+                  onClick={handleSkip}
+                  className="flex-1 bg-gradient-to-r from-gray-600 to-gray-500 text-white text-xl font-bold py-4 px-6 rounded-xl hover:from-gray-700 hover:to-gray-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+                >
+                  ⏭ Пропустить
+                </button>
+                <button
+                  onClick={handleTransfer}
+                  className="flex-1 bg-gradient-to-r from-blue-600 to-blue-500 text-white text-xl font-bold py-4 px-6 rounded-xl hover:from-blue-700 hover:to-blue-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+                >
+                  ↔ Передать
+                </button>
+              </div>
             </div>
           )}
 

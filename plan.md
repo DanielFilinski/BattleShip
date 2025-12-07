@@ -366,3 +366,7 @@ battleship/
 ✅ Modern, beautiful UI with animations
 ✅ Easy to deploy: just double-click HTML file
 ✅ Media files stored and played locally
+
+
+
+необходимо по завершинию ответа на последний воспрос показать анимацию
