@@ -47,7 +47,7 @@ export function QuestionModal({
 
   const handleTransfer = () => {
     onTransfer();
-    onClose();
+    // НЕ закрываем модал - вопрос остается на экране
   };
 
   const getCategoryIcon = () => {

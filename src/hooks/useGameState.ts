@@ -6,6 +6,7 @@ interface GameStore extends GameState {
   // Actions
   startGame: (team1Name: string, team2Name: string) => void;
   clickCell: (coordinate: string) => void;
+  unclickCell: (coordinate: string) => void;
   answerCorrect: (points: number) => void;
   answerWrong: () => void;
   switchTurn: () => void;
@@ -40,6 +41,12 @@ export const useGameState = create<GameStore>()(
       clickCell: (coordinate: string) =>
         set((state) => ({
           clickedCells: [...state.clickedCells, coordinate],
+          timestamp: Date.now(),
+        })),
+
+      unclickCell: (coordinate: string) =>
+        set((state) => ({
+          clickedCells: state.clickedCells.filter((cell) => cell !== coordinate),
           timestamp: Date.now(),
         })),
 

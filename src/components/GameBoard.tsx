@@ -19,12 +19,13 @@ interface GameBoardProps {
 }
 
 export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
-  const { clickedCells, clickCell, answerCorrect, answerWrong, resetGame, team1, team2, currentTurn } =
+  const { clickedCells, clickCell, unclickCell, answerCorrect, answerWrong, resetGame, team1, team2, currentTurn } =
     useGameState();
   const { playHit, playMiss, playCorrect, playWrong } = useSound();
   const { columns: fieldColumns, rows: fieldRows, cellSize, setFieldSize, setCellSize } = useFieldSettings();
 
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
+  const [currentCoordinate, setCurrentCoordinate] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isFieldSettingsOpen, setIsFieldSettingsOpen] = useState(false);
@@ -36,6 +37,8 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
   const handleCellClick = (coordinate: string) => {
     // Mark cell as clicked
     clickCell(coordinate);
+    // Save current coordinate for skip functionality
+    setCurrentCoordinate(coordinate);
 
     // Determine cell type
     const { type, questionId } = getCellType(coordinate, ships, bombs);
@@ -80,17 +83,20 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
   };
 
   const handleSkip = () => {
-    // Пропустить вопрос - закрыть модал без начисления очков
-    // Ход остается у текущей команды
+    // Пропустить вопрос - убрать ячейку и переключить ход
+    if (currentCoordinate) {
+      unclickCell(currentCoordinate);
+    }
+    answerWrong(); // Переключить ход
     setIsModalOpen(false);
     setCurrentQuestion(null);
+    setCurrentCoordinate(null);
   };
 
   const handleTransfer = () => {
     // Передать вопрос другой команде - переключить ход
     answerWrong(); // Используем answerWrong для переключения хода
-    setIsModalOpen(false);
-    setCurrentQuestion(null);
+    // НЕ закрываем модал - вопрос остается на экране
   };
 
   const getCellStatus = (coordinate: string): CellStatus => {
