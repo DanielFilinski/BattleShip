@@ -138,9 +138,38 @@ export function QuestionModal({
               <div className="text-sm font-semibold text-ocean-600 mb-2 uppercase">
                 Правильный ответ:
               </div>
-              <div className="text-2xl font-bold text-ocean-900">
+              <div className="text-2xl font-bold text-ocean-900 mb-4">
                 {question.answer}
               </div>
+
+              {/* Answer Images */}
+              {question.answerImages && (
+                <div className={`mt-4 ${
+                  Array.isArray(question.answerImages) && question.answerImages.length > 1
+                    ? 'grid grid-cols-2 gap-4'
+                    : 'flex justify-center'
+                }`}>
+                  {(Array.isArray(question.answerImages)
+                    ? question.answerImages
+                    : [question.answerImages]
+                  ).map((imagePath, index) => (
+                    <div
+                      key={index}
+                      className="rounded-xl overflow-hidden shadow-lg bg-white"
+                    >
+                      <img
+                        src={imagePath}
+                        alt={`Ответ ${index + 1}`}
+                        className="w-full h-auto object-contain max-h-96"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 

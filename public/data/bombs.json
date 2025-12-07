@@ -1,16 +1,24 @@
 {
   "bombs": [
     {
-      "cell": "Д5",
-      "questionId": "q32"
+      "cell": "И1",
+      "questionId": "q1"
     },
     {
-      "cell": "И10",
-      "questionId": "q33"
+      "cell": "А1",
+      "questionId": "q9"
     },
     {
-      "cell": "В6",
-      "questionId": "q28"
+      "cell": "Ж10",
+      "questionId": "q5"
+    },
+    {
+      "cell": "А3",
+      "questionId": "q13"
+    },
+    {
+      "cell": "Ж4",
+      "questionId": "q17"
     }
   ]
 }

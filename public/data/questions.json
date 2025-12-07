@@ -2,302 +2,193 @@
   "questions": [
     {
       "id": "q1",
-      "category": "История",
-      "type": "text",
-      "difficulty": "easy",
-      "points": 100,
-      "question": "В каком году началась Вторая мировая война?",
-      "answer": "1939 год"
+      "category": "Музыкальный крокодил",
+      "type": "creative",
+      "difficulty": "medium",
+      "points": 200,
+      "question": "Музыкальный крокодил - задание 1",
+      "answer": "Оценивается артистизм и музыкальность"
     },
     {
       "id": "q2",
-      "category": "История",
-      "type": "text",
+      "category": "Музыкальный крокодил",
+      "type": "creative",
       "difficulty": "medium",
       "points": 200,
-      "question": "Кто был первым президентом России?",
-      "answer": "Борис Ельцин"
+      "question": "Музыкальный крокодил - задание 2",
+      "answer": "Оценивается артистизм и музыкальность"
     },
     {
       "id": "q3",
-      "category": "География",
-      "type": "text",
-      "difficulty": "easy",
-      "points": 100,
-      "question": "Какая самая длинная река в мире?",
-      "answer": "Амазонка (или Нил)"
+      "category": "Музыкальный крокодил",
+      "type": "creative",
+      "difficulty": "medium",
+      "points": 200,
+      "question": "Музыкальный крокодил - задание 3",
+      "answer": "Оценивается артистизм и музыкальность"
     },
     {
       "id": "q4",
-      "category": "География",
-      "type": "text",
+      "category": "Музыкальный крокодил",
+      "type": "creative",
       "difficulty": "medium",
       "points": 200,
-      "question": "Назовите столицу Австралии.",
-      "answer": "Канберра"
+      "question": "Музыкальный крокодил - задание 4",
+      "answer": "Оценивается артистизм и музыкальность"
     },
     {
       "id": "q5",
-      "category": "Наука",
-      "type": "text",
-      "difficulty": "easy",
-      "points": 100,
-      "question": "Сколько планет в Солнечной системе?",
-      "answer": "8 планет"
-    },
-    {
-      "id": "q6",
-      "category": "Наука",
-      "type": "text",
-      "difficulty": "medium",
-      "points": 200,
-      "question": "Кто открыл пенициллин?",
-      "answer": "Александр Флеминг"
-    },
-    {
-      "id": "q7",
-      "category": "Литература",
-      "type": "text",
-      "difficulty": "easy",
-      "points": 100,
-      "question": "Кто написал 'Евгений Онегин'?",
-      "answer": "Александр Пушкин"
-    },
-    {
-      "id": "q8",
-      "category": "Литература",
-      "type": "text",
-      "difficulty": "medium",
-      "points": 200,
-      "question": "Как называется главный герой романа 'Мастер и Маргарита'?",
-      "answer": "Мастер (или Воланд)"
-    },
-    {
-      "id": "q9",
-      "category": "Спорт",
-      "type": "text",
-      "difficulty": "easy",
-      "points": 100,
-      "question": "Сколько игроков в футбольной команде на поле?",
-      "answer": "11 игроков"
-    },
-    {
-      "id": "q10",
-      "category": "Спорт",
-      "type": "text",
-      "difficulty": "medium",
-      "points": 200,
-      "question": "В каком году Россия принимала Зимние Олимпийские игры в Сочи?",
-      "answer": "2014 год"
-    },
-    {
-      "id": "q11",
-      "category": "Кино",
-      "type": "text",
-      "difficulty": "easy",
-      "points": 100,
-      "question": "Кто сыграл Гарри Поттера в фильмах?",
-      "answer": "Дэниел Рэдклифф"
-    },
-    {
-      "id": "q12",
-      "category": "Кино",
-      "type": "text",
-      "difficulty": "medium",
-      "points": 200,
-      "question": "Какой фильм получил Оскар за лучший фильм в 2020 году?",
-      "answer": "Паразиты"
-    },
-    {
-      "id": "q13",
-      "category": "Музыка",
-      "type": "text",
-      "difficulty": "easy",
-      "points": 100,
-      "question": "Какая группа исполнила песню 'Bohemian Rhapsody'?",
-      "answer": "Queen"
-    },
-    {
-      "id": "q14",
-      "category": "Музыка",
-      "type": "text",
-      "difficulty": "medium",
-      "points": 200,
-      "question": "Как звали солиста группы 'Кино'?",
-      "answer": "Виктор Цой"
-    },
-    {
-      "id": "q15",
-      "category": "Искусство",
-      "type": "text",
-      "difficulty": "easy",
-      "points": 100,
-      "question": "Кто написал картину 'Мона Лиза'?",
-      "answer": "Леонардо да Винчи"
-    },
-    {
-      "id": "q16",
-      "category": "Искусство",
-      "type": "text",
-      "difficulty": "medium",
-      "points": 200,
-      "question": "В каком музее находится 'Черный квадрат' Малевича?",
-      "answer": "Третьяковская галерея"
-    },
-    {
-      "id": "q17",
-      "category": "Технологии",
-      "type": "text",
-      "difficulty": "easy",
-      "points": 100,
-      "question": "Кто основал компанию Apple?",
-      "answer": "Стив Джобс (и Стив Возняк)"
-    },
-    {
-      "id": "q18",
-      "category": "Технологии",
-      "type": "text",
-      "difficulty": "medium",
-      "points": 200,
-      "question": "В каком году был создан Google?",
-      "answer": "1998 год"
-    },
-    {
-      "id": "q19",
-      "category": "Еда",
-      "type": "text",
-      "difficulty": "easy",
-      "points": 100,
-      "question": "Из какой страны родом пицца?",
-      "answer": "Италия"
-    },
-    {
-      "id": "q20",
-      "category": "Еда",
-      "type": "text",
-      "difficulty": "medium",
-      "points": 200,
-      "question": "Как называется японское блюдо из сырой рыбы?",
-      "answer": "Суши (или сашими)"
-    },
-    {
-      "id": "q21",
-      "category": "Животные",
-      "type": "text",
-      "difficulty": "easy",
-      "points": 100,
-      "question": "Какое самое быстрое животное на земле?",
-      "answer": "Гепард"
-    },
-    {
-      "id": "q22",
-      "category": "Животные",
-      "type": "text",
-      "difficulty": "medium",
-      "points": 200,
-      "question": "Какое животное является символом WWF?",
-      "answer": "Панда"
-    },
-    {
-      "id": "q23",
-      "category": "Математика",
-      "type": "text",
-      "difficulty": "easy",
-      "points": 100,
-      "question": "Сколько будет 7 × 8?",
-      "answer": "56"
-    },
-    {
-      "id": "q24",
-      "category": "Математика",
-      "type": "text",
-      "difficulty": "medium",
-      "points": 200,
-      "question": "Чему равно число Пи (приблизительно)?",
-      "answer": "3.14"
-    },
-    {
-      "id": "q25",
-      "category": "История",
-      "type": "text",
-      "difficulty": "hard",
-      "points": 300,
-      "question": "В каком году пал Берлинская стена?",
-      "answer": "1989 год"
-    },
-    {
-      "id": "q26",
-      "category": "География",
-      "type": "text",
-      "difficulty": "hard",
-      "points": 300,
-      "question": "Какое государство имеет больше всего часовых поясов?",
-      "answer": "Франция (12 часовых поясов)"
-    },
-    {
-      "id": "q27",
-      "category": "Наука",
-      "type": "text",
-      "difficulty": "hard",
-      "points": 300,
-      "question": "Как называется самая маленькая частица химического элемента?",
-      "answer": "Атом"
-    },
-    {
-      "id": "q28",
-      "category": "Творчество",
-      "type": "creative",
-      "difficulty": "medium",
-      "points": 250,
-      "question": "Изобразите пантомиму: вы ловите рыбу и вытаскиваете огромного осетра!",
-      "answer": "Оценивается артистизм и юмор выступления"
-    },
-    {
-      "id": "q29",
-      "category": "Творчество",
-      "type": "creative",
-      "difficulty": "medium",
-      "points": 250,
-      "question": "Придумайте и расскажите четверостишие про морской бой!",
-      "answer": "Оценивается креативность и рифма"
-    },
-    {
-      "id": "q30",
-      "category": "Музыка",
+      "category": "Угадай мелодию",
       "type": "audio",
       "difficulty": "medium",
       "points": 200,
-      "question": "Угадайте мелодию",
-      "answer": "Название песни будет указано в аудиофайле",
-      "mediaPath": "audio/sample.mp3"
+      "question": "Угадайте песню",
+      "answer": "Я вновь бегу к Тебе",
+      "mediaPath": "audio/Я_вновь_бегу_к_Тебе.mp3"
     },
     {
-      "id": "q31",
-      "category": "Кино",
-      "type": "video",
+      "id": "q6",
+      "category": "Угадай мелодию",
+      "type": "audio",
       "difficulty": "medium",
       "points": 200,
-      "question": "Из какого фильма этот отрывок?",
-      "answer": "Название фильма будет указано в видеофайле",
-      "mediaPath": "video/sample.mp4"
+      "question": "Угадайте песню",
+      "answer": "Силой Одного",
+      "mediaPath": "audio/Силой_Одного.mp3"
     },
     {
-      "id": "q32",
-      "category": "Бонус",
-      "type": "creative",
-      "difficulty": "hard",
-      "points": 500,
-      "question": "Всей командой изобразите: ваш корабль тонет! У вас есть 30 секунд!",
-      "answer": "Оценивается командная работа и артистизм"
+      "id": "q7",
+      "category": "Угадай мелодию",
+      "type": "audio",
+      "difficulty": "medium",
+      "points": 200,
+      "question": "Угадайте песню",
+      "answer": "Маша и Медведи",
+      "mediaPath": "audio/Маша_и_медведь.mp3"
     },
     {
-      "id": "q33",
-      "category": "Бонус",
+      "id": "q8",
+      "category": "Угадай мелодию",
+      "type": "audio",
+      "difficulty": "medium",
+      "points": 200,
+      "question": "Угадайте песню",
+      "answer": "Мимо текла, текла река",
+      "mediaPath": "audio/Маша_и_медведь.mp3"
+    },
+    {
+      "id": "q9",
+      "category": "Хоровой телефон",
+      "type": "creative",
+      "difficulty": "medium",
+      "points": 200,
+      "question": "Хоровой телефон - задание 1",
+      "answer": "Оценивается точность передачи информации"
+    },
+    {
+      "id": "q10",
+      "category": "Хоровой телефон",
+      "type": "creative",
+      "difficulty": "medium",
+      "points": 200,
+      "question": "Хоровой телефон - задание 2",
+      "answer": "Оценивается точность передачи информации"
+    },
+    {
+      "id": "q11",
+      "category": "Хоровой телефон",
+      "type": "creative",
+      "difficulty": "medium",
+      "points": 200,
+      "question": "Хоровой телефон - задание 3",
+      "answer": "Оценивается точность передачи информации"
+    },
+    {
+      "id": "q12",
+      "category": "Хоровой телефон",
+      "type": "creative",
+      "difficulty": "medium",
+      "points": 200,
+      "question": "Хоровой телефон - задание 4",
+      "answer": "Оценивается точность передачи информации"
+    },
+    {
+      "id": "q13",
+      "category": "Вопросы о хоре",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 200,
+      "question": "Кто в хоре играет на музыкальных инструментах?",
+      "answer": "Наталья, Вика, Марина, Даша, Лиза, Эвелина, Сергей"
+    },
+    {
+      "id": "q14",
+      "category": "Вопросы о хоре",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 200,
+      "question": "Количество детей хористов?",
+      "answer": "8 (Даник, Ксюша, Арина, Тимофей, Вика, Саша, Егор, Камиль)"
+    },
+    {
+      "id": "q15",
+      "category": "Вопросы о хоре",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 200,
+      "question": "Кто самый высокий в хоре из парней и его рост (с точностью в 2см)?",
+      "answer": "Влад, 191см"
+    },
+    {
+      "id": "q16",
+      "category": "Вопросы о хоре",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 200,
+      "question": "Какие первые произведения разучивал хор?",
+      "answer": "Ты чудесный Бог, Столб огня"
+    },
+    {
+      "id": "q17",
+      "category": "Музыкальная эрудиция",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 100,
+      "question": "Сколько струн у классической гитары?",
+      "answer": "6"
+    },
+    {
+      "id": "q18",
+      "category": "Музыкальная эрудиция",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 200,
+      "question": "Что означает crescendo (крещендо) в музыке?",
+      "answer": "Музыкальный термин, обозначающий постепенное увеличение силы звука. В нотах обозначается знаком «<»"
+    },
+    {
+      "id": "q19",
+      "category": "Музыкальная эрудиция",
+      "type": "image",
+      "difficulty": "medium",
+      "points": 200,
+      "question": "Назовите три духовых инструмента из Библии",
+      "answer": "Шофар, труба, флейта",
+      "mediaPath": "images/instruments.jpg",
+      "answerImages": [
+        "images/труба.jpg",
+        "images/флейта.jpg",
+        "images/шофар.jpg"
+      ]
+    },
+    {
+      "id": "q20",
+      "category": "Музыкальная эрудиция",
       "type": "creative",
       "difficulty": "hard",
-      "points": 500,
-      "question": "Спойте хором первый куплет гимна России!",
-      "answer": "Оценивается знание слов и хоровое исполнение"
+      "points": 300,
+      "question": "Что означает Стаккато (staccato) в музыке? Назовите его антоним и изобразите.",
+      "answer": "Музыкальный штрих, предписывающий исполнять звуки отрывисто, отделяя один от другого паузами. Антоним - легато (legato)"
     }
   ]
 }

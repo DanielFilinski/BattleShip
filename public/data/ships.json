@@ -3,62 +3,122 @@
     {
       "id": "ship1",
       "name": "Линкор",
-      "cells": ["А1", "Б1", "В1", "Г1"],
-      "questionIds": ["q1", "q2", "q3", "q4"]
+      "cells": [
+        "Б6",
+        "Б7",
+        "Б8",
+        "Б9"
+      ],
+      "questionIds": [
+        "q1",
+        "q2",
+        "q3",
+        "q4"
+      ]
     },
     {
       "id": "ship2",
       "name": "Крейсер",
-      "cells": ["Е3", "Е4", "Е5"],
-      "questionIds": ["q5", "q6", "q7"]
+      "cells": [
+        "В1",
+        "В2",
+        "В3"
+      ],
+      "questionIds": [
+        "q5",
+        "q6",
+        "q7"
+      ]
     },
     {
       "id": "ship3",
       "name": "Эсминец 1",
-      "cells": ["А7", "Б7"],
-      "questionIds": ["q8", "q9"]
+      "cells": [
+        "Д3",
+        "Д4"
+      ],
+      "questionIds": [
+        "q8",
+        "q9"
+      ]
     },
     {
       "id": "ship4",
       "name": "Эсминец 2",
-      "cells": ["Г9", "Д9"],
-      "questionIds": ["q10", "q11"]
+      "cells": [
+        "Г9",
+        "Д9"
+      ],
+      "questionIds": [
+        "q10",
+        "q11"
+      ]
     },
     {
       "id": "ship5",
       "name": "Подлодка 1",
-      "cells": ["З2"],
-      "questionIds": ["q12"]
+      "cells": [
+        "К6"
+      ],
+      "questionIds": [
+        "q12"
+      ]
     },
     {
       "id": "ship6",
       "name": "Подлодка 2",
-      "cells": ["И4"],
-      "questionIds": ["q13"]
+      "cells": [
+        "Д1"
+      ],
+      "questionIds": [
+        "q13"
+      ]
     },
     {
       "id": "ship7",
       "name": "Подлодка 3",
-      "cells": ["Б5"],
-      "questionIds": ["q14"]
+      "cells": [
+        "И9"
+      ],
+      "questionIds": [
+        "q14"
+      ]
     },
     {
       "id": "ship8",
       "name": "Подлодка 4",
-      "cells": ["Ж8"],
-      "questionIds": ["q15"]
+      "cells": [
+        "Ж2"
+      ],
+      "questionIds": [
+        "q15"
+      ]
     },
     {
       "id": "ship9",
       "name": "Крейсер 2",
-      "cells": ["А10", "Б10", "В10"],
-      "questionIds": ["q16", "q17", "q18"]
+      "cells": [
+        "Д6",
+        "Е6",
+        "Ж6"
+      ],
+      "questionIds": [
+        "q16",
+        "q17",
+        "q18"
+      ]
     },
     {
       "id": "ship10",
       "name": "Эсминец 3",
-      "cells": ["З6", "З7"],
-      "questionIds": ["q19", "q20"]
+      "cells": [
+        "И3",
+        "И4"
+      ],
+      "questionIds": [
+        "q19",
+        "q20"
+      ]
     }
   ]
 }
