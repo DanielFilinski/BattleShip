@@ -149,16 +149,16 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
 
         {/* Game Grid */}
         <div className={`bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 ${isFullscreen ? 'flex-1 flex flex-col overflow-hidden' : ''}`}>
-          <div className={`${isFullscreen ? 'flex-1 flex items-center justify-center' : 'overflow-x-auto'}`}>
-            <div className={`${isFullscreen ? 'w-full h-full flex flex-col justify-center' : 'inline-block min-w-full'}`}>
+          <div className={`${isFullscreen ? 'flex-1 overflow-auto' : 'overflow-x-auto'}`}>
+            <div className={`${isFullscreen ? 'min-h-full flex flex-col justify-center items-center p-4' : 'inline-block min-w-full'}`}>
               {/* Column headers */}
               <div className="flex mb-2">
                 <div className={isFullscreen ? 'w-8 sm:w-12' : 'w-12'}></div>
                 {COLUMNS.map((col) => (
                   <div
                     key={col}
-                    className={`flex-1 text-center font-bold text-ocean-700 ${isFullscreen ? 'text-lg sm:text-xl' : 'min-w-[60px] text-2xl'}`}
-                    style={isFullscreen ? { maxWidth: `${cellSize}px` } : undefined}
+                    className={`text-center font-bold text-ocean-700 ${isFullscreen ? 'text-lg sm:text-xl' : 'flex-1 min-w-[60px] text-2xl'}`}
+                    style={isFullscreen ? { width: `${cellSize}px`, flexShrink: 0 } : undefined}
                   >
                     {col}
                   </div>
@@ -179,8 +179,8 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
                     return (
                       <div
                         key={coordinate}
-                        className={`flex-1 ${isFullscreen ? 'px-0.5' : 'min-w-[60px] px-1'}`}
-                        style={isFullscreen ? { maxWidth: `${cellSize}px` } : undefined}
+                        className={isFullscreen ? 'px-0.5' : 'flex-1 min-w-[60px] px-1'}
+                        style={isFullscreen ? { width: `${cellSize}px`, flexShrink: 0 } : undefined}
                       >
                         <Cell
                           coordinate={coordinate}
