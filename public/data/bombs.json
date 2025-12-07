@@ -1,0 +1,16 @@
+{
+  "bombs": [
+    {
+      "cell": "Д5",
+      "questionId": "q32"
+    },
+    {
+      "cell": "И10",
+      "questionId": "q33"
+    },
+    {
+      "cell": "В6",
+      "questionId": "q28"
+    }
+  ]
+}

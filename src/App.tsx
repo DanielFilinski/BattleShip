@@ -1,0 +1,87 @@
+import { useEffect, useState } from 'react';
+import { useGameState } from './hooks/useGameState';
+import { WelcomeScreen } from './components/WelcomeScreen';
+import { GameBoard } from './components/GameBoard';
+import { loadQuestions, loadShips, loadBombs } from './utils/loadData';
+import { Question } from './types/question';
+import { Ship, Bomb } from './types/game';
+
+function App() {
+  const { gameStarted } = useGameState();
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [ships, setShips] = useState<Ship[]>([]);
+  const [bombs, setBombs] = useState<Bomb[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function loadGameData() {
+      try {
+        setLoading(true);
+        const [loadedQuestions, loadedShips, loadedBombs] = await Promise.all([
+          loadQuestions(),
+          loadShips(),
+          loadBombs(),
+        ]);
+
+        setQuestions(loadedQuestions);
+        setShips(loadedShips);
+        setBombs(loadedBombs);
+
+        if (loadedQuestions.length === 0) {
+          setError('Не удалось загрузить вопросы');
+        }
+      } catch (err) {
+        console.error('Failed to load game data:', err);
+        setError('Ошибка загрузки данных игры');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadGameData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-ocean-900 via-ocean-700 to-ocean-500 flex items-center justify-center">
+        <div className="text-white text-center">
+          <div className="text-6xl mb-4 animate-pulse">⚓</div>
+          <div className="text-2xl font-semibold">Загрузка игры...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-ocean-900 via-ocean-700 to-ocean-500 flex items-center justify-center">
+        <div className="bg-white rounded-3xl shadow-2xl p-12 max-w-2xl text-center">
+          <div className="text-6xl mb-4">❌</div>
+          <h1 className="text-3xl font-bold text-red-600 mb-4">
+            Ошибка загрузки
+          </h1>
+          <p className="text-xl text-ocean-700">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-6 bg-ocean-600 text-white text-lg font-semibold py-3 px-8 rounded-xl hover:bg-ocean-700 transition-colors"
+          >
+            Перезагрузить
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {!gameStarted ? (
+        <WelcomeScreen />
+      ) : (
+        <GameBoard questions={questions} ships={ships} bombs={bombs} />
+      )}
+    </>
+  );
+}
+
+export default App;
