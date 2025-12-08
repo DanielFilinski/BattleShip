@@ -156,88 +156,193 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-ocean-900 via-ocean-700 to-ocean-500 p-6">
-      <div className={isFullscreen ? 'h-screen flex flex-col' : 'max-w-7xl mx-auto'}>
-        {/* View Mode Toggle and Compact Score */}
-        <div className="flex justify-between items-center mb-4">
-          {/* Compact Score for Fullscreen */}
-          {isFullscreen && (
-            <div className="flex items-center gap-4 bg-white/90 backdrop-blur-sm rounded-xl px-4 py-2 shadow-lg">
-              <div className={`flex items-center gap-2 px-3 py-1 rounded-lg transition-all ${currentTurn === 1 ? 'bg-emerald-100' : ''}`}>
-                <span className="font-bold text-ocean-700">{team1.name}</span>
-                <span className="text-2xl font-black text-emerald-600">{team1.score}</span>
+    <div className={`bg-gradient-to-br from-ocean-900 via-ocean-700 to-ocean-500 ${isFullscreen ? 'h-screen flex p-0' : 'min-h-screen p-6'}`}>
+      {isFullscreen ? (
+        <>
+          {/* Left Sidebar - Settings and Team Status */}
+          <div className="w-64 flex flex-col gap-3 p-3 bg-ocean-900/50">
+            {/* Settings Menu */}
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-3 shadow-lg">
+              <SettingsMenu
+                onToggleFullscreen={() => setIsFullscreen(!isFullscreen)}
+                onOpenFieldSettings={() => setIsFieldSettingsOpen(true)}
+                isFullscreen={isFullscreen}
+              />
+            </div>
+
+            {/* Team Scores - Vertical Layout */}
+            <div className="flex flex-col gap-3">
+              {/* Team 1 */}
+              <div
+                className={`bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-lg border-4 transition-all ${
+                  currentTurn === 1
+                    ? 'border-emerald-500 scale-105'
+                    : 'border-ocean-200'
+                }`}
+              >
+                <div className="text-center">
+                  <div className="text-xs font-semibold text-ocean-600 mb-1">
+                    {currentTurn === 1 && '▶️ '}КОМАНДА 1
+                  </div>
+                  <div className="text-xl font-bold text-ocean-800 mb-1">
+                    {team1.name}
+                  </div>
+                  <div className="text-4xl font-black text-emerald-600">
+                    {team1.score}
+                  </div>
+                  <div className="text-xs text-ocean-500 mt-1">БАЛЛОВ</div>
+                </div>
               </div>
-              <div className="text-ocean-400 font-bold">VS</div>
-              <div className={`flex items-center gap-2 px-3 py-1 rounded-lg transition-all ${currentTurn === 2 ? 'bg-emerald-100' : ''}`}>
-                <span className="font-bold text-ocean-700">{team2.name}</span>
-                <span className="text-2xl font-black text-emerald-600">{team2.score}</span>
+
+              {/* VS Divider */}
+              <div className="text-center">
+                <div className="text-2xl font-black text-white/70">VS</div>
+              </div>
+
+              {/* Team 2 */}
+              <div
+                className={`bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-lg border-4 transition-all ${
+                  currentTurn === 2
+                    ? 'border-emerald-500 scale-105'
+                    : 'border-ocean-200'
+                }`}
+              >
+                <div className="text-center">
+                  <div className="text-xs font-semibold text-ocean-600 mb-1">
+                    {currentTurn === 2 && '▶️ '}КОМАНДА 2
+                  </div>
+                  <div className="text-xl font-bold text-ocean-800 mb-1">
+                    {team2.name}
+                  </div>
+                  <div className="text-4xl font-black text-emerald-600">
+                    {team2.score}
+                  </div>
+                  <div className="text-xs text-ocean-500 mt-1">БАЛЛОВ</div>
+                </div>
               </div>
             </div>
-          )}
 
-          <div className="ml-auto">
+            {/* Reset Button */}
+            <button
+              onClick={handleReset}
+              className="bg-gradient-to-r from-red-600 to-red-500 text-white text-sm font-semibold py-2 px-4 rounded-xl hover:from-red-700 hover:to-red-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg mt-auto"
+            >
+              🔄 Новая игра
+            </button>
+          </div>
+
+          {/* Game Grid - Right Side */}
+          <div className="flex-1 flex flex-col overflow-hidden p-2">
+            <div className="flex-1 overflow-auto bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-2">
+              <div className="min-h-full flex flex-col justify-center items-center">
+                {/* Column headers */}
+                <div className="flex mb-1">
+                  <div className="w-8"></div>
+                  {COLUMNS.map((col) => (
+                    <div
+                      key={col}
+                      className="text-center font-bold text-ocean-700 text-lg"
+                      style={{ width: `${cellSize}px`, flexShrink: 0 }}
+                    >
+                      {col}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Grid rows */}
+                {ROWS.map((row) => (
+                  <div key={row} className="flex mb-1">
+                    {/* Row header */}
+                    <div className="w-8 flex items-center justify-center font-bold text-ocean-700 text-lg">
+                      {row}
+                    </div>
+
+                    {/* Cells */}
+                    {COLUMNS.map((col) => {
+                      const coordinate = `${col}${row}`;
+                      return (
+                        <div
+                          key={coordinate}
+                          className="px-0.5"
+                          style={{ width: `${cellSize}px`, flexShrink: 0 }}
+                        >
+                          <Cell
+                            coordinate={coordinate}
+                            status={getCellStatus(coordinate)}
+                            onClick={handleCellClick}
+                            disabled={isModalOpen}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </>
+      ) : (
+        <div className="max-w-7xl mx-auto">
+          {/* Settings Menu - Normal Mode */}
+          <div className="flex justify-end mb-4">
             <SettingsMenu
               onToggleFullscreen={() => setIsFullscreen(!isFullscreen)}
               onOpenFieldSettings={() => setIsFieldSettingsOpen(true)}
               isFullscreen={isFullscreen}
             />
           </div>
-        </div>
 
-        {/* Score Board */}
-        {!isFullscreen && <ScoreBoard />}
+          {/* Score Board */}
+          <ScoreBoard />
 
-        {/* Game Grid */}
-        <div className={`bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 ${isFullscreen ? 'flex-1 flex flex-col overflow-hidden' : ''}`}>
-          <div className={`${isFullscreen ? 'flex-1 overflow-auto' : 'overflow-x-auto'}`}>
-            <div className={`${isFullscreen ? 'min-h-full flex flex-col justify-center items-center p-4' : 'inline-block min-w-full'}`}>
-              {/* Column headers */}
-              <div className="flex mb-2">
-                <div className={isFullscreen ? 'w-8 sm:w-12' : 'w-12'}></div>
-                {COLUMNS.map((col) => (
-                  <div
-                    key={col}
-                    className={`text-center font-bold text-ocean-700 ${isFullscreen ? 'text-lg sm:text-xl' : 'flex-1 min-w-[60px] text-2xl'}`}
-                    style={isFullscreen ? { width: `${cellSize}px`, flexShrink: 0 } : undefined}
-                  >
-                    {col}
+          {/* Game Grid */}
+          <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8">
+            <div className="overflow-x-auto">
+              <div className="inline-block min-w-full">
+                {/* Column headers */}
+                <div className="flex mb-2">
+                  <div className="w-12"></div>
+                  {COLUMNS.map((col) => (
+                    <div
+                      key={col}
+                      className="text-center font-bold text-ocean-700 flex-1 min-w-[60px] text-2xl"
+                    >
+                      {col}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Grid rows */}
+                {ROWS.map((row) => (
+                  <div key={row} className="flex mb-2">
+                    {/* Row header */}
+                    <div className="w-12 flex items-center justify-center font-bold text-ocean-700 text-2xl">
+                      {row}
+                    </div>
+
+                    {/* Cells */}
+                    {COLUMNS.map((col) => {
+                      const coordinate = `${col}${row}`;
+                      return (
+                        <div
+                          key={coordinate}
+                          className="flex-1 min-w-[60px] px-1"
+                        >
+                          <Cell
+                            coordinate={coordinate}
+                            status={getCellStatus(coordinate)}
+                            onClick={handleCellClick}
+                            disabled={isModalOpen}
+                          />
+                        </div>
+                      );
+                    })}
                   </div>
                 ))}
               </div>
-
-              {/* Grid rows */}
-              {ROWS.map((row) => (
-                <div key={row} className="flex mb-2">
-                  {/* Row header */}
-                  <div className={`flex items-center justify-center font-bold text-ocean-700 ${isFullscreen ? 'w-8 sm:w-12 text-lg sm:text-xl' : 'w-12 text-2xl'}`}>
-                    {row}
-                  </div>
-
-                  {/* Cells */}
-                  {COLUMNS.map((col) => {
-                    const coordinate = `${col}${row}`;
-                    return (
-                      <div
-                        key={coordinate}
-                        className={isFullscreen ? 'px-0.5' : 'flex-1 min-w-[60px] px-1'}
-                        style={isFullscreen ? { width: `${cellSize}px`, flexShrink: 0 } : undefined}
-                      >
-                        <Cell
-                          coordinate={coordinate}
-                          status={getCellStatus(coordinate)}
-                          onClick={handleCellClick}
-                          disabled={isModalOpen}
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-              ))}
             </div>
-          </div>
 
-          {/* Reset Button */}
-          {!isFullscreen && (
+            {/* Reset Button */}
             <div className="mt-8 flex justify-center">
               <button
                 onClick={handleReset}
@@ -246,18 +351,16 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
                 🔄 Новая игра
               </button>
             </div>
-          )}
-        </div>
+          </div>
 
-        {/* Game Stats */}
-        {!isFullscreen && (
+          {/* Game Stats */}
           <div className="mt-6 text-center text-white/80 text-sm">
             <p>
               Кликнуто ячеек: {clickedCells.length} / {fieldColumns * fieldRows}
             </p>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Question Modal */}
       {isModalOpen && currentQuestion && (

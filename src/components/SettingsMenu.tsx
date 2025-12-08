@@ -27,6 +27,35 @@ export function SettingsMenu({ onToggleFullscreen, onOpenFieldSettings, isFullsc
     };
   }, [isOpen]);
 
+  // In fullscreen mode, show buttons directly instead of dropdown
+  if (isFullscreen) {
+    return (
+      <div className="flex flex-col gap-2">
+        {/* Fullscreen Toggle */}
+        <button
+          onClick={onToggleFullscreen}
+          className="w-full px-3 py-2 text-left hover:bg-ocean-50 transition-colors flex items-center gap-2 rounded-lg"
+        >
+          <span className="text-lg">📊</span>
+          <div className="flex-1">
+            <div className="text-sm font-semibold text-ocean-700">Обычный вид</div>
+          </div>
+        </button>
+
+        {/* Field Settings */}
+        <button
+          onClick={onOpenFieldSettings}
+          className="w-full px-3 py-2 text-left hover:bg-ocean-50 transition-colors flex items-center gap-2 rounded-lg"
+        >
+          <span className="text-lg">📐</span>
+          <div className="flex-1">
+            <div className="text-sm font-semibold text-ocean-700">Размер поля</div>
+          </div>
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="relative" ref={menuRef}>
       {/* Settings Button */}
