@@ -6,6 +6,7 @@ import { ScoreBoard } from './ScoreBoard';
 import { Cell } from './Cell';
 import { QuestionModal } from './QuestionModal';
 import { SettingsMenu } from './SettingsMenu';
+import { SettingsModal } from './SettingsModal';
 import { FieldSettingsModal } from './FieldSettingsModal';
 import { VictoryAnimation } from './VictoryAnimation';
 import { ConfirmModal } from './ConfirmModal';
@@ -30,6 +31,7 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
   const [currentCoordinate, setCurrentCoordinate] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isFieldSettingsOpen, setIsFieldSettingsOpen] = useState(false);
   const [showVictory, setShowVictory] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
@@ -255,12 +257,11 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
           </div>
 
           {/* Right Sidebar - Settings and Team Status */}
-          <div className="w-72 flex flex-col gap-3 p-3 bg-ocean-900/50">
+          <div className="w-72 flex flex-col gap-3 p-3 bg-ocean-900/50 overflow-visible">
             {/* Settings Menu */}
             <div className="bg-white/90 backdrop-blur-sm rounded-xl p-3 shadow-lg">
               <SettingsMenu
-                onToggleFullscreen={() => setIsFullscreen(!isFullscreen)}
-                onOpenFieldSettings={() => setIsFieldSettingsOpen(true)}
+                onOpenSettings={() => setIsSettingsOpen(true)}
                 isFullscreen={isFullscreen}
               />
             </div>
@@ -352,8 +353,7 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
           {/* Settings Menu - Normal Mode */}
           <div className="flex justify-end mb-4">
             <SettingsMenu
-              onToggleFullscreen={() => setIsFullscreen(!isFullscreen)}
-              onOpenFieldSettings={() => setIsFieldSettingsOpen(true)}
+              onOpenSettings={() => setIsSettingsOpen(true)}
               isFullscreen={isFullscreen}
             />
           </div>
@@ -426,6 +426,22 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
             </p>
           </div>
         </div>
+      )}
+
+      {/* Settings Modal */}
+      {isSettingsOpen && (
+        <SettingsModal
+          onToggleFullscreen={() => {
+            setIsFullscreen(!isFullscreen);
+            setIsSettingsOpen(false);
+          }}
+          onOpenFieldSettings={() => {
+            setIsFieldSettingsOpen(true);
+            setIsSettingsOpen(false);
+          }}
+          onClose={() => setIsSettingsOpen(false)}
+          isFullscreen={isFullscreen}
+        />
       )}
 
       {/* Question Modal */}
