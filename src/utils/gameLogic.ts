@@ -52,3 +52,13 @@ export function isGameOver(clickedCells: string[], totalCells: number = 100): bo
   // Game is over when all cells are clicked
   return clickedCells.length >= totalCells;
 }
+
+export function isShipSunk(ship: Ship, clickedCells: string[]): boolean {
+  // A ship is sunk when all its cells are clicked
+  return ship.cells.every(cell => clickedCells.includes(cell));
+}
+
+export function getShipByCell(coordinate: string, ships: Ship[]): Ship | undefined {
+  // Find the ship that contains the given cell
+  return ships.find(ship => ship.cells.includes(coordinate));
+}

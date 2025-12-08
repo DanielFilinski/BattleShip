@@ -20,6 +20,8 @@ export function Cell({ coordinate, status, onClick, disabled }: CellProps) {
         return 'bg-ocean-100 border-ocean-300';
       case 'hit':
         return 'bg-red-500 border-red-600';
+      case 'sunk':
+        return 'bg-gray-700 border-gray-900';
       case 'bomb':
         return 'bg-amber-500 border-amber-600';
       default:
@@ -35,7 +37,11 @@ export function Cell({ coordinate, status, onClick, disabled }: CellProps) {
         );
       case 'hit':
         return (
-          <span className="text-3xl text-white animate-hit">🎯</span>
+          <span className="text-3xl text-white animate-hit"></span>
+        );
+      case 'sunk':
+        return (
+          <span className="text-3xl text-white animate-hit">❌</span>
         );
       case 'bomb':
         return (

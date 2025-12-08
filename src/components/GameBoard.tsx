@@ -8,7 +8,7 @@ import { QuestionModal } from './QuestionModal';
 import { SettingsMenu } from './SettingsMenu';
 import { FieldSettingsModal } from './FieldSettingsModal';
 import { VictoryAnimation } from './VictoryAnimation';
-import { generateColumns, generateRows, getCellType } from '../utils/gameLogic';
+import { generateColumns, generateRows, getCellType, isShipSunk, getShipByCell } from '../utils/gameLogic';
 import { Question } from '../types/question';
 import { Ship, Bomb } from '../types/game';
 import { CellStatus } from '../types/cell';
@@ -140,6 +140,16 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
 
     if (type === 'empty') return 'miss';
     if (type === 'bomb') return 'bomb';
+
+    // Check if this is a ship cell and if the ship is fully sunk
+    if (type === 'ship') {
+      const ship = getShipByCell(coordinate, ships);
+      if (ship && isShipSunk(ship, clickedCells)) {
+        return 'sunk';
+      }
+      return 'hit';
+    }
+
     return 'hit';
   };
 
@@ -161,7 +171,6 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
 
   // Calculate remaining ships, bombs, and questions
   const remainingStats = useMemo(() => {
-    const foundShipCells = ships.flatMap(ship => ship.cells).filter(cell => clickedCells.includes(cell));
     const foundBombCells = bombs.map(bomb => bomb.cell).filter(cell => clickedCells.includes(cell));
 
     // Count remaining ships (a ship is remaining if not all its cells are clicked)
