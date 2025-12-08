@@ -20,7 +20,7 @@ interface GameBoardProps {
 }
 
 export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
-  const { clickedCells, clickCell, unclickCell, answerCorrect, answerWrong, resetGame, team1, team2, currentTurn } =
+  const { clickedCells, clickCell, unclickCell, answerCorrect, answerWrong, resetGame, team1, team2, currentTurn, answeredQuestions, markQuestionAnswered } =
     useGameState();
   const { playHit, playMiss, playCorrect, playWrong } = useSound();
   const { columns: fieldColumns, rows: fieldRows, cellSize, setFieldSize, setCellSize } = useFieldSettings();
@@ -83,6 +83,7 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
     if (currentQuestion) {
       playCorrect();
       answerCorrect(currentQuestion.points);
+      markQuestionAnswered(currentQuestion.id);
       // Team gets another turn (don't switch)
     }
     setIsModalOpen(false);
@@ -97,6 +98,9 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
   };
 
   const handleWrongAnswer = () => {
+    if (currentQuestion) {
+      markQuestionAnswered(currentQuestion.id);
+    }
     playWrong();
     answerWrong();
     setIsModalOpen(false);
@@ -155,12 +159,87 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
     // Optionally reset the game or show final scores
   };
 
+  // Calculate remaining ships, bombs, and questions
+  const remainingStats = useMemo(() => {
+    const foundShipCells = ships.flatMap(ship => ship.cells).filter(cell => clickedCells.includes(cell));
+    const foundBombCells = bombs.map(bomb => bomb.cell).filter(cell => clickedCells.includes(cell));
+
+    // Count remaining ships (a ship is remaining if not all its cells are clicked)
+    const remainingShips = ships.filter(ship => !ship.cells.every(cell => clickedCells.includes(cell))).length;
+
+    // Count remaining bombs
+    const remainingBombs = bombs.length - foundBombCells.length;
+
+    // Count total remaining questions (from ships and bombs, excluding answered questions)
+    const allQuestionIds = [
+      ...ships.flatMap(ship => ship.questionIds),
+      ...bombs.map(bomb => bomb.questionId)
+    ];
+    const totalRemainingQuestions = allQuestionIds.filter(qId => !answeredQuestions.includes(qId)).length;
+
+    return {
+      ships: remainingShips,
+      bombs: remainingBombs,
+      questions: totalRemainingQuestions
+    };
+  }, [ships, bombs, clickedCells, answeredQuestions]);
+
   return (
     <div className={`bg-gradient-to-br from-ocean-900 via-ocean-700 to-ocean-500 ${isFullscreen ? 'h-screen flex p-0' : 'min-h-screen p-6'}`}>
       {isFullscreen ? (
         <>
-          {/* Left Sidebar - Settings and Team Status */}
-          <div className="w-64 flex flex-col gap-3 p-3 bg-ocean-900/50">
+          {/* Game Grid - Left Side */}
+          <div className="flex-1 flex flex-col overflow-hidden p-2">
+            <div className="flex-1 overflow-auto bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-2">
+              <div className="min-h-full flex flex-col justify-center items-center">
+                {/* Column headers */}
+                <div className="flex mb-1">
+                  <div className="w-8"></div>
+                  {COLUMNS.map((col) => (
+                    <div
+                      key={col}
+                      className="text-center font-bold text-ocean-700 text-lg"
+                      style={{ width: `${cellSize}px`, flexShrink: 0 }}
+                    >
+                      {col}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Grid rows */}
+                {ROWS.map((row) => (
+                  <div key={row} className="flex mb-1">
+                    {/* Row header */}
+                    <div className="w-8 flex items-center justify-center font-bold text-ocean-700 text-lg">
+                      {row}
+                    </div>
+
+                    {/* Cells */}
+                    {COLUMNS.map((col) => {
+                      const coordinate = `${col}${row}`;
+                      return (
+                        <div
+                          key={coordinate}
+                          className="px-0.5"
+                          style={{ width: `${cellSize}px`, flexShrink: 0 }}
+                        >
+                          <Cell
+                            coordinate={coordinate}
+                            status={getCellStatus(coordinate)}
+                            onClick={handleCellClick}
+                            disabled={isModalOpen}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Right Sidebar - Settings and Team Status */}
+          <div className="w-72 flex flex-col gap-3 p-3 bg-ocean-900/50">
             {/* Settings Menu */}
             <div className="bg-white/90 backdrop-blur-sm rounded-xl p-3 shadow-lg">
               <SettingsMenu
@@ -168,6 +247,27 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
                 onOpenFieldSettings={() => setIsFieldSettingsOpen(true)}
                 isFullscreen={isFullscreen}
               />
+            </div>
+
+            {/* Game Statistics */}
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-lg">
+              <div className="text-center mb-2">
+                <div className="text-sm font-bold text-ocean-800">СТАТИСТИКА ИГРЫ</div>
+              </div>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center bg-blue-50 rounded-lg px-3 py-2">
+                  <span className="text-sm font-semibold text-ocean-700">🚢 Кораблей:</span>
+                  <span className="text-lg font-bold text-blue-600">{remainingStats.ships}</span>
+                </div>
+                <div className="flex justify-between items-center bg-red-50 rounded-lg px-3 py-2">
+                  <span className="text-sm font-semibold text-ocean-700">💣 Бомб:</span>
+                  <span className="text-lg font-bold text-red-600">{remainingStats.bombs}</span>
+                </div>
+                <div className="flex justify-between items-center bg-purple-50 rounded-lg px-3 py-2">
+                  <span className="text-sm font-semibold text-ocean-700">❓ Вопросов:</span>
+                  <span className="text-lg font-bold text-purple-600">{remainingStats.questions}</span>
+                </div>
+              </div>
             </div>
 
             {/* Team Scores - Vertical Layout */}
@@ -229,56 +329,6 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
             >
               🔄 Новая игра
             </button>
-          </div>
-
-          {/* Game Grid - Right Side */}
-          <div className="flex-1 flex flex-col overflow-hidden p-2">
-            <div className="flex-1 overflow-auto bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-2">
-              <div className="min-h-full flex flex-col justify-center items-center">
-                {/* Column headers */}
-                <div className="flex mb-1">
-                  <div className="w-8"></div>
-                  {COLUMNS.map((col) => (
-                    <div
-                      key={col}
-                      className="text-center font-bold text-ocean-700 text-lg"
-                      style={{ width: `${cellSize}px`, flexShrink: 0 }}
-                    >
-                      {col}
-                    </div>
-                  ))}
-                </div>
-
-                {/* Grid rows */}
-                {ROWS.map((row) => (
-                  <div key={row} className="flex mb-1">
-                    {/* Row header */}
-                    <div className="w-8 flex items-center justify-center font-bold text-ocean-700 text-lg">
-                      {row}
-                    </div>
-
-                    {/* Cells */}
-                    {COLUMNS.map((col) => {
-                      const coordinate = `${col}${row}`;
-                      return (
-                        <div
-                          key={coordinate}
-                          className="px-0.5"
-                          style={{ width: `${cellSize}px`, flexShrink: 0 }}
-                        >
-                          <Cell
-                            coordinate={coordinate}
-                            status={getCellStatus(coordinate)}
-                            onClick={handleCellClick}
-                            disabled={isModalOpen}
-                          />
-                        </div>
-                      );
-                    })}
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
         </>
       ) : (

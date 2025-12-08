@@ -12,6 +12,7 @@ interface GameStore extends GameState {
   switchTurn: () => void;
   resetGame: () => void;
   loadSavedGame: (state: GameState) => void;
+  markQuestionAnswered: (questionId: string) => void;
 }
 
 const initialState: GameState = {
@@ -19,6 +20,7 @@ const initialState: GameState = {
   team2: { name: '', score: 0 },
   currentTurn: 1,
   clickedCells: [],
+  answeredQuestions: [],
   gameStarted: false,
   timestamp: Date.now(),
 };
@@ -34,6 +36,7 @@ export const useGameState = create<GameStore>()(
           team2: { name: team2Name, score: 0 },
           currentTurn: 1,
           clickedCells: [],
+          answeredQuestions: [],
           gameStarted: true,
           timestamp: Date.now(),
         }),
@@ -82,6 +85,12 @@ export const useGameState = create<GameStore>()(
           ...initialState,
           timestamp: Date.now(),
         }),
+
+      markQuestionAnswered: (questionId: string) =>
+        set((state) => ({
+          answeredQuestions: [...state.answeredQuestions, questionId],
+          timestamp: Date.now(),
+        })),
 
       loadSavedGame: (state: GameState) => set(state),
     }),

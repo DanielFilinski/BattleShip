@@ -8,6 +8,7 @@ export interface GameState {
   team2: Team;
   currentTurn: 1 | 2;
   clickedCells: string[];
+  answeredQuestions: string[]; // IDs of questions that have been answered
   gameStarted: boolean;
   timestamp: number;
 }
