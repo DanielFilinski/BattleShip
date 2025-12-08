@@ -169,12 +169,11 @@
     {
       "id": "q19",
       "category": "Музыкальная эрудиция",
-      "type": "image",
+      "type": "text",
       "difficulty": "medium",
       "points": 2,
       "question": "Назовите три духовых инструмента из Библии",
       "answer": "Шофар, труба, флейта",
-      "mediaPath": "images/instruments.jpg",
       "answerImages": [
         "images/труба.jpg",
         "images/флейта.jpg",

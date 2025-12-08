@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Question } from '../types/question';
 import { MediaPlayer } from './MediaPlayer';
+import { useModalSettings } from '../hooks/useModalSettings';
 
 interface QuestionModalProps {
   question: Question;
@@ -21,23 +22,47 @@ export function QuestionModal({
 }: QuestionModalProps) {
   const [showAnswer, setShowAnswer] = useState(false);
   const [answered, setAnswered] = useState(false);
+  const [wasCorrect, setWasCorrect] = useState<boolean | null>(null);
+  const { autoCloseModal } = useModalSettings();
+  const timeoutRef = useRef<number | null>(null);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleCorrect = () => {
     setShowAnswer(true);
     setAnswered(true);
-    setTimeout(() => {
-      onCorrect();
-      onClose();
-    }, 2000);
+    setWasCorrect(true);
+
+    if (autoCloseModal) {
+      timeoutRef.current = window.setTimeout(() => {
+        onCorrect();
+        onClose();
+      }, 2000);
+    }
+    // Если автозакрытие выключено, не вызываем onCorrect() сразу
+    // Это будет сделано при нажатии кнопки "Закрыть"
   };
 
   const handleWrong = () => {
     setShowAnswer(true);
     setAnswered(true);
-    setTimeout(() => {
-      onWrong();
-      onClose();
-    }, 2000);
+    setWasCorrect(false);
+
+    if (autoCloseModal) {
+      timeoutRef.current = window.setTimeout(() => {
+        onWrong();
+        onClose();
+      }, 2000);
+    }
+    // Если автозакрытие выключено, не вызываем onWrong() сразу
+    // Это будет сделано при нажатии кнопки "Закрыть"
   };
 
   const handleSkip = () => {
@@ -158,7 +183,7 @@ export function QuestionModal({
                       className="rounded-xl overflow-hidden shadow-lg bg-white"
                     >
                       <img
-                        src={imagePath}
+                        src={`/media/${imagePath}`}
                         alt={`Ответ ${index + 1}`}
                         className="w-full h-auto object-contain max-h-96"
                         onError={(e) => {
@@ -212,8 +237,27 @@ export function QuestionModal({
 
           {/* Answered State */}
           {answered && (
-            <div className="text-center text-ocean-600 text-lg font-semibold animate-pulse">
-              Закрывается автоматически...
+            <div className="text-center">
+              {autoCloseModal ? (
+                <div className="text-ocean-600 text-lg font-semibold animate-pulse">
+                  Закрывается автоматически...
+                </div>
+              ) : (
+                <button
+                  onClick={() => {
+                    // Вызываем правильный callback перед закрытием
+                    if (wasCorrect === true) {
+                      onCorrect();
+                    } else if (wasCorrect === false) {
+                      onWrong();
+                    }
+                    onClose();
+                  }}
+                  className="bg-gradient-to-r from-ocean-600 to-ocean-500 text-white text-xl font-bold py-4 px-8 rounded-xl hover:from-ocean-700 hover:to-ocean-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+                >
+                  ✓ Закрыть
+                </button>
+              )}
             </div>
           )}
         </div>

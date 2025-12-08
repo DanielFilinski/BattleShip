@@ -8,6 +8,7 @@ import { QuestionModal } from './QuestionModal';
 import { SettingsMenu } from './SettingsMenu';
 import { FieldSettingsModal } from './FieldSettingsModal';
 import { VictoryAnimation } from './VictoryAnimation';
+import { ConfirmModal } from './ConfirmModal';
 import { generateColumns, generateRows, getCellType, isShipSunk, getShipByCell } from '../utils/gameLogic';
 import { Question } from '../types/question';
 import { Ship, Bomb } from '../types/game';
@@ -31,6 +32,9 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isFieldSettingsOpen, setIsFieldSettingsOpen] = useState(false);
   const [showVictory, setShowVictory] = useState(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [showFieldSettingsSaved, setShowFieldSettingsSaved] = useState(false);
+  const [savedFieldSettings, setSavedFieldSettings] = useState<{columns: number, rows: number, cellSize: number} | null>(null);
 
   // Generate columns and rows based on settings
   const COLUMNS = useMemo(() => generateColumns(fieldColumns), [fieldColumns]);
@@ -154,14 +158,17 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
   };
 
   const handleReset = () => {
-    if (
-      confirm(
-        'Вы уверены, что хотите начать новую игру? Текущий прогресс будет потерян.'
-      )
-    ) {
-      resetGame();
-      setShowVictory(false);
-    }
+    setShowResetConfirm(true);
+  };
+
+  const confirmReset = () => {
+    resetGame();
+    setShowVictory(false);
+    setShowResetConfirm(false);
+  };
+
+  const cancelReset = () => {
+    setShowResetConfirm(false);
   };
 
   const handleVictoryClose = () => {
@@ -442,8 +449,8 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
           onSave={(columns, rows, newCellSize) => {
             setFieldSize(columns, rows);
             setCellSize(newCellSize);
-            // Show confirmation message
-            alert(`Настройки сохранены: ${columns}×${rows}, размер ячейки ${newCellSize}px. Начните новую игру для применения изменений.`);
+            setSavedFieldSettings({ columns, rows, cellSize: newCellSize });
+            setShowFieldSettingsSaved(true);
           }}
           onClose={() => setIsFieldSettingsOpen(false)}
         />
@@ -457,6 +464,32 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
           loserName={team1.score > team2.score ? team2.name : team1.name}
           loserScore={Math.min(team1.score, team2.score)}
           onClose={handleVictoryClose}
+        />
+      )}
+
+      {/* Reset Confirmation Modal */}
+      {showResetConfirm && (
+        <ConfirmModal
+          title="Начать новую игру?"
+          message="Вы уверены, что хотите начать новую игру? Текущий прогресс будет потерян."
+          confirmText="Да, начать"
+          cancelText="Отмена"
+          type="danger"
+          onConfirm={confirmReset}
+          onCancel={cancelReset}
+        />
+      )}
+
+      {/* Field Settings Saved Modal */}
+      {showFieldSettingsSaved && savedFieldSettings && (
+        <ConfirmModal
+          title="Настройки сохранены"
+          message={`Настройки сохранены: ${savedFieldSettings.columns}×${savedFieldSettings.rows}, размер ячейки ${savedFieldSettings.cellSize}px. Начните новую игру для применения изменений.`}
+          confirmText="Понятно"
+          cancelText=""
+          type="info"
+          onConfirm={() => setShowFieldSettingsSaved(false)}
+          onCancel={() => setShowFieldSettingsSaved(false)}
         />
       )}
     </div>

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useModalSettings } from '../hooks/useModalSettings';
 
 interface SettingsMenuProps {
   onToggleFullscreen: () => void;
@@ -9,6 +10,7 @@ interface SettingsMenuProps {
 export function SettingsMenu({ onToggleFullscreen, onOpenFieldSettings, isFullscreen }: SettingsMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const { autoCloseModal, toggleAutoCloseModal } = useModalSettings();
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -27,34 +29,6 @@ export function SettingsMenu({ onToggleFullscreen, onOpenFieldSettings, isFullsc
     };
   }, [isOpen]);
 
-  // In fullscreen mode, show buttons directly instead of dropdown
-  if (isFullscreen) {
-    return (
-      <div className="flex flex-col gap-2">
-        {/* Fullscreen Toggle */}
-        <button
-          onClick={onToggleFullscreen}
-          className="w-full px-3 py-2 text-left hover:bg-ocean-50 transition-colors flex items-center gap-2 rounded-lg"
-        >
-          <span className="text-lg">📊</span>
-          <div className="flex-1">
-            <div className="text-sm font-semibold text-ocean-700">Обычный вид</div>
-          </div>
-        </button>
-
-        {/* Field Settings */}
-        <button
-          onClick={onOpenFieldSettings}
-          className="w-full px-3 py-2 text-left hover:bg-ocean-50 transition-colors flex items-center gap-2 rounded-lg"
-        >
-          <span className="text-lg">📐</span>
-          <div className="flex-1">
-            <div className="text-sm font-semibold text-ocean-700">Размер поля</div>
-          </div>
-        </button>
-      </div>
-    );
-  }
 
   return (
     <div className="relative" ref={menuRef}>
@@ -106,6 +80,31 @@ export function SettingsMenu({ onToggleFullscreen, onOpenFieldSettings, isFullsc
               <div>
                 <div className="font-semibold text-ocean-700">Параметры поля</div>
                 <div className="text-xs text-ocean-500">Настроить размер игровой доски</div>
+              </div>
+            </button>
+
+            {/* Divider */}
+            <div className="border-t border-ocean-100 my-1"></div>
+
+            {/* Auto Close Modal Toggle */}
+            <button
+              onClick={() => {
+                toggleAutoCloseModal();
+                setIsOpen(false);
+              }}
+              className="w-full px-4 py-3 text-left hover:bg-ocean-50 transition-colors flex items-center gap-3"
+            >
+              <span className="text-xl">{autoCloseModal ? '⏱️' : '⏸️'}</span>
+              <div>
+                <div className="font-semibold text-ocean-700">
+                  Автозакрытие {autoCloseModal ? 'включено' : 'выключено'}
+                </div>
+                <div className="text-xs text-ocean-500">
+                  {autoCloseModal
+                    ? 'Ответ закрывается автоматически через 2 сек'
+                    : 'Ответ остается на экране'
+                  }
+                </div>
               </div>
             </button>
           </div>
