@@ -151,6 +151,15 @@ export function QuestionModal({
             </div>
           )}
 
+          {/* Together Task Hint */}
+          {question.type === 'together' && (
+            <div className="mb-6 bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-300 rounded-xl p-4">
+              <p className="text-center text-blue-800 font-semibold text-lg">
+                🤝 Совместное задание! Обе команды получат по {question.points} {question.points === 1 ? 'баллу' : 'балла'}!
+              </p>
+            </div>
+          )}
+
           {/* Answer Section */}
           {showAnswer && (
             <div

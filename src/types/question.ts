@@ -1,4 +1,4 @@
-export type QuestionType = 'text' | 'audio' | 'video' | 'image' | 'creative';
+export type QuestionType = 'text' | 'audio' | 'video' | 'image' | 'creative' | 'together';
 export type QuestionDifficulty = 'easy' | 'medium' | 'hard';
 
 export interface Question {

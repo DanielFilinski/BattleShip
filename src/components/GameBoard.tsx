@@ -22,7 +22,7 @@ interface GameBoardProps {
 }
 
 export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
-  const { clickedCells, clickCell, unclickCell, answerCorrect, answerWrong, resetGame, team1, team2, currentTurn, answeredQuestions, markQuestionAnswered } =
+  const { clickedCells, clickCell, unclickCell, answerCorrect, answerCorrectBothTeams, answerWrong, resetGame, team1, team2, currentTurn, answeredQuestions, markQuestionAnswered } =
     useGameState();
   const { playHit, playMiss, playCorrect, playWrong } = useSound();
   const { columns: fieldColumns, rows: fieldRows, cellSize, setFieldSize, setCellSize } = useFieldSettings();
@@ -88,7 +88,12 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
   const handleCorrectAnswer = () => {
     if (currentQuestion) {
       playCorrect();
-      answerCorrect(currentQuestion.points);
+      // Если тип вопроса together, начисляем баллы обеим командам
+      if (currentQuestion.type === 'together') {
+        answerCorrectBothTeams(currentQuestion.points);
+      } else {
+        answerCorrect(currentQuestion.points);
+      }
       markQuestionAnswered(currentQuestion.id);
       // Team gets another turn (don't switch)
     }
