@@ -201,7 +201,29 @@ export function QuestionModal({
                         }}
                       />
                     </div>
-                  ))}
+                  ))};
+                </div>
+              )}
+
+              {/* Answer Video */}
+              {question.answerVideoPath && (
+                <div className="mt-4">
+                  <div className="rounded-xl overflow-hidden shadow-lg bg-white p-4">
+                    <div className="flex items-center justify-center gap-2 mb-3">
+                      <span className="text-xl">🎬</span>
+                      <span className="text-base font-semibold text-ocean-700">
+                        Видео к ответу
+                      </span>
+                    </div>
+                    <video
+                      controls
+                      className="w-full rounded-lg max-h-96"
+                      src={`/media/${question.answerVideoPath}`}
+                      preload="metadata"
+                    >
+                      Ваш браузер не поддерживает видео.
+                    </video>
+                  </div>
                 </div>
               )}
             </div>

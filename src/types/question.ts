@@ -11,4 +11,5 @@ export interface Question {
   answer: string;
   mediaPath?: string;
   answerImages?: string | string[]; // Single image path or array of image paths
+  answerVideoPath?: string; // Video path to show after answer is revealed
 }
