@@ -29,6 +29,7 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
 
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [currentCoordinate, setCurrentCoordinate] = useState<string | null>(null);
+  const [currentCellType, setCurrentCellType] = useState<'ship' | 'bomb' | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -73,6 +74,9 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
     } else {
       // Hit or bomb
       playHit();
+      
+      // Save cell type to determine turn switching logic later
+      setCurrentCellType(type === 'bomb' ? 'bomb' : 'ship');
 
       // Find and show question
       if (questionId) {
@@ -95,10 +99,16 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
         answerCorrect(currentQuestion.points);
       }
       markQuestionAnswered(currentQuestion.id);
-      // Team gets another turn (don't switch)
+      
+      // Если это бомба - переключаем ход после правильного ответа
+      if (currentCellType === 'bomb') {
+        answerWrong(); // используем для переключения хода
+      }
+      // Если это корабль - команда получает еще один ход (не переключаем)
     }
     setIsModalOpen(false);
     setCurrentQuestion(null);
+    setCurrentCellType(null);
 
     // Check if game is completed after a short delay
     setTimeout(() => {
@@ -116,6 +126,7 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
     answerWrong();
     setIsModalOpen(false);
     setCurrentQuestion(null);
+    setCurrentCellType(null);
 
     // Check if game is completed after a short delay
     setTimeout(() => {
@@ -134,6 +145,7 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
     setIsModalOpen(false);
     setCurrentQuestion(null);
     setCurrentCoordinate(null);
+    setCurrentCellType(null);
   };
 
   const handleTransfer = () => {
