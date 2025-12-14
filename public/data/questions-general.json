@@ -1,0 +1,184 @@
+{
+  "questions": [
+    {
+      "id": "g1",
+      "category": "Природа",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "question": "Сколько ног у паука?",
+      "answer": "8"
+    },
+    {
+      "id": "g2",
+      "category": "Природа",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "question": "Какое животное является символом России?",
+      "answer": "Медведь"
+    },
+    {
+      "id": "g3",
+      "category": "Природа",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Как называется детеныш лошади?",
+      "answer": "Жеребенок"
+    },
+    {
+      "id": "g4",
+      "category": "Природа",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Какое дерево сбрасывает иголки на зиму?",
+      "answer": "Лиственница"
+    },
+    {
+      "id": "g5",
+      "category": "Спорт",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "question": "Сколько игроков в футбольной команде на поле?",
+      "answer": "11"
+    },
+    {
+      "id": "g6",
+      "category": "Спорт",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "В каком городе проходили летние Олимпийские игры 2024 года?",
+      "answer": "Париж"
+    },
+    {
+      "id": "g7",
+      "category": "Спорт",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Как называется игра с ракетками через сетку с воланом?",
+      "answer": "Бадминтон"
+    },
+    {
+      "id": "g8",
+      "category": "Спорт",
+      "type": "text",
+      "difficulty": "hard",
+      "points": 3,
+      "question": "Сколько километров в марафонской дистанции?",
+      "answer": "42,195 км"
+    },
+    {
+      "id": "g9",
+      "category": "Еда и кулинария",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "question": "Из какого овоща делают кетчуп?",
+      "answer": "Помидор"
+    },
+    {
+      "id": "g10",
+      "category": "Еда и кулинария",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Национальное блюдо какой страны - паэлья?",
+      "answer": "Испания"
+    },
+    {
+      "id": "g11",
+      "category": "Еда и кулинария",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Какая ягода бывает черной, красной и белой?",
+      "answer": "Смородина"
+    },
+    {
+      "id": "g12",
+      "category": "Еда и кулинария",
+      "type": "text",
+      "difficulty": "hard",
+      "points": 3,
+      "question": "Из молока какого животного традиционно делают сыр рокфор?",
+      "answer": "Овца"
+    },
+    {
+      "id": "g13",
+      "category": "Технологии",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "question": "Что означает 'WWW' в интернет-адресах?",
+      "answer": "World Wide Web"
+    },
+    {
+      "id": "g14",
+      "category": "Технологии",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Кто основал компанию Apple?",
+      "answer": "Стив Джобс и Стив Возняк"
+    },
+    {
+      "id": "g15",
+      "category": "Технологии",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Как называется самая популярная поисковая система в мире?",
+      "answer": "Google"
+    },
+    {
+      "id": "g16",
+      "category": "Технологии",
+      "type": "text",
+      "difficulty": "hard",
+      "points": 3,
+      "question": "В каком году была создана социальная сеть Facebook?",
+      "answer": "2004"
+    },
+    {
+      "id": "g17",
+      "category": "Развлечения",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "question": "Сколько клеток на шахматной доске?",
+      "answer": "64"
+    },
+    {
+      "id": "g18",
+      "category": "Развлечения",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Как называется карточная масть с сердечками?",
+      "answer": "Червы"
+    },
+    {
+      "id": "g19",
+      "category": "Развлечения",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Сколько костяшек в стандартном наборе домино?",
+      "answer": "28"
+    },
+    {
+      "id": "g20",
+      "category": "Развлечения",
+      "type": "text",
+      "difficulty": "hard",
+      "points": 3,
+      "question": "В какой настольной игре нужно покупать недвижимость и собирать арендную плату?",
+      "answer": "Монополия"
+    }
+  ]
+}

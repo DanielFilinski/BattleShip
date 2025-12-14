@@ -11,36 +11,38 @@ function App() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [ships, setShips] = useState<Ship[]>([]);
   const [bombs, setBombs] = useState<Bomb[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedMode, setSelectedMode] = useState<string>('choir');
 
-  useEffect(() => {
-    async function loadGameData() {
-      try {
-        setLoading(true);
-        const [loadedQuestions, loadedShips, loadedBombs] = await Promise.all([
-          loadQuestions(),
-          loadShips(),
-          loadBombs(),
-        ]);
+  const loadGameData = async (mode: string) => {
+    try {
+      setLoading(true);
+      const [loadedQuestions, loadedShips, loadedBombs] = await Promise.all([
+        loadQuestions(mode),
+        loadShips(mode),
+        loadBombs(),
+      ]);
 
-        setQuestions(loadedQuestions);
-        setShips(loadedShips);
-        setBombs(loadedBombs);
+      setQuestions(loadedQuestions);
+      setShips(loadedShips);
+      setBombs(loadedBombs);
 
-        if (loadedQuestions.length === 0) {
-          setError('Не удалось загрузить вопросы');
-        }
-      } catch (err) {
-        console.error('Failed to load game data:', err);
-        setError('Ошибка загрузки данных игры');
-      } finally {
-        setLoading(false);
+      if (loadedQuestions.length === 0) {
+        setError('Не удалось загрузить вопросы');
       }
+    } catch (err) {
+      console.error('Failed to load game data:', err);
+      setError('Ошибка загрузки данных игры');
+    } finally {
+      setLoading(false);
     }
+  };
 
-    loadGameData();
-  }, []);
+  const handleModeSelect = (mode: string) => {
+    setSelectedMode(mode);
+    loadGameData(mode);
+  };
 
   if (loading) {
     return (
@@ -76,7 +78,7 @@ function App() {
   return (
     <>
       {!gameStarted ? (
-        <WelcomeScreen />
+        <WelcomeScreen onModeSelect={handleModeSelect} />
       ) : (
         <GameBoard questions={questions} ships={ships} bombs={bombs} />
       )}

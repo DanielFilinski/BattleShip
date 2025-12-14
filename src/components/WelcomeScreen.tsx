@@ -1,15 +1,37 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useGameState } from '../hooks/useGameState';
 import { hasSavedGame, loadGameState } from '../utils/storage';
+import { loadGameModes } from '../utils/loadData';
+import { GameMode } from '../types/game';
 
-export function WelcomeScreen() {
+interface WelcomeScreenProps {
+  onModeSelect?: (mode: string) => void;
+}
+
+export function WelcomeScreen({ onModeSelect }: WelcomeScreenProps) {
   const [team1Name, setTeam1Name] = useState('');
   const [team2Name, setTeam2Name] = useState('');
+  const [selectedMode, setSelectedMode] = useState<string>('choir');
+  const [gameModes, setGameModes] = useState<GameMode[]>([]);
   const { startGame, loadSavedGame } = useGameState();
   const canResume = hasSavedGame();
 
+  useEffect(() => {
+    async function loadModes() {
+      const modes = await loadGameModes();
+      setGameModes(modes);
+      if (modes.length > 0) {
+        setSelectedMode(modes[0].id);
+      }
+    }
+    loadModes();
+  }, []);
+
   const handleStart = () => {
     if (team1Name.trim() && team2Name.trim()) {
+      if (onModeSelect) {
+        onModeSelect(selectedMode);
+      }
       startGame(team1Name.trim(), team2Name.trim());
     }
   };
@@ -32,6 +54,32 @@ export function WelcomeScreen() {
         </p>
 
         <div className="space-y-6">
+          <div>
+            <label className="block text-lg font-semibold text-ocean-700 mb-2">
+              Выберите режим игры
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              {gameModes.map((mode) => (
+                <button
+                  key={mode.id}
+                  onClick={() => setSelectedMode(mode.id)}
+                  className={`p-4 rounded-xl border-2 transition-all text-left ${
+                    selectedMode === mode.id
+                      ? 'border-ocean-500 bg-ocean-50 shadow-md transform scale-105'
+                      : 'border-gray-300 bg-white hover:border-ocean-300'
+                  }`}
+                >
+                  <div
+                    className="w-3 h-3 rounded-full mb-2"
+                    style={{ backgroundColor: mode.color }}
+                  ></div>
+                  <div className="font-bold text-ocean-800">{mode.name}</div>
+                  <div className="text-xs text-ocean-600 mt-1">{mode.description}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div>
             <label className="block text-lg font-semibold text-ocean-700 mb-2">
               Название первой команды

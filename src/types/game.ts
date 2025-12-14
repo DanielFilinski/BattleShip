@@ -25,6 +25,13 @@ export interface Bomb {
   questionId: string;
 }
 
+export interface GameMode {
+  id: string;
+  name: string;
+  description: string;
+  color: string;
+}
+
 export interface GameData {
   questions: any[];
   ships: Ship[];

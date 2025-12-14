@@ -1,0 +1,184 @@
+{
+  "questions": [
+    {
+      "id": "e1",
+      "category": "Наука",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "question": "Сколько планет в нашей солнечной системе?",
+      "answer": "8"
+    },
+    {
+      "id": "e2",
+      "category": "Наука",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "question": "Как называется наука о звездах и планетах?",
+      "answer": "Астрономия"
+    },
+    {
+      "id": "e3",
+      "category": "Наука",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Кто открыл закон всемирного тяготения?",
+      "answer": "Исаак Ньютон"
+    },
+    {
+      "id": "e4",
+      "category": "Наука",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Какой газ составляет большую часть атмосферы Земли?",
+      "answer": "Азот (около 78%)"
+    },
+    {
+      "id": "e5",
+      "category": "История",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "question": "В каком году началась Великая Отечественная война?",
+      "answer": "1941"
+    },
+    {
+      "id": "e6",
+      "category": "История",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Кто основал Санкт-Петербург?",
+      "answer": "Петр I (Петр Великий)"
+    },
+    {
+      "id": "e7",
+      "category": "История",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Как называлась древняя торговая дорога между Востоком и Западом?",
+      "answer": "Великий шелковый путь"
+    },
+    {
+      "id": "e8",
+      "category": "История",
+      "type": "text",
+      "difficulty": "hard",
+      "points": 3,
+      "question": "Кто был первым президентом США?",
+      "answer": "Джордж Вашингтон"
+    },
+    {
+      "id": "e9",
+      "category": "Литература",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "question": "Кто написал роман 'Война и мир'?",
+      "answer": "Лев Толстой"
+    },
+    {
+      "id": "e10",
+      "category": "Литература",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Как звали главного героя романа 'Евгений Онегин'?",
+      "answer": "Евгений Онегин"
+    },
+    {
+      "id": "e11",
+      "category": "Литература",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Кто автор сказки 'Снежная королева'?",
+      "answer": "Ганс Христиан Андерсен"
+    },
+    {
+      "id": "e12",
+      "category": "Литература",
+      "type": "text",
+      "difficulty": "hard",
+      "points": 3,
+      "question": "Как называется первая опубликованная повесть А.С. Пушкина?",
+      "answer": "Руслан и Людмила"
+    },
+    {
+      "id": "e13",
+      "category": "География",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "question": "Какая река является самой длинной в мире?",
+      "answer": "Нил"
+    },
+    {
+      "id": "e14",
+      "category": "География",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "На каком материке расположена пустыня Сахара?",
+      "answer": "Африка"
+    },
+    {
+      "id": "e15",
+      "category": "География",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Столица какой страны - Канберра?",
+      "answer": "Австралия"
+    },
+    {
+      "id": "e16",
+      "category": "География",
+      "type": "text",
+      "difficulty": "hard",
+      "points": 3,
+      "question": "Какой пролив разделяет Европу и Африку?",
+      "answer": "Гибралтарский пролив"
+    },
+    {
+      "id": "e17",
+      "category": "Искусство",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "question": "Кто нарисовал 'Мону Лизу'?",
+      "answer": "Леонардо да Винчи"
+    },
+    {
+      "id": "e18",
+      "category": "Искусство",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "В каком городе находится Эрмитаж?",
+      "answer": "Санкт-Петербург"
+    },
+    {
+      "id": "e19",
+      "category": "Искусство",
+      "type": "text",
+      "difficulty": "hard",
+      "points": 3,
+      "question": "Кто автор скульптуры 'Мыслитель'?",
+      "answer": "Огюст Роден"
+    },
+    {
+      "id": "e20",
+      "category": "Математика",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Чему равно число Пи с точностью до сотых?",
+      "answer": "3,14"
+    }
+  ]
+}

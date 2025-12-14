@@ -1,9 +1,21 @@
 import { Question } from '../types/question';
-import { Ship, Bomb } from '../types/game';
+import { Ship, Bomb, GameMode } from '../types/game';
 
-export async function loadQuestions(): Promise<Question[]> {
+export async function loadGameModes(): Promise<GameMode[]> {
   try {
-    const response = await fetch('/data/questions.json');
+    const response = await fetch('/data/gameModes.json');
+    const data = await response.json();
+    return data.modes;
+  } catch (error) {
+    console.error('Failed to load game modes:', error);
+    return [];
+  }
+}
+
+export async function loadQuestions(mode?: string): Promise<Question[]> {
+  try {
+    const filename = mode ? `questions-${mode}.json` : 'questions.json';
+    const response = await fetch(`/data/${filename}`);
     const data = await response.json();
     return data.questions;
   } catch (error) {
@@ -12,9 +24,10 @@ export async function loadQuestions(): Promise<Question[]> {
   }
 }
 
-export async function loadShips(): Promise<Ship[]> {
+export async function loadShips(mode?: string): Promise<Ship[]> {
   try {
-    const response = await fetch('/data/ships.json');
+    const filename = mode ? `ships-${mode}.json` : 'ships.json';
+    const response = await fetch(`/data/${filename}`);
     const data = await response.json();
     return data.ships;
   } catch (error) {

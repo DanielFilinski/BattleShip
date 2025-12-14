@@ -1,0 +1,184 @@
+{
+  "questions": [
+    {
+      "id": "b1",
+      "category": "Библейские личности",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "question": "Кто был первым человеком, созданным Богом?",
+      "answer": "Адам"
+    },
+    {
+      "id": "b2",
+      "category": "Библейские личности",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "question": "Как звали пророка, которого поглотила большая рыба?",
+      "answer": "Иона"
+    },
+    {
+      "id": "b3",
+      "category": "Библейские личности",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Какой царь Израиля победил великана Голиафа в юности?",
+      "answer": "Давид"
+    },
+    {
+      "id": "b4",
+      "category": "Библейские личности",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Как звали мать Иисуса Христа?",
+      "answer": "Мария"
+    },
+    {
+      "id": "b5",
+      "category": "Библейские события",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "question": "Сколько дней длился всемирный потоп?",
+      "answer": "40 дней и 40 ночей"
+    },
+    {
+      "id": "b6",
+      "category": "Библейские события",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "На какой горе Моисей получил каменные скрижали с заповедями?",
+      "answer": "Синай"
+    },
+    {
+      "id": "b7",
+      "category": "Библейские события",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Сколько хлебов и рыб использовал Иисус, чтобы накормить 5000 человек?",
+      "answer": "5 хлебов и 2 рыбы"
+    },
+    {
+      "id": "b8",
+      "category": "Библейские события",
+      "type": "text",
+      "difficulty": "hard",
+      "points": 3,
+      "question": "В каком городе родился Иисус Христос?",
+      "answer": "Вифлеем"
+    },
+    {
+      "id": "b9",
+      "category": "Библейские книги",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "question": "Как называется первая книга Библии?",
+      "answer": "Бытие"
+    },
+    {
+      "id": "b10",
+      "category": "Библейские книги",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Сколько книг в Новом Завете?",
+      "answer": "27"
+    },
+    {
+      "id": "b11",
+      "category": "Библейские книги",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Как называется книга песен в Библии?",
+      "answer": "Псалтирь"
+    },
+    {
+      "id": "b12",
+      "category": "Библейские книги",
+      "type": "text",
+      "difficulty": "hard",
+      "points": 3,
+      "question": "Кто написал большинство посланий в Новом Завете?",
+      "answer": "Апостол Павел"
+    },
+    {
+      "id": "b13",
+      "category": "Заповеди и учения",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "question": "Сколько заповедей дал Бог Моисею?",
+      "answer": "10"
+    },
+    {
+      "id": "b14",
+      "category": "Заповеди и учения",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Назовите первые слова молитвы 'Отче наш'",
+      "answer": "Отче наш, сущий на небесах!"
+    },
+    {
+      "id": "b15",
+      "category": "Заповеди и учения",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Какая заповедь является наибольшей по словам Иисуса?",
+      "answer": "Возлюби Господа Бога твоего всем сердцем твоим"
+    },
+    {
+      "id": "b16",
+      "category": "Заповеди и учения",
+      "type": "text",
+      "difficulty": "hard",
+      "points": 3,
+      "question": "Продолжите стих: 'Ибо так возлюбил Бог мир, что отдал...'",
+      "answer": "Сына Своего Единородного, дабы всякий верующий в Него не погиб, но имел жизнь вечную"
+    },
+    {
+      "id": "b17",
+      "category": "Притчи Иисуса",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "В притче о добром самарянине, кто помог пострадавшему?",
+      "answer": "Самарянин"
+    },
+    {
+      "id": "b18",
+      "category": "Притчи Иисуса",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Сколько монет потеряла женщина в притче о потерянной монете?",
+      "answer": "Одну из десяти"
+    },
+    {
+      "id": "b19",
+      "category": "Притчи Иисуса",
+      "type": "text",
+      "difficulty": "hard",
+      "points": 3,
+      "question": "В притче о блудном сыне, что захотел есть младший сын?",
+      "answer": "Рожки, которые ели свиньи"
+    },
+    {
+      "id": "b20",
+      "category": "Чудеса Иисуса",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "По какому морю ходил Иисус?",
+      "answer": "По Галилейскому морю"
+    }
+  ]
+}
