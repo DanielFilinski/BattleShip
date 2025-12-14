@@ -36,9 +36,13 @@ export async function loadShips(mode?: string): Promise<Ship[]> {
   }
 }
 
-export async function loadBombs(): Promise<Bomb[]> {
+export async function loadBombs(mode: string = 'choir'): Promise<Bomb[]> {
   try {
-    const response = await fetch('/data/bombs.json');
+    let filename = '/data/bombs.json';
+    if (mode !== 'choir') {
+      filename = `/data/bombs-${mode}.json`;
+    }
+    const response = await fetch(filename);
     const data = await response.json();
     return data.bombs;
   } catch (error) {

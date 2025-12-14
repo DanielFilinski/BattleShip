@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useGameState } from './hooks/useGameState';
 import { WelcomeScreen } from './components/WelcomeScreen';
 import { GameBoard } from './components/GameBoard';
@@ -13,7 +13,6 @@ function App() {
   const [bombs, setBombs] = useState<Bomb[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedMode, setSelectedMode] = useState<string>('choir');
 
   const loadGameData = async (mode: string) => {
     try {
@@ -21,7 +20,7 @@ function App() {
       const [loadedQuestions, loadedShips, loadedBombs] = await Promise.all([
         loadQuestions(mode),
         loadShips(mode),
-        loadBombs(),
+        loadBombs(mode),
       ]);
 
       setQuestions(loadedQuestions);
@@ -40,7 +39,6 @@ function App() {
   };
 
   const handleModeSelect = (mode: string) => {
-    setSelectedMode(mode);
     loadGameData(mode);
   };
 
