@@ -9,6 +9,7 @@ interface GameStore extends GameState {
   unclickCell: (coordinate: string) => void;
   answerCorrect: (points: number) => void;
   answerCorrectBothTeams: (points: number) => void;
+  answerCorrectSpecificTeam: (teamNumber: 1 | 2, points: number) => void;
   answerWrong: () => void;
   switchTurn: () => void;
   resetGame: () => void;
@@ -75,6 +76,21 @@ export const useGameState = create<GameStore>()(
           team2: { ...state.team2, score: state.team2.score + points },
           timestamp: Date.now(),
         })),
+
+      answerCorrectSpecificTeam: (teamNumber: 1 | 2, points: number) =>
+        set((state) => {
+          if (teamNumber === 1) {
+            return {
+              team1: { ...state.team1, score: state.team1.score + points },
+              timestamp: Date.now(),
+            };
+          } else {
+            return {
+              team2: { ...state.team2, score: state.team2.score + points },
+              timestamp: Date.now(),
+            };
+          }
+        }),
 
       answerWrong: () =>
         set((state) => ({

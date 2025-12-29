@@ -22,7 +22,7 @@ interface GameBoardProps {
 }
 
 export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
-  const { clickedCells, clickCell, unclickCell, answerCorrect, answerCorrectBothTeams, answerWrong, resetGame, team1, team2, currentTurn, answeredQuestions, markQuestionAnswered } =
+  const { clickedCells, clickCell, unclickCell, answerCorrect, answerCorrectBothTeams, answerCorrectSpecificTeam, answerWrong, resetGame, team1, team2, currentTurn, answeredQuestions, markQuestionAnswered } =
     useGameState();
   const { playHit, playMiss, playCorrect, playWrong } = useSound();
   const { columns: fieldColumns, rows: fieldRows, cellSize, setFieldSize, setCellSize } = useFieldSettings();
@@ -152,6 +152,48 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
     // Передать вопрос другой команде - переключить ход
     answerWrong(); // Используем answerWrong для переключения хода
     // НЕ закрываем модал - вопрос остается на экране
+  };
+
+  const handleTeamAnswer = (teamNumber: 1 | 2 | 0) => {
+    if (!currentQuestion) return;
+
+    // Если это вопрос типа "together", начисляем баллы обеим командам
+    if (currentQuestion.type === 'together') {
+      answerCorrectBothTeams(currentQuestion.points);
+      playCorrect();
+    } else if (teamNumber === 0) {
+      // Никому - обе команды ответили неправильно
+      playWrong();
+      answerWrong(); // Переключаем ход
+    } else {
+      // Одна из команд ответила правильно
+      playCorrect();
+
+      // Начисляем баллы правильной команде
+      answerCorrectSpecificTeam(teamNumber, currentQuestion.points);
+
+      // Если это бомба - переключаем ход после правильного ответа
+      if (currentCellType === 'bomb') {
+        answerWrong(); // используем для переключения хода
+      }
+      // Если это корабль и ответила НЕ текущая команда - переключаем ход
+      else if (currentCellType === 'ship' && teamNumber !== currentTurn) {
+        answerWrong(); // переключаем ход
+      }
+      // Если это корабль и ответила текущая команда - ход НЕ переключается (команда получает еще один ход)
+    }
+
+    markQuestionAnswered(currentQuestion.id);
+    setIsModalOpen(false);
+    setCurrentQuestion(null);
+    setCurrentCellType(null);
+
+    // Check if game is completed after a short delay
+    setTimeout(() => {
+      if (isGameCompleted) {
+        setShowVictory(true);
+      }
+    }, 500);
   };
 
   const getCellStatus = (coordinate: string): CellStatus => {
@@ -308,23 +350,31 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
             <div className="flex flex-col gap-3">
               {/* Team 1 */}
               <div
-                className={`bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-lg border-4 transition-all ${
+                className={`backdrop-blur-sm rounded-xl p-4 shadow-lg border-4 transition-all duration-300 ${
                   currentTurn === 1
-                    ? 'border-emerald-500 scale-105'
-                    : 'border-ocean-200'
+                    ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 border-emerald-400 scale-105 shadow-2xl shadow-emerald-500/50'
+                    : 'bg-white/90 border-ocean-200'
                 }`}
               >
                 <div className="text-center">
-                  <div className="text-xs font-semibold text-ocean-600 mb-1">
+                  <div className={`text-xs font-semibold mb-1 ${
+                    currentTurn === 1 ? 'text-white' : 'text-ocean-600'
+                  }`}>
                     {currentTurn === 1 && '▶️ '}КОМАНДА 1
                   </div>
-                  <div className="text-xl font-bold text-ocean-800 mb-1">
+                  <div className={`text-xl font-bold mb-1 ${
+                    currentTurn === 1 ? 'text-white' : 'text-ocean-800'
+                  }`}>
                     {team1.name}
                   </div>
-                  <div className="text-4xl font-black text-emerald-600">
+                  <div className={`text-4xl font-black ${
+                    currentTurn === 1 ? 'text-white' : 'text-emerald-600'
+                  }`}>
                     {team1.score}
                   </div>
-                  <div className="text-xs text-ocean-500 mt-1">БАЛЛОВ</div>
+                  <div className={`text-xs mt-1 ${
+                    currentTurn === 1 ? 'text-emerald-100' : 'text-ocean-500'
+                  }`}>БАЛЛОВ</div>
                 </div>
               </div>
 
@@ -335,23 +385,31 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
 
               {/* Team 2 */}
               <div
-                className={`bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-lg border-4 transition-all ${
+                className={`backdrop-blur-sm rounded-xl p-4 shadow-lg border-4 transition-all duration-300 ${
                   currentTurn === 2
-                    ? 'border-emerald-500 scale-105'
-                    : 'border-ocean-200'
+                    ? 'bg-gradient-to-br from-blue-500 to-blue-600 border-blue-400 scale-105 shadow-2xl shadow-blue-500/50'
+                    : 'bg-white/90 border-ocean-200'
                 }`}
               >
                 <div className="text-center">
-                  <div className="text-xs font-semibold text-ocean-600 mb-1">
+                  <div className={`text-xs font-semibold mb-1 ${
+                    currentTurn === 2 ? 'text-white' : 'text-ocean-600'
+                  }`}>
                     {currentTurn === 2 && '▶️ '}КОМАНДА 2
                   </div>
-                  <div className="text-xl font-bold text-ocean-800 mb-1">
+                  <div className={`text-xl font-bold mb-1 ${
+                    currentTurn === 2 ? 'text-white' : 'text-ocean-800'
+                  }`}>
                     {team2.name}
                   </div>
-                  <div className="text-4xl font-black text-emerald-600">
+                  <div className={`text-4xl font-black ${
+                    currentTurn === 2 ? 'text-white' : 'text-blue-600'
+                  }`}>
                     {team2.score}
                   </div>
-                  <div className="text-xs text-ocean-500 mt-1">БАЛЛОВ</div>
+                  <div className={`text-xs mt-1 ${
+                    currentTurn === 2 ? 'text-blue-100' : 'text-ocean-500'
+                  }`}>БАЛЛОВ</div>
                 </div>
               </div>
             </div>
@@ -470,6 +528,9 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
           onSkip={handleSkip}
           onTransfer={handleTransfer}
           onClose={() => setIsModalOpen(false)}
+          team1Name={team1.name}
+          team2Name={team2.name}
+          onTeamAnswer={handleTeamAnswer}
         />
       )}
 
