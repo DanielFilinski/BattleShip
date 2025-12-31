@@ -226,11 +226,12 @@
     {
       "id": "ny25",
       "category": "Загадки",
-      "type": "text",
+      "type": "image",
       "difficulty": "hard",
       "points": 3,
-      "question": "Расшифруйте слово, закодированное азбукой Морзе: ...  -.  .  ...-  ..  -.  -.-  .-",
-      "answer": "Снежинка"
+      "question": "Расшифруйте слово, закодированное азбукой Морзе",
+      "answer": "Снежинка",
+      "mediaPath": "newyear/morze.jpg"
     }
   ]
 }
