@@ -615,6 +615,7 @@ export function GameBoard({ questions, ships, bombs, onUpdateShipCell, onUpdateB
           team2Name={team2.name}
           onTeamAnswer={handleTeamAnswer}
           viewMode={viewMode}
+          currentTurn={currentTurn}
         />
       )}
 

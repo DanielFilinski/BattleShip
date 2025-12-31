@@ -14,6 +14,7 @@ interface QuestionModalProps {
   team2Name: string;
   onTeamAnswer: (teamNumber: 1 | 2 | 0) => void; // 0 = никому
   viewMode?: boolean;
+  currentTurn: 1 | 2;
 }
 
 export function QuestionModal({
@@ -27,10 +28,12 @@ export function QuestionModal({
   team2Name,
   onTeamAnswer,
   viewMode = false,
+  currentTurn,
 }: QuestionModalProps) {
   const [showAnswer, setShowAnswer] = useState(viewMode);
   const [answered, setAnswered] = useState(false);
   const [wasCorrect, setWasCorrect] = useState<boolean | null>(null);
+  const [answeringTeam, setAnsweringTeam] = useState<1 | 2 | 0 | null>(null);
   const { autoCloseModal } = useModalSettings();
   const timeoutRef = useRef<number | null>(null);
 
@@ -96,6 +99,7 @@ export function QuestionModal({
 
   const handleTeamAnswer = (teamNumber: 1 | 2 | 0) => {
     setAnswered(true);
+    setAnsweringTeam(teamNumber);
     
     // Всегда вызываем onTeamAnswer для начисления баллов
     onTeamAnswer(teamNumber);
@@ -202,6 +206,13 @@ export function QuestionModal({
                   : 'bg-ocean-50'
               }`}
             >
+              {answeringTeam !== null && (
+                <div className="text-center mb-4 p-3 bg-white/50 rounded-xl">
+                  <div className="text-lg font-bold text-ocean-800">
+                    {answeringTeam === 1 ? `Отвечает: ${team1Name}` : answeringTeam === 2 ? `Отвечает: ${team2Name}` : 'Никто не ответил правильно'}
+                  </div>
+                </div>
+              )}
               <div className="text-sm font-semibold text-ocean-600 mb-2 uppercase">
                 Правильный ответ:
               </div>
@@ -267,13 +278,29 @@ export function QuestionModal({
             <div className="space-y-4">
               {/* Show Answer Button - показывается когда ответ не показан */}
               {!showAnswer && (
-                <div>
+                <div className="space-y-3">
                   <button
                     onClick={handleShowAnswer}
                     className="w-full bg-gradient-to-r from-purple-600 to-purple-500 text-white text-2xl font-bold py-6 px-8 rounded-xl hover:from-purple-700 hover:to-purple-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
                   >
                     👁️ Показать ответ
                   </button>
+                  
+                  {/* Пропустить и Передать - когда вопрос показан */}
+                  <div className="flex gap-4">
+                    <button
+                      onClick={handleSkip}
+                      className="flex-1 bg-gradient-to-r from-gray-500 to-gray-400 text-white text-lg font-semibold py-3 px-6 rounded-xl hover:from-gray-600 hover:to-gray-500 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+                    >
+                      ⏭ Пропустить
+                    </button>
+                    <button
+                      onClick={handleTransfer}
+                      className="flex-1 bg-gradient-to-r from-amber-600 to-amber-500 text-white text-lg font-semibold py-3 px-6 rounded-xl hover:from-amber-700 hover:to-amber-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+                    >
+                      ↔ Передать
+                    </button>
+                  </div>
                 </div>
               )}
 
@@ -283,42 +310,38 @@ export function QuestionModal({
                   <div className="text-center text-ocean-700 font-semibold text-lg mb-2">
                     Кто ответил правильно?
                   </div>
-                  <button
-                    onClick={() => handleTeamAnswer(1)}
-                    className="w-full bg-gradient-to-r from-emerald-600 to-emerald-500 text-white text-2xl font-bold py-5 px-8 rounded-xl hover:from-emerald-700 hover:to-emerald-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
-                  >
-                    ✓ {team1Name}
-                  </button>
-                  <button
-                    onClick={() => handleTeamAnswer(2)}
-                    className="w-full bg-gradient-to-r from-blue-600 to-blue-500 text-white text-2xl font-bold py-5 px-8 rounded-xl hover:from-blue-700 hover:to-blue-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
-                  >
-                    ✓ {team2Name}
-                  </button>
-                  <button
-                    onClick={() => handleTeamAnswer(0)}
-                    className="w-full bg-gradient-to-r from-gray-600 to-gray-500 text-white text-xl font-bold py-4 px-8 rounded-xl hover:from-gray-700 hover:to-gray-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
-                  >
-                    ✗ Никому (обе неправильно)
-                  </button>
+                  {/* Кнопки команд в один ряд */}
+                  <div className="flex gap-4">
+                    <button
+                      onClick={() => handleTeamAnswer(1)}
+                      className="flex-1 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white text-2xl font-bold py-5 px-4 rounded-xl hover:from-emerald-700 hover:to-emerald-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+                    >
+                      {currentTurn === 1 ? '✓ ' : ''}{team1Name}
+                    </button>
+                    <button
+                      onClick={() => handleTeamAnswer(2)}
+                      className="flex-1 bg-gradient-to-r from-blue-600 to-blue-500 text-white text-2xl font-bold py-5 px-4 rounded-xl hover:from-blue-700 hover:to-blue-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+                    >
+                      {currentTurn === 2 ? '✓ ' : ''}{team2Name}
+                    </button>
+                  </div>
+                  {/* Никому и Пропустить в один ряд */}
+                  <div className="flex gap-4">
+                    <button
+                      onClick={() => handleTeamAnswer(0)}
+                      className="flex-1 bg-gradient-to-r from-gray-600 to-gray-500 text-white text-xl font-bold py-4 px-4 rounded-xl hover:from-gray-700 hover:to-gray-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+                    >
+                      ✗ Никому
+                    </button>
+                    <button
+                      onClick={handleSkip}
+                      className="flex-1 bg-gradient-to-r from-gray-500 to-gray-400 text-white text-lg font-semibold py-3 px-4 rounded-xl hover:from-gray-600 hover:to-gray-500 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+                    >
+                      ⏭ Пропустить
+                    </button>
+                  </div>
                 </div>
               )}
-
-              {/* Skip and Transfer - всегда доступны */}
-              <div className="flex gap-4 pt-2">
-                <button
-                  onClick={handleSkip}
-                  className="flex-1 bg-gradient-to-r from-gray-500 to-gray-400 text-white text-lg font-semibold py-3 px-6 rounded-xl hover:from-gray-600 hover:to-gray-500 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
-                >
-                  ⏭ Пропустить
-                </button>
-                <button
-                  onClick={handleTransfer}
-                  className="flex-1 bg-gradient-to-r from-amber-600 to-amber-500 text-white text-lg font-semibold py-3 px-6 rounded-xl hover:from-amber-700 hover:to-amber-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
-                >
-                  ↔ Передать
-                </button>
-              </div>
             </div>
           )}
 
