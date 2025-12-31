@@ -155,17 +155,18 @@
 
     <script>
         let lastQuestionId = null;
+        const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3001' : `http://${window.location.hostname}:3001`;
         
-        function updateDisplay() {
+        async function updateDisplay() {
             try {
-                // Читаем данные из localStorage
-                const currentQuestionStr = localStorage.getItem('currentQuestion');
-                const gameStartedStr = localStorage.getItem('gameStarted');
+                // Получаем данные с сервера
+                const response = await fetch(`${API_URL}/api/current-question`);
+                const data = await response.json();
                 
                 const statusEl = document.getElementById('status');
                 const contentEl = document.getElementById('content');
                 
-                if (gameStartedStr === 'true') {
+                if (data.gameStarted) {
                     statusEl.textContent = '🟢 Игра активна';
                     statusEl.style.background = '#c6f6d5';
                     statusEl.style.color = '#22543d';
@@ -175,8 +176,8 @@
                     statusEl.style.color = '#742a2a';
                 }
                 
-                if (currentQuestionStr && currentQuestionStr !== 'null') {
-                    const question = JSON.parse(currentQuestionStr);
+                if (data.question) {
+                    const question = data.question;
                     
                     // Обновляем только если вопрос изменился
                     if (question.id !== lastQuestionId) {
@@ -229,6 +230,8 @@
                 }
             } catch (error) {
                 console.error('Ошибка обновления:', error);
+                document.getElementById('status').textContent = '⚠️ Ошибка подключения к серверу';
+                document.getElementById('status').style.background = '#fed7d7';
             }
         }
         

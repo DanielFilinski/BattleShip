@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Новогодняя викторина - Вопросы и ответы</title>
+    <style>
+        @page {
+            margin: 2cm;
+            size: A4;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            line-height: 1.6;
+            color: #333;
+            background: #fff;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #2c5aa0;
+        }
+
+        .header h1 {
+            color: #2c5aa0;
+            font-size: 32px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .header p {
+            color: #666;
+            font-style: italic;
+            font-size: 14px;
+        }
+
+        .category-section {
+            margin-bottom: 35px;
+            page-break-inside: avoid;
+        }
+
+        .category-header {
+            background: linear-gradient(135deg, #2c5aa0 0%, #4a7bc8 100%);
+            color: white;
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-size: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .question-block {
+            margin-bottom: 25px;
+            padding: 20px;
+            border-left: 4px solid #2c5aa0;
+            background: #f9f9f9;
+            border-radius: 4px;
+            page-break-inside: avoid;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .question-number {
+            font-weight: bold;
+            color: #2c5aa0;
+            font-size: 16px;
+        }
+
+        .question-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 12px;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .difficulty-light {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .difficulty-medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .difficulty-hard {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .points {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .type {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .question-text {
+            font-size: 16px;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .answer-section {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px dashed #ccc;
+        }
+
+        .answer-label {
+            font-weight: bold;
+            color: #28a745;
+            margin-bottom: 6px;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+
+        .answer-text {
+            color: #555;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .media-note {
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: #fff3cd;
+            border-left: 3px solid #ffc107;
+            font-size: 13px;
+            color: #856404;
+            font-style: italic;
+        }
+
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid #ddd;
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+        }
+
+        @media print {
+            body {
+                padding: 0;
+            }
+
+            .question-block {
+                page-break-inside: avoid;
+            }
+
+            .category-section {
+                page-break-after: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎄 Новогодняя викторина 🎄</h1>
+        <p>Вопросы и ответы для праздничной игры</p>
+    </div>
+
+    <div class="category-section">
+        <div class="category-header">📖 Библейские знания</div>
+        
+        <div class="question-block">
+            <div class="question-header">
+                <span class="question-number">Вопрос 1</span>
+                <div class="question-meta">
+                    <span class="badge difficulty-medium">Средний</span>
+                    <span class="badge points">2 балла</span>
+                    <span class="badge type">Текстовый</span>
+                </div>
+            </div>
+            <div class="question-text">
+                Согласно Библии, кто сказал: 'Вот, Я творю новое; ныне же оно явится'?
+            </div>
+            <div class="answer-section">
+                <div class="answer-label">✓ Ответ:</div>
+                <div class="answer-text">
+                    Бог через пророка Исаию и Втором послании к Коринфянам (Исаия 43:19, 2 Коринфянам 5:17)
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-header">
+                <span class="question-number">Вопрос 2</span>
+                <div class="question-meta">
+                    <span class="badge difficulty-hard">Сложный</span>
+                    <span class="badge points">3 балла</span>
+                    <span class="badge type">Текстовый</span>
+                </div>
+            </div>
+            <div class="question-text">
+                Сколько дней Ной и его семья провели в ковчеге?
+            </div>
+            <div class="answer-section">
+                <div class="answer-label">✓ Ответ:</div>
+                <div class="answer-text">
+                    Около года (150 дней вода прибывала и убывала, затем еще несколько месяцев до полного высыхания земли)
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-header">
+                <span class="question-number">Вопрос 3</span>
+                <div class="question-meta">
+                    <span class="badge difficulty-hard">Сложный</span>
+                    <span class="badge points">3 балла</span>
+                    <span class="badge type">Текстовый</span>
+                </div>
+            </div>
+            <div class="question-text">
+                Какое животное, согласно Библии, говорило с человеком?
+            </div>
+            <div class="answer-section">
+                <div class="answer-label">✓ Ответ:</div>
+                <div class="answer-text">
+                    Змей в Едемском саду (говорил с Евой) и ослица Валаама (Числа 22:28-30)
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="category-section">
+        <div class="category-header">🏛️ История и традиции</div>
+        
+        <div class="question-block">
+            <div class="question-header">
+                <span class="question-number">Вопрос 4</span>
+                <div class="question-meta">
+                    <span class="badge difficulty-medium">Средний</span>
+                    <span class="badge points">2 балла</span>
+                    <span class="badge type">Текстовый</span>
+                </div>
+            </div>
+            <div class="question-text">
+                В какой стране впервые начали праздновать Новый год 1 января?
+            </div>
+            <div class="answer-section">
+                <div class="answer-label">✓ Ответ:</div>
+                <div class="answer-text">
+                    В Древнем Риме, после реформы календаря Юлием Цезарем в 46 году до н.э.
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-header">
+                <span class="question-number">Вопрос 5</span>
+                <div class="question-meta">
+                    <span class="badge difficulty-hard">Сложный</span>
+                    <span class="badge points">3 балла</span>
+                    <span class="badge type">Текстовый</span>
+                </div>
+            </div>
+            <div class="question-text">
+                Какая знаменитая башня была построена как временная конструкция для Всемирной выставки 1889 года?
+            </div>
+            <div class="answer-section">
+                <div class="answer-label">✓ Ответ:</div>
+                <div class="answer-text">
+                    Эйфелева башня в Париже
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="category-section">
+        <div class="category-header">🌍 География и культура</div>
+        
+        <div class="question-block">
+            <div class="question-header">
+                <span class="question-number">Вопрос 6</span>
+                <div class="question-meta">
+                    <span class="badge difficulty-medium">Средний</span>
+                    <span class="badge points">2 балла</span>
+                    <span class="badge type">Текстовый</span>
+                </div>
+            </div>
+            <div class="question-text">
+                В какой стране находится самая длинная горная цепь в мире?
+            </div>
+            <div class="answer-section">
+                <div class="answer-label">✓ Ответ:</div>
+                <div class="answer-text">
+                    В Южной Америке (Анды, протяженность около 9000 км)
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-header">
+                <span class="question-number">Вопрос 7</span>
+                <div class="question-meta">
+                    <span class="badge difficulty-hard">Сложный</span>
+                    <span class="badge points">3 балла</span>
+                    <span class="badge type">Текстовый</span>
+                </div>
+            </div>
+            <div class="question-text">
+                Какой город является столицей Австралии?
+            </div>
+            <div class="answer-section">
+                <div class="answer-label">✓ Ответ:</div>
+                <div class="answer-text">
+                    Канберра (многие думают, что Сидней или Мельбурн)
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="category-section">
+        <div class="category-header">🎨 Литература и искусство</div>
+        
+        <div class="question-block">
+            <div class="question-header">
+                <span class="question-number">Вопрос 8</span>
+                <div class="question-meta">
+                    <span class="badge difficulty-medium">Средний</span>
+                    <span class="badge points">2 балла</span>
+                    <span class="badge type">Изображение</span>
+                </div>
+            </div>
+            <div class="question-text">
+                Кто написал эту знаменитую картину 'Звездная ночь'?
+            </div>
+            <div class="media-note">
+                📁 Медиафайл: newyear/starry_night.jpg
+            </div>
+            <div class="answer-section">
+                <div class="answer-label">✓ Ответ:</div>
+                <div class="answer-text">
+                    Винсент Ван Гог
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="category-section">
+        <div class="category-header">🎵 Музыка</div>
+        
+        <div class="question-block">
+            <div class="question-header">
+                <span class="question-number">Вопрос 9</span>
+                <div class="question-meta">
+                    <span class="badge difficulty-light">Легкий</span>
+                    <span class="badge points">1 балл</span>
+                    <span class="badge type">Аудио</span>
+                </div>
+            </div>
+            <div class="question-text">
+                Угадайте новогоднюю песню по мелодии
+            </div>
+            <div class="media-note">
+                🎵 Медиафайл: newyear/song1.mp3
+            </div>
+            <div class="answer-section">
+                <div class="answer-label">✓ Ответ:</div>
+                <div class="answer-text">
+                    Кабы Не Было Зимы
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-header">
+                <span class="question-number">Вопрос 10</span>
+                <div class="question-meta">
+                    <span class="badge difficulty-light">Легкий</span>
+                    <span class="badge points">1 балл</span>
+                    <span class="badge type">Аудио</span>
+                </div>
+            </div>
+            <div class="question-text">
+                Угадайте песню о зиме по мелодии
+            </div>
+            <div class="media-note">
+                🎵 Медиафайл: newyear/song2.mp3
+            </div>
+            <div class="answer-section">
+                <div class="answer-label">✓ Ответ:</div>
+                <div class="answer-text">
+                    Расскажи, Снегурочка, Где Была
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-header">
+                <span class="question-number">Вопрос 11</span>
+                <div class="question-meta">
+                    <span class="badge difficulty-light">Легкий</span>
+                    <span class="badge points">1 балл</span>
+                    <span class="badge type">Аудио</span>
+                </div>
+            </div>
+            <div class="question-text">
+                Угадайте песню из гимнов
+            </div>
+            <div class="media-note">
+                🎵 Медиафайл: newyear/song3.mp3
+            </div>
+            <div class="answer-section">
+                <div class="answer-label">✓ Ответ:</div>
+                <div class="answer-text">
+                    Дружной, радостной семьёю
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="category-section">
+        <div class="category-header">🤔 Загадки</div>
+        
+        <div class="question-block">
+            <div class="question-header">
+                <span class="question-number">Вопрос 12</span>
+                <div class="question-meta">
+                    <span class="badge difficulty-medium">Средний</span>
+                    <span class="badge points">2 балла</span>
+                    <span class="badge type">Текстовый</span>
+                </div>
+            </div>
+            <div class="question-text">
+                Загадка: Чем больше из неё берёшь, тем больше она становится. Что это?
+            </div>
+            <div class="answer-section">
+                <div class="answer-label">✓ Ответ:</div>
+                <div class="answer-text">
+                    Яма
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-header">
+                <span class="question-number">Вопрос 13</span>
+                <div class="question-meta">
+                    <span class="badge difficulty-hard">Сложный</span>
+                    <span class="badge points">3 балла</span>
+                    <span class="badge type">Текстовый</span>
+                </div>
+            </div>
+            <div class="question-text">
+                Загадка: У меня есть города, но нет домов. У меня есть леса, но нет деревьев. У меня есть воду, но нет рыбы. Что я?
+            </div>
+            <div class="answer-section">
+                <div class="answer-label">✓ Ответ:</div>
+                <div class="answer-text">
+                    Карта
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-header">
+                <span class="question-number">Вопрос 23</span>
+                <div class="question-meta">
+                    <span class="badge difficulty-hard">Сложный</span>
+                    <span class="badge points">3 балла</span>
+                    <span class="badge type">Творческое</span>
+                </div>
+            </div>
+            <div class="question-text">
+                Викторина: назовите 10 стран, которые начинаются на букву 'И'
+            </div>
+            <div class="answer-section">
+                <div class="answer-label">✓ Ответ:</div>
+                <div class="answer-text">
+                    Примеры: Индия, Индонезия, Иран, Ирак, Ирландия, Исландия, Испания, Италия, Израиль, Иордания
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-header">
+                <span class="question-number">Вопрос 25</span>
+                <div class="question-meta">
+                    <span class="badge difficulty-hard">Сложный</span>
+                    <span class="badge points">3 балла</span>
+                    <span class="badge type">Изображение</span>
+                </div>
+            </div>
+            <div class="question-text">
+                Расшифруйте слово, закодированное азбукой Морзе
+            </div>
+            <div class="media-note">
+                📁 Медиафайл: newyear/morze.jpg
+            </div>
+            <div class="answer-section">
+                <div class="answer-label">✓ Ответ:</div>
+                <div class="answer-text">
+                    Снежинка
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="category-section">
+        <div class="category-header">🎯 Ребусы</div>
+        
+        <div class="question-block">
+            <div class="question-header">
+                <span class="question-number">Вопрос 14</span>
+                <div class="question-meta">
+                    <span class="badge difficulty-medium">Средний</span>
+                    <span class="badge points">2 балла</span>
+                    <span class="badge type">Изображение</span>
+                </div>
+            </div>
+            <div class="question-text">
+                Разгадайте новогодний ребус
+            </div>
+            <div class="media-note">
+                📁 Медиафайл: newyear/rebus1.jpg
+            </div>
+            <div class="answer-section">
+                <div class="answer-label">✓ Ответ:</div>
+                <div class="answer-text">
+                    Коньки
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-header">
+                <span class="question-number">Вопрос 15</span>
+                <div class="question-meta">
+                    <span class="badge difficulty-hard">Сложный</span>
+                    <span class="badge points">3 балла</span>
+                    <span class="badge type">Изображение</span>
+                </div>
+            </div>
+            <div class="question-text">
+                Разгадайте сложный новогодний ребус
+            </div>
+            <div class="media-note">
+                📁 Медиафайл: newyear/rebus2.jpg
+            </div>
+            <div class="answer-section">
+                <div class="answer-label">✓ Ответ:</div>
+                <div class="answer-text">
+                    Санки
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-header">
+                <span class="question-number">Вопрос 24</span>
+                <div class="question-meta">
+                    <span class="badge difficulty-hard">Сложный</span>
+                    <span class="badge points">3 балла</span>
+                    <span class="badge type">Изображение</span>
+                </div>
+            </div>
+            <div class="question-text">
+                Разгадайте новогодний ребус
+            </div>
+            <div class="media-note">
+                📁 Медиафайл: newyear/rebus3.jpg
+            </div>
+            <div class="answer-section">
+                <div class="answer-label">✓ Ответ:</div>
+                <div class="answer-text">
+                    Метель
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="category-section">
+        <div class="category-header">🔬 Наука</div>
+        
+        <div class="question-block">
+            <div class="question-header">
+                <span class="question-number">Вопрос 16</span>
+                <div class="question-meta">
+                    <span class="badge difficulty-hard">Сложный</span>
+                    <span class="badge points">5 баллов</span>
+                    <span class="badge type">Текстовый</span>
+                </div>
+            </div>
+            <div class="question-text">
+                Какая планета Солнечной системы имеет самую большую гору в нашей звездной системе - вулкан Олимп высотой 21 км?
+            </div>
+            <div class="answer-section">
+                <div class="answer-label">✓ Ответ:</div>
+                <div class="answer-text">
+                    Марс
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="category-section">
+        <div class="category-header">🎭 Творческие задания</div>
+        
+        <div class="question-block">
+            <div class="question-header">
+                <span class="question-number">Вопрос 17</span>
+                <div class="question-meta">
+                    <span class="badge difficulty-hard">Сложный</span>
+                    <span class="badge points">5 баллов</span>
+                    <span class="badge type">Творческое</span>
+                </div>
+            </div>
+            <div class="question-text">
+                Придумайте и исполните рекламный слоган для обычной вещи (например, ложки или стула), как будто это революционный продукт
+            </div>
+            <div class="answer-section">
+                <div class="answer-label">✓ Ответ:</div>
+                <div class="answer-text">
+                    Отличное выступление! Команда получает баллы за креативность и юмор!
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-header">
+                <span class="question-number">Вопрос 18</span>
+                <div class="question-meta">
+                    <span class="badge difficulty-hard">Сложный</span>
+                    <span class="badge points">5 баллов</span>
+                    <span class="badge type">Творческое</span>
+                </div>
+            </div>
+            <div class="question-text">
+                За 1 минуту придумайте и покажите короткую сценку на тему 'Новый год в будущем'
+            </div>
+            <div class="answer-section">
+                <div class="answer-label">✓ Ответ:</div>
+                <div class="answer-text">
+                    Оцените креативность и артистизм!
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-header">
+                <span class="question-number">Вопрос 21</span>
+                <div class="question-meta">
+                    <span class="badge difficulty-hard">Сложный</span>
+                    <span class="badge points">5 баллов</span>
+                    <span class="badge type">Творческое</span>
+                </div>
+            </div>
+            <div class="question-text">
+                Составьте веселое четверостишие на новогоднюю тему за 1 минуту
+            </div>
+            <div class="answer-section">
+                <div class="answer-label">✓ Ответ:</div>
+                <div class="answer-text">
+                    Отличное стихотворение! Команда получает баллы за творчество!
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-header">
+                <span class="question-number">Вопрос 22</span>
+                <div class="question-meta">
+                    <span class="badge difficulty-hard">Сложный</span>
+                    <span class="badge points">3 балла</span>
+                    <span class="badge type">Творческое</span>
+                </div>
+            </div>
+            <div class="question-text">
+                Изобразите пантомимой известную профессию так, чтобы другая команда угадала. Нельзя говорить!
+            </div>
+            <div class="answer-section">
+                <div class="answer-label">✓ Ответ:</div>
+                <div class="answer-text">
+                    За артистизм и правильную догадку!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="category-section">
+        <div class="category-header">🏃 Активные задания</div>
+        
+        <div class="question-block">
+            <div class="question-header">
+                <span class="question-number">Вопрос 19</span>
+                <div class="question-meta">
+                    <span class="badge difficulty-hard">Сложный</span>
+                    <span class="badge points">5 баллов</span>
+                    <span class="badge type">Творческое</span>
+                </div>
+            </div>
+            <div class="question-text">
+                Исполните отрывок из любой новогодней или зимней песни (минимум один куплет)
+            </div>
+            <div class="answer-section">
+                <div class="answer-label">✓ Ответ:</div>
+                <div class="answer-text">
+                    Замечательное исполнение! Команда получает баллы!
+                </div>
+            </div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-header">
+                <span class="question-number">Вопрос 20</span>
+                <div class="question-meta">
+                    <span class="badge difficulty-hard">Сложный</span>
+                    <span class="badge points">5 баллов</span>
+                    <span class="badge type">Творческое</span>
+                </div>
+            </div>
+            <div class="question-text">
+                Командная эстафета: постройте самую высокую башню из подручных предметов за 2 минуты
+            </div>
+            <div class="answer-section">
+                <div class="answer-label">✓ Ответ:</div>
+                <div class="answer-text">
+                    Измеряется высота башни - побеждает самая высокая конструкция!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>🎄 Новогодняя викторина • 25 вопросов • Всего баллов: 75 🎄</p>
+        <p>Подготовлено для печати • 31 декабря 2025</p>
+    </div>
+</body>
+</html>

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Question } from '../types/question';
 import { MediaPlayer } from './MediaPlayer';
 import { useModalSettings } from '../hooks/useModalSettings';
+import { sendCurrentQuestion } from '../utils/storage';
 
 interface QuestionModalProps {
   question: Question;
@@ -44,13 +45,15 @@ export function QuestionModal({
     }
   }, [viewMode]);
 
-  // Save current question to localStorage for external display
+  // Save current question to localStorage and API for external display
   useEffect(() => {
     localStorage.setItem('currentQuestion', JSON.stringify(question));
+    sendCurrentQuestion(question); // Отправляем на сервер
     
     return () => {
       // Clear when modal closes
       localStorage.removeItem('currentQuestion');
+      sendCurrentQuestion(null); // Очищаем на сервере
     };
   }, [question]);
 
