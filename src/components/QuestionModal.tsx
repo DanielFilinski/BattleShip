@@ -96,10 +96,13 @@ export function QuestionModal({
 
   const handleTeamAnswer = (teamNumber: 1 | 2 | 0) => {
     setAnswered(true);
+    
+    // Всегда вызываем onTeamAnswer для начисления баллов
+    onTeamAnswer(teamNumber);
 
+    // Автозакрытие только если включено
     if (autoCloseModal) {
       timeoutRef.current = window.setTimeout(() => {
-        onTeamAnswer(teamNumber);
         onClose();
       }, 2000);
     }

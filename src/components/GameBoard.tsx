@@ -185,8 +185,8 @@ export function GameBoard({ questions, ships, bombs, onUpdateShipCell, onUpdateB
 
     // Если это вопрос типа "together", начисляем баллы обеим командам
     if (currentQuestion.type === 'together') {
-      answerCorrectBothTeams(currentQuestion.points);
       playCorrect();
+      answerCorrectBothTeams(currentQuestion.points);
     } else if (teamNumber === 0) {
       // Никому - обе команды ответили неправильно
       playWrong();
@@ -198,15 +198,18 @@ export function GameBoard({ questions, ships, bombs, onUpdateShipCell, onUpdateB
       // Начисляем баллы правильной команде
       answerCorrectSpecificTeam(teamNumber, currentQuestion.points);
 
-      // Если это бомба - переключаем ход после правильного ответа
-      if (currentCellType === 'bomb') {
-        answerWrong(); // используем для переключения хода
-      }
-      // Если это корабль и ответила НЕ текущая команда - переключаем ход
-      else if (currentCellType === 'ship' && teamNumber !== currentTurn) {
-        answerWrong(); // переключаем ход
-      }
-      // Если это корабль и ответила текущая команда - ход НЕ переключается (команда получает еще один ход)
+      // Переключаем ход только после начисления баллов
+      setTimeout(() => {
+        // Если это бомба - переключаем ход после правильного ответа
+        if (currentCellType === 'bomb') {
+          answerWrong(); // используем для переключения хода
+        }
+        // Если это корабль и ответила НЕ текущая команда - переключаем ход
+        else if (currentCellType === 'ship' && teamNumber !== currentTurn) {
+          answerWrong(); // переключаем ход
+        }
+        // Если это корабль и ответила текущая команда - ход НЕ переключается (команда получает еще один ход)
+      }, 0);
     }
 
     markQuestionAnswered(currentQuestion.id);

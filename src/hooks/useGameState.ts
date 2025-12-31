@@ -63,11 +63,13 @@ export const useGameState = create<GameStore>()(
         set((state) => {
           if (state.currentTurn === 1) {
             return {
+              ...state,
               team1: { ...state.team1, score: state.team1.score + points },
               timestamp: Date.now(),
             };
           } else {
             return {
+              ...state,
               team2: { ...state.team2, score: state.team2.score + points },
               timestamp: Date.now(),
             };
@@ -76,6 +78,7 @@ export const useGameState = create<GameStore>()(
 
       answerCorrectBothTeams: (points: number) =>
         set((state) => ({
+          ...state,
           team1: { ...state.team1, score: state.team1.score + points },
           team2: { ...state.team2, score: state.team2.score + points },
           timestamp: Date.now(),
@@ -85,11 +88,13 @@ export const useGameState = create<GameStore>()(
         set((state) => {
           if (teamNumber === 1) {
             return {
+              ...state,
               team1: { ...state.team1, score: state.team1.score + points },
               timestamp: Date.now(),
             };
           } else {
             return {
+              ...state,
               team2: { ...state.team2, score: state.team2.score + points },
               timestamp: Date.now(),
             };
