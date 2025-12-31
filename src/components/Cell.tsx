@@ -6,32 +6,43 @@ interface CellProps {
   onClick: (coordinate: string) => void;
   disabled: boolean;
   questionId?: string;
+  editMode?: boolean;
 }
 
-export function Cell({ coordinate, status, onClick, disabled, questionId }: CellProps) {
+export function Cell({ coordinate, status, onClick, disabled, questionId, editMode = false }: CellProps) {
   const handleClick = () => {
-    if (!disabled && (status === 'untouched' || status === 'view-ship' || status === 'view-bomb')) {
+    if (editMode && (status === 'view-ship' || status === 'view-bomb')) {
+      onClick(coordinate);
+    } else if (!disabled && (status === 'untouched' || status === 'view-ship' || status === 'view-bomb')) {
       onClick(coordinate);
     }
   };
 
   const getStatusStyles = () => {
-    switch (status) {
-      case 'miss':
-        return 'bg-ocean-100 border-ocean-300';
-      case 'hit':
-        return 'bg-red-500 border-red-600';
-      case 'sunk':
-        return 'bg-gray-700 border-gray-900';
-      case 'bomb':
-        return 'bg-amber-500 border-amber-600';
-      case 'view-ship':
-        return 'bg-blue-200 border-blue-400 hover:bg-blue-300 hover:border-blue-500';
-      case 'view-bomb':
-        return 'bg-amber-200 border-amber-400 hover:bg-amber-300 hover:border-amber-500';
-      default:
-        return 'bg-ocean-50 border-ocean-200 hover:bg-ocean-100 hover:border-ocean-400';
+    const baseStyle = (() => {
+      switch (status) {
+        case 'miss':
+          return 'bg-ocean-100 border-ocean-300';
+        case 'hit':
+          return 'bg-red-500 border-red-600';
+        case 'sunk':
+          return 'bg-gray-700 border-gray-900';
+        case 'bomb':
+          return 'bg-amber-500 border-amber-600';
+        case 'view-ship':
+          return 'bg-blue-200 border-blue-400 hover:bg-blue-300 hover:border-blue-500';
+        case 'view-bomb':
+          return 'bg-amber-200 border-amber-400 hover:bg-amber-300 hover:border-amber-500';
+        default:
+          return 'bg-ocean-50 border-ocean-200 hover:bg-ocean-100 hover:border-ocean-400';
+      }
+    })();
+
+    if (editMode && (status === 'view-ship' || status === 'view-bomb')) {
+      return `${baseStyle} ring-2 ring-purple-400 ring-offset-1`;
     }
+
+    return baseStyle;
   };
 
   const getStatusIcon = () => {
@@ -54,18 +65,27 @@ export function Cell({ coordinate, status, onClick, disabled, questionId }: Cell
         );
       case 'view-ship':
         return (
-          <span className="text-xs font-bold text-blue-800">{questionId}</span>
+          <div className="flex flex-col items-center justify-center">
+            <span className="text-xs font-bold text-blue-800">{questionId}</span>
+            {editMode && <span className="text-xs">✏️</span>}
+          </div>
         );
       case 'view-bomb':
         return (
-          <span className="text-2xl">💣</span>
+          <div className="flex flex-col items-center justify-center gap-0.5">
+            <span className="text-xl">💣</span>
+            <span className="text-xs font-bold text-amber-800">{questionId}</span>
+            {editMode && <span className="text-xs">✏️</span>}
+          </div>
         );
       default:
         return null;
     }
   };
 
-  const isClickable = (status === 'untouched' || status === 'view-ship' || status === 'view-bomb') && !disabled;
+  const isClickable = editMode
+    ? (status === 'view-ship' || status === 'view-bomb')
+    : (status === 'untouched' || status === 'view-ship' || status === 'view-bomb') && !disabled;
 
   return (
     <button

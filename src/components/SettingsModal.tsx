@@ -10,7 +10,7 @@ interface SettingsModalProps {
 
 export function SettingsModal({ onToggleFullscreen, onOpenFieldSettings, onClose, isFullscreen }: SettingsModalProps) {
   const { autoCloseModal, toggleAutoCloseModal } = useModalSettings();
-  const { viewMode, toggleViewMode } = useGameState();
+  const { viewMode, toggleViewMode, editMode, toggleEditMode } = useGameState();
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[9999] p-4">
@@ -103,6 +103,27 @@ export function SettingsModal({ onToggleFullscreen, onOpenFieldSettings, onClose
                   {viewMode
                     ? 'Все корабли и бомбы видны'
                     : 'Корабли и бомбы скрыты'
+                  }
+                </div>
+              </div>
+            </button>
+
+            {/* Edit Mode Toggle */}
+            <button
+              onClick={() => {
+                toggleEditMode();
+              }}
+              className="w-full px-4 py-4 text-left hover:bg-ocean-50 transition-colors flex items-center gap-4 rounded-xl border-2 border-ocean-100 hover:border-ocean-300"
+            >
+              <span className="text-3xl">{editMode ? '✏️' : '🔐'}</span>
+              <div className="flex-1">
+                <div className="font-semibold text-ocean-700 text-lg">
+                  Режим редактирования {editMode ? 'включен' : 'выключен'}
+                </div>
+                <div className="text-sm text-ocean-500 mt-1">
+                  {editMode
+                    ? 'Можно перемещать корабли и менять вопросы'
+                    : 'Редактирование недоступно'
                   }
                 </div>
               </div>

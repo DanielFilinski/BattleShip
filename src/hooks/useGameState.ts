@@ -16,6 +16,7 @@ interface GameStore extends GameState {
   loadSavedGame: (state: GameState) => void;
   markQuestionAnswered: (questionId: string) => void;
   toggleViewMode: () => void;
+  toggleEditMode: () => void;
 }
 
 const initialState: GameState = {
@@ -26,6 +27,7 @@ const initialState: GameState = {
   answeredQuestions: [],
   gameStarted: false,
   viewMode: false,
+  editMode: false,
   timestamp: Date.now(),
 };
 
@@ -121,6 +123,14 @@ export const useGameState = create<GameStore>()(
       toggleViewMode: () =>
         set((state) => ({
           viewMode: !state.viewMode,
+          timestamp: Date.now(),
+        })),
+
+      toggleEditMode: () =>
+        set((state) => ({
+          editMode: !state.editMode,
+          // Auto-enable viewMode when enabling editMode
+          viewMode: !state.editMode ? true : state.viewMode,
           timestamp: Date.now(),
         })),
 

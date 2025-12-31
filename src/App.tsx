@@ -42,6 +42,45 @@ function App() {
     loadGameData(mode);
   };
 
+  const updateShipCell = (shipId: string, cellIndex: number, newCell: string, newQuestionId: string) => {
+    setShips(prevShips =>
+      prevShips.map(ship =>
+        ship.id === shipId
+          ? {
+              ...ship,
+              cells: ship.cells.map((cell, idx) => (idx === cellIndex ? newCell : cell)),
+              questionIds: ship.questionIds.map((qId, idx) => (idx === cellIndex ? newQuestionId : qId)),
+            }
+          : ship
+      )
+    );
+  };
+
+  const updateBomb = (oldCell: string, newCell: string, newQuestionId: string) => {
+    setBombs(prevBombs =>
+      prevBombs.map(bomb =>
+        bomb.cell === oldCell
+          ? { cell: newCell, questionId: newQuestionId }
+          : bomb
+      )
+    );
+  };
+
+  const exportGameData = () => {
+    const data = {
+      ships,
+      bombs,
+    };
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'game-data-edited.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-ocean-900 via-ocean-700 to-ocean-500 flex items-center justify-center">
@@ -78,7 +117,14 @@ function App() {
       {!gameStarted ? (
         <WelcomeScreen onModeSelect={handleModeSelect} />
       ) : (
-        <GameBoard questions={questions} ships={ships} bombs={bombs} />
+        <GameBoard
+          questions={questions}
+          ships={ships}
+          bombs={bombs}
+          onUpdateShipCell={updateShipCell}
+          onUpdateBomb={updateBomb}
+          onExportData={exportGameData}
+        />
       )}
     </>
   );

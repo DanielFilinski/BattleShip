@@ -10,6 +10,7 @@ import { SettingsModal } from './SettingsModal';
 import { FieldSettingsModal } from './FieldSettingsModal';
 import { VictoryAnimation } from './VictoryAnimation';
 import { ConfirmModal } from './ConfirmModal';
+import { QuestionSelector } from './QuestionSelector';
 import { generateColumns, generateRows, getCellType, isShipSunk, getShipByCell } from '../utils/gameLogic';
 import { Question } from '../types/question';
 import { Ship, Bomb } from '../types/game';
@@ -19,10 +20,13 @@ interface GameBoardProps {
   questions: Question[];
   ships: Ship[];
   bombs: Bomb[];
+  onUpdateShipCell?: (shipId: string, cellIndex: number, newCell: string, newQuestionId: string) => void;
+  onUpdateBomb?: (oldCell: string, newCell: string, newQuestionId: string) => void;
+  onExportData?: () => void;
 }
 
-export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
-  const { clickedCells, clickCell, unclickCell, answerCorrect, answerCorrectBothTeams, answerCorrectSpecificTeam, answerWrong, resetGame, team1, team2, currentTurn, answeredQuestions, markQuestionAnswered, viewMode } =
+export function GameBoard({ questions, ships, bombs, onUpdateShipCell, onUpdateBomb, onExportData }: GameBoardProps) {
+  const { clickedCells, clickCell, unclickCell, answerCorrect, answerCorrectBothTeams, answerCorrectSpecificTeam, answerWrong, resetGame, team1, team2, currentTurn, answeredQuestions, markQuestionAnswered, viewMode, editMode } =
     useGameState();
   const { playHit, playMiss, playCorrect, playWrong } = useSound();
   const { columns: fieldColumns, rows: fieldRows, cellSize, setFieldSize, setCellSize } = useFieldSettings();
@@ -38,6 +42,8 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showFieldSettingsSaved, setShowFieldSettingsSaved] = useState(false);
   const [savedFieldSettings, setSavedFieldSettings] = useState<{columns: number, rows: number, cellSize: number} | null>(null);
+  const [showQuestionSelector, setShowQuestionSelector] = useState(false);
+  const [editingCell, setEditingCell] = useState<{ coordinate: string; currentQuestionId: string } | null>(null);
 
   // Generate columns and rows based on settings
   const COLUMNS = useMemo(() => generateColumns(fieldColumns), [fieldColumns]);
@@ -58,6 +64,13 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
   const handleCellClick = (coordinate: string) => {
     // Determine cell type
     const { type, questionId } = getCellType(coordinate, ships, bombs);
+
+    // In edit mode, open question selector
+    if (editMode && (type === 'ship' || type === 'bomb')) {
+      setEditingCell({ coordinate, currentQuestionId: questionId || '' });
+      setShowQuestionSelector(true);
+      return;
+    }
 
     // In view mode, just show the question and answer
     if (viewMode) {
@@ -258,6 +271,28 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
     // Optionally reset the game or show final scores
   };
 
+  const handleQuestionSelect = (questionId: string) => {
+    if (!editingCell || !onUpdateShipCell || !onUpdateBomb) return;
+
+    const { type } = getCellType(editingCell.coordinate, ships, bombs);
+
+    if (type === 'bomb') {
+      // Update bomb
+      onUpdateBomb(editingCell.coordinate, editingCell.coordinate, questionId);
+    } else if (type === 'ship') {
+      // Find ship and cell index
+      for (const ship of ships) {
+        const cellIndex = ship.cells.indexOf(editingCell.coordinate);
+        if (cellIndex !== -1) {
+          onUpdateShipCell(ship.id, cellIndex, editingCell.coordinate, questionId);
+          break;
+        }
+      }
+    }
+
+    setEditingCell(null);
+  };
+
   // Calculate remaining ships, bombs, and questions
   const remainingStats = useMemo(() => {
     const foundBombCells = bombs.map(bomb => bomb.cell).filter(cell => clickedCells.includes(cell));
@@ -328,6 +363,7 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
                             onClick={handleCellClick}
                             disabled={isModalOpen}
                             questionId={questionId}
+                            editMode={editMode}
                           />
                         </div>
                       );
@@ -437,13 +473,23 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
               </div>
             </div>
 
-            {/* Reset Button */}
-            <button
-              onClick={handleReset}
-              className="bg-gradient-to-r from-red-600 to-red-500 text-white text-sm font-semibold py-2 px-4 rounded-xl hover:from-red-700 hover:to-red-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg mt-auto"
-            >
-              🔄 Новая игра
-            </button>
+            {/* Action Buttons */}
+            <div className="space-y-2 mt-auto">
+              {editMode && onExportData && (
+                <button
+                  onClick={onExportData}
+                  className="w-full bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm font-semibold py-2 px-4 rounded-xl hover:from-purple-700 hover:to-purple-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+                >
+                  💾 Экспорт данных
+                </button>
+              )}
+              <button
+                onClick={handleReset}
+                className="w-full bg-gradient-to-r from-red-600 to-red-500 text-white text-sm font-semibold py-2 px-4 rounded-xl hover:from-red-700 hover:to-red-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+              >
+                🔄 Новая игра
+              </button>
+            </div>
           </div>
         </>
       ) : (
@@ -499,6 +545,7 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
                             onClick={handleCellClick}
                             disabled={isModalOpen}
                             questionId={questionId}
+                            editMode={editMode}
                           />
                         </div>
                       );
@@ -508,8 +555,16 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
               </div>
             </div>
 
-            {/* Reset Button */}
-            <div className="mt-8 flex justify-center">
+            {/* Action Buttons */}
+            <div className="mt-8 flex justify-center gap-4">
+              {editMode && onExportData && (
+                <button
+                  onClick={onExportData}
+                  className="bg-gradient-to-r from-purple-600 to-purple-500 text-white text-lg font-semibold py-3 px-8 rounded-xl hover:from-purple-700 hover:to-purple-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+                >
+                  💾 Экспорт данных
+                </button>
+              )}
               <button
                 onClick={handleReset}
                 className="bg-gradient-to-r from-red-600 to-red-500 text-white text-lg font-semibold py-3 px-8 rounded-xl hover:from-red-700 hover:to-red-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
@@ -610,6 +665,19 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
           type="info"
           onConfirm={() => setShowFieldSettingsSaved(false)}
           onCancel={() => setShowFieldSettingsSaved(false)}
+        />
+      )}
+
+      {/* Question Selector Modal */}
+      {showQuestionSelector && editingCell && (
+        <QuestionSelector
+          questions={questions}
+          currentQuestionId={editingCell.currentQuestionId}
+          onSelect={handleQuestionSelect}
+          onClose={() => {
+            setShowQuestionSelector(false);
+            setEditingCell(null);
+          }}
         />
       )}
     </div>
