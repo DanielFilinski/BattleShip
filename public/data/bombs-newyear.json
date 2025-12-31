@@ -1,7 +1,7 @@
 {
   "bombs": [
     {
-      "cell": "В3",
+      "cell": "Г2",
       "questionId": "ny21"
     },
     {
@@ -9,15 +9,15 @@
       "questionId": "ny22"
     },
     {
-      "cell": "З4",
+      "cell": "Д7",
       "questionId": "ny23"
     },
     {
-      "cell": "И8",
+      "cell": "Ж2",
       "questionId": "ny24"
     },
     {
-      "cell": "Е1",
+      "cell": "И6",
       "questionId": "ny25"
     }
   ]
