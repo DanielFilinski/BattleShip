@@ -44,6 +44,16 @@ export function QuestionModal({
     }
   }, [viewMode]);
 
+  // Save current question to localStorage for external display
+  useEffect(() => {
+    localStorage.setItem('currentQuestion', JSON.stringify(question));
+    
+    return () => {
+      // Clear when modal closes
+      localStorage.removeItem('currentQuestion');
+    };
+  }, [question]);
+
   // Cleanup timeout on unmount
   useEffect(() => {
     return () => {

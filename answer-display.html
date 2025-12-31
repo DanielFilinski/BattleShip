@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ответы - Морской бой</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2em;
+        }
+        
+        .status {
+            text-align: center;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            color: #4a5568;
+        }
+        
+        .question-block, .answer-block {
+            margin-bottom: 30px;
+        }
+        
+        .label {
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .content {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 1.3em;
+            line-height: 1.6;
+            border-left: 4px solid #667eea;
+        }
+        
+        .answer-block .content {
+            border-left-color: #48bb78;
+            background: #f0fff4;
+            font-weight: 500;
+        }
+        
+        .no-question {
+            text-align: center;
+            padding: 60px 20px;
+            color: #718096;
+            font-size: 1.2em;
+        }
+        
+        .metadata {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        
+        .badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+        
+        .badge-category {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+        
+        .badge-difficulty {
+            background: #fbd38d;
+            color: #744210;
+        }
+        
+        .badge-points {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        
+        .icon {
+            font-size: 1.5em;
+        }
+        
+        .refresh-notice {
+            text-align: center;
+            margin-top: 20px;
+            color: #718096;
+            font-size: 0.9em;
+        }
+        
+        .media-info {
+            margin-top: 10px;
+            padding: 10px;
+            background: #fef5e7;
+            border-radius: 5px;
+            font-size: 0.9em;
+            color: #7c5c00;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 Просмотр ответов</h1>
+        
+        <div class="status" id="status">
+            Подключение к игре...
+        </div>
+        
+        <div id="content">
+            <div class="no-question">
+                <p>Ожидание вопроса...</p>
+                <p style="font-size: 0.8em; margin-top: 10px;">Откройте вопрос в основной игре</p>
+            </div>
+        </div>
+        
+        <div class="refresh-notice">
+            Страница автоматически обновляется каждые 500 мс
+        </div>
+    </div>
+
+    <script>
+        let lastQuestionId = null;
+        
+        function updateDisplay() {
+            try {
+                // Читаем данные из localStorage
+                const currentQuestionStr = localStorage.getItem('currentQuestion');
+                const gameStartedStr = localStorage.getItem('gameStarted');
+                
+                const statusEl = document.getElementById('status');
+                const contentEl = document.getElementById('content');
+                
+                if (gameStartedStr === 'true') {
+                    statusEl.textContent = '🟢 Игра активна';
+                    statusEl.style.background = '#c6f6d5';
+                    statusEl.style.color = '#22543d';
+                } else {
+                    statusEl.textContent = '🔴 Игра не запущена';
+                    statusEl.style.background = '#fed7d7';
+                    statusEl.style.color = '#742a2a';
+                }
+                
+                if (currentQuestionStr && currentQuestionStr !== 'null') {
+                    const question = JSON.parse(currentQuestionStr);
+                    
+                    // Обновляем только если вопрос изменился
+                    if (question.id !== lastQuestionId) {
+                        lastQuestionId = question.id;
+                        
+                        let mediaInfo = '';
+                        if (question.mediaPath) {
+                            const typeEmoji = {
+                                'audio': '🎵',
+                                'video': '🎬',
+                                'image': '🖼️'
+                            };
+                            mediaInfo = `<div class="media-info">${typeEmoji[question.type] || '📎'} Медиа: ${question.mediaPath}</div>`;
+                        }
+                        
+                        contentEl.innerHTML = `
+                            <div class="question-block">
+                                <div class="label">
+                                    <span class="icon">❓</span>
+                                    <span>Вопрос:</span>
+                                </div>
+                                <div class="content">${question.question}</div>
+                                <div class="metadata">
+                                    <span class="badge badge-category">📂 ${question.category}</span>
+                                    <span class="badge badge-difficulty">⭐ ${question.difficulty}</span>
+                                    <span class="badge badge-points">🎯 ${question.points} очков</span>
+                                </div>
+                                ${mediaInfo}
+                            </div>
+                            
+                            <div class="answer-block">
+                                <div class="label">
+                                    <span class="icon">✅</span>
+                                    <span>Ответ:</span>
+                                </div>
+                                <div class="content">${question.answer}</div>
+                            </div>
+                        `;
+                    }
+                } else {
+                    if (lastQuestionId !== null) {
+                        lastQuestionId = null;
+                        contentEl.innerHTML = `
+                            <div class="no-question">
+                                <p>Нет активного вопроса</p>
+                                <p style="font-size: 0.8em; margin-top: 10px;">Откройте новый вопрос в основной игре</p>
+                            </div>
+                        `;
+                    }
+                }
+            } catch (error) {
+                console.error('Ошибка обновления:', error);
+            }
+        }
+        
+        // Обновляем каждые 500ms
+        setInterval(updateDisplay, 500);
+        
+        // Первое обновление сразу
+        updateDisplay();
+    </script>
+</body>
+</html>
