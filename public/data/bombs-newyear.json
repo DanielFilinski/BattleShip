@@ -2,23 +2,23 @@
   "bombs": [
     {
       "cell": "Г2",
-      "questionId": "ny21"
+      "questionId": "ny17"
     },
     {
       "cell": "Е9",
-      "questionId": "ny22"
+      "questionId": "ny18"
     },
     {
       "cell": "Д7",
-      "questionId": "ny23"
+      "questionId": "ny19"
     },
     {
       "cell": "В4",
-      "questionId": "ny24"
+      "questionId": "ny20"
     },
     {
       "cell": "И6",
-      "questionId": "ny25"
+      "questionId": "ny21"
     }
   ]
 }
