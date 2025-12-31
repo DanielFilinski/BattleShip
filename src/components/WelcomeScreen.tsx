@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useGameState } from '../hooks/useGameState';
-import { hasSavedGame, loadGameState } from '../utils/storage';
 import { loadGameModes } from '../utils/loadData';
 import { GameMode } from '../types/game';
 
@@ -13,8 +12,10 @@ export function WelcomeScreen({ onModeSelect }: WelcomeScreenProps) {
   const [team2Name, setTeam2Name] = useState('');
   const [selectedMode, setSelectedMode] = useState<string>('choir');
   const [gameModes, setGameModes] = useState<GameMode[]>([]);
-  const { startGame, loadSavedGame } = useGameState();
-  const canResume = hasSavedGame();
+  const { startGame, gameStarted, gameMode } = useGameState();
+  
+  // Check if there's a saved game from zustand persist
+  const canResume = gameStarted;
 
   useEffect(() => {
     async function loadModes() {
@@ -37,13 +38,9 @@ export function WelcomeScreen({ onModeSelect }: WelcomeScreenProps) {
   };
 
   const handleResume = () => {
-    const savedState = loadGameState();
-    if (savedState) {
-      loadSavedGame(savedState);
-      // Notify parent about saved mode to load game data
-      if (onModeSelect && savedState.gameMode) {
-        onModeSelect(savedState.gameMode);
-      }
+    // Just notify parent to load game data for the saved mode
+    if (onModeSelect && gameMode) {
+      onModeSelect(gameMode);
     }
   };
 

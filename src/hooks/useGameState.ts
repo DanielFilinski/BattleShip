@@ -13,7 +13,6 @@ interface GameStore extends GameState {
   answerWrong: () => void;
   switchTurn: () => void;
   resetGame: () => void;
-  loadSavedGame: (state: GameState) => void;
   markQuestionAnswered: (questionId: string) => void;
   toggleViewMode: () => void;
   toggleEditMode: () => void;
@@ -140,8 +139,6 @@ export const useGameState = create<GameStore>()(
           viewMode: !state.editMode ? true : state.viewMode,
           timestamp: Date.now(),
         })),
-
-      loadSavedGame: (state: GameState) => set(state),
     }),
     {
       name: 'battleship-game-state',

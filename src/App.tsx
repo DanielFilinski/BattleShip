@@ -13,6 +13,7 @@ function App() {
   const [bombs, setBombs] = useState<Bomb[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showWelcome, setShowWelcome] = useState(true);
 
   // Load game data when gameStarted and gameMode are available
   useEffect(() => {
@@ -20,6 +21,24 @@ function App() {
       loadGameData(gameMode);
     }
   }, [gameStarted, gameMode]);
+
+  // Hide welcome screen when game is started and data is loaded
+  useEffect(() => {
+    if (gameStarted && questions.length > 0 && ships.length > 0) {
+      setShowWelcome(false);
+    }
+  }, [gameStarted, questions, ships]);
+
+  // Show welcome screen when game is reset (gameStarted becomes false)
+  useEffect(() => {
+    if (!gameStarted) {
+      setShowWelcome(true);
+      // Clear game data when returning to welcome screen
+      setQuestions([]);
+      setShips([]);
+      setBombs([]);
+    }
+  }, [gameStarted]);
 
   const loadGameData = async (mode: string) => {
     try {
@@ -47,6 +66,7 @@ function App() {
 
   const handleModeSelect = (mode: string) => {
     loadGameData(mode);
+    // Don't hide welcome screen yet - wait for data to load
   };
 
   const updateShipCell = (shipId: string, cellIndex: number, newCell: string, newQuestionId: string) => {
@@ -121,8 +141,15 @@ function App() {
 
   return (
     <>
-      {!gameStarted ? (
+      {showWelcome ? (
         <WelcomeScreen onModeSelect={handleModeSelect} />
+      ) : questions.length === 0 || ships.length === 0 ? (
+        <div className="min-h-screen bg-gradient-to-br from-ocean-900 via-ocean-700 to-ocean-500 flex items-center justify-center">
+          <div className="text-white text-center">
+            <div className="text-6xl mb-4 animate-pulse">⚓</div>
+            <div className="text-2xl font-semibold">Загрузка игры...</div>
+          </div>
+        </div>
       ) : (
         <GameBoard
           questions={questions}
