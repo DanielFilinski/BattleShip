@@ -5,11 +5,12 @@ interface CellProps {
   status: CellStatus;
   onClick: (coordinate: string) => void;
   disabled: boolean;
+  questionId?: string;
 }
 
-export function Cell({ coordinate, status, onClick, disabled }: CellProps) {
+export function Cell({ coordinate, status, onClick, disabled, questionId }: CellProps) {
   const handleClick = () => {
-    if (!disabled && status === 'untouched') {
+    if (!disabled && (status === 'untouched' || status === 'view-ship' || status === 'view-bomb')) {
       onClick(coordinate);
     }
   };
@@ -24,6 +25,10 @@ export function Cell({ coordinate, status, onClick, disabled }: CellProps) {
         return 'bg-gray-700 border-gray-900';
       case 'bomb':
         return 'bg-amber-500 border-amber-600';
+      case 'view-ship':
+        return 'bg-blue-200 border-blue-400 hover:bg-blue-300 hover:border-blue-500';
+      case 'view-bomb':
+        return 'bg-amber-200 border-amber-400 hover:bg-amber-300 hover:border-amber-500';
       default:
         return 'bg-ocean-50 border-ocean-200 hover:bg-ocean-100 hover:border-ocean-400';
     }
@@ -47,12 +52,20 @@ export function Cell({ coordinate, status, onClick, disabled }: CellProps) {
         return (
           <span className="text-3xl text-white animate-hit">💣</span>
         );
+      case 'view-ship':
+        return (
+          <span className="text-xs font-bold text-blue-800">{questionId}</span>
+        );
+      case 'view-bomb':
+        return (
+          <span className="text-2xl">💣</span>
+        );
       default:
         return null;
     }
   };
 
-  const isClickable = status === 'untouched' && !disabled;
+  const isClickable = (status === 'untouched' || status === 'view-ship' || status === 'view-bomb') && !disabled;
 
   return (
     <button

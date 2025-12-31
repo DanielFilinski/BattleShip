@@ -15,6 +15,7 @@ interface GameStore extends GameState {
   resetGame: () => void;
   loadSavedGame: (state: GameState) => void;
   markQuestionAnswered: (questionId: string) => void;
+  toggleViewMode: () => void;
 }
 
 const initialState: GameState = {
@@ -24,6 +25,7 @@ const initialState: GameState = {
   clickedCells: [],
   answeredQuestions: [],
   gameStarted: false,
+  viewMode: false,
   timestamp: Date.now(),
 };
 
@@ -113,6 +115,12 @@ export const useGameState = create<GameStore>()(
       markQuestionAnswered: (questionId: string) =>
         set((state) => ({
           answeredQuestions: [...state.answeredQuestions, questionId],
+          timestamp: Date.now(),
+        })),
+
+      toggleViewMode: () =>
+        set((state) => ({
+          viewMode: !state.viewMode,
           timestamp: Date.now(),
         })),
 

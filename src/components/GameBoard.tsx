@@ -22,7 +22,7 @@ interface GameBoardProps {
 }
 
 export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
-  const { clickedCells, clickCell, unclickCell, answerCorrect, answerCorrectBothTeams, answerCorrectSpecificTeam, answerWrong, resetGame, team1, team2, currentTurn, answeredQuestions, markQuestionAnswered } =
+  const { clickedCells, clickCell, unclickCell, answerCorrect, answerCorrectBothTeams, answerCorrectSpecificTeam, answerWrong, resetGame, team1, team2, currentTurn, answeredQuestions, markQuestionAnswered, viewMode } =
     useGameState();
   const { playHit, playMiss, playCorrect, playWrong } = useSound();
   const { columns: fieldColumns, rows: fieldRows, cellSize, setFieldSize, setCellSize } = useFieldSettings();
@@ -56,13 +56,26 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
   }, [allTargetCells, clickedCells]);
 
   const handleCellClick = (coordinate: string) => {
+    // Determine cell type
+    const { type, questionId } = getCellType(coordinate, ships, bombs);
+
+    // In view mode, just show the question and answer
+    if (viewMode) {
+      if (questionId) {
+        const question = questions.find((q) => q.id === questionId);
+        if (question) {
+          setCurrentQuestion(question);
+          setIsModalOpen(true);
+        }
+      }
+      return;
+    }
+
+    // Normal game mode
     // Mark cell as clicked
     clickCell(coordinate);
     // Save current coordinate for skip functionality
     setCurrentCoordinate(coordinate);
-
-    // Determine cell type
-    const { type, questionId } = getCellType(coordinate, ships, bombs);
 
     if (type === 'empty') {
       // Miss
@@ -74,7 +87,7 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
     } else {
       // Hit or bomb
       playHit();
-      
+
       // Save cell type to determine turn switching logic later
       setCurrentCellType(type === 'bomb' ? 'bomb' : 'ship');
 
@@ -197,11 +210,19 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
   };
 
   const getCellStatus = (coordinate: string): CellStatus => {
-    if (!clickedCells.includes(coordinate)) {
+    const { type } = getCellType(coordinate, ships, bombs);
+
+    // In view mode, show all ships and bombs
+    if (viewMode) {
+      if (type === 'ship') return 'view-ship';
+      if (type === 'bomb') return 'view-bomb';
       return 'untouched';
     }
 
-    const { type } = getCellType(coordinate, ships, bombs);
+    // Normal game mode
+    if (!clickedCells.includes(coordinate)) {
+      return 'untouched';
+    }
 
     if (type === 'empty') return 'miss';
     if (type === 'bomb') return 'bomb';
@@ -294,6 +315,7 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
                     {/* Cells */}
                     {COLUMNS.map((col) => {
                       const coordinate = `${col}${row}`;
+                      const { questionId } = getCellType(coordinate, ships, bombs);
                       return (
                         <div
                           key={coordinate}
@@ -305,6 +327,7 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
                             status={getCellStatus(coordinate)}
                             onClick={handleCellClick}
                             disabled={isModalOpen}
+                            questionId={questionId}
                           />
                         </div>
                       );
@@ -464,6 +487,7 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
                     {/* Cells */}
                     {COLUMNS.map((col) => {
                       const coordinate = `${col}${row}`;
+                      const { questionId } = getCellType(coordinate, ships, bombs);
                       return (
                         <div
                           key={coordinate}
@@ -474,6 +498,7 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
                             status={getCellStatus(coordinate)}
                             onClick={handleCellClick}
                             disabled={isModalOpen}
+                            questionId={questionId}
                           />
                         </div>
                       );
@@ -531,6 +556,7 @@ export function GameBoard({ questions, ships, bombs }: GameBoardProps) {
           team1Name={team1.name}
           team2Name={team2.name}
           onTeamAnswer={handleTeamAnswer}
+          viewMode={viewMode}
         />
       )}
 

@@ -13,6 +13,7 @@ interface QuestionModalProps {
   team1Name: string;
   team2Name: string;
   onTeamAnswer: (teamNumber: 1 | 2 | 0) => void; // 0 = никому
+  viewMode?: boolean;
 }
 
 export function QuestionModal({
@@ -25,12 +26,20 @@ export function QuestionModal({
   team1Name,
   team2Name,
   onTeamAnswer,
+  viewMode = false,
 }: QuestionModalProps) {
-  const [showAnswer, setShowAnswer] = useState(false);
+  const [showAnswer, setShowAnswer] = useState(viewMode);
   const [answered, setAnswered] = useState(false);
   const [wasCorrect, setWasCorrect] = useState<boolean | null>(null);
   const { autoCloseModal } = useModalSettings();
   const timeoutRef = useRef<number | null>(null);
+
+  // Auto-show answer in view mode
+  useEffect(() => {
+    if (viewMode) {
+      setShowAnswer(true);
+    }
+  }, [viewMode]);
 
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -251,7 +260,7 @@ export function QuestionModal({
           )}
 
           {/* Host Controls */}
-          {!answered && (
+          {!answered && !viewMode && (
             <div className="space-y-4">
               {/* Show Answer Button - показывается когда ответ не показан */}
               {!showAnswer && (
@@ -307,6 +316,18 @@ export function QuestionModal({
                   ↔ Передать
                 </button>
               </div>
+            </div>
+          )}
+
+          {/* View Mode - Simple Close Button */}
+          {viewMode && (
+            <div className="text-center">
+              <button
+                onClick={onClose}
+                className="bg-gradient-to-r from-ocean-600 to-ocean-500 text-white text-xl font-bold py-4 px-8 rounded-xl hover:from-ocean-700 hover:to-ocean-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+              >
+                ✓ Закрыть
+              </button>
             </div>
           )}
 

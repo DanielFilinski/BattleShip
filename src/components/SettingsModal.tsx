@@ -1,4 +1,5 @@
 import { useModalSettings } from '../hooks/useModalSettings';
+import { useGameState } from '../hooks/useGameState';
 
 interface SettingsModalProps {
   onToggleFullscreen: () => void;
@@ -9,6 +10,7 @@ interface SettingsModalProps {
 
 export function SettingsModal({ onToggleFullscreen, onOpenFieldSettings, onClose, isFullscreen }: SettingsModalProps) {
   const { autoCloseModal, toggleAutoCloseModal } = useModalSettings();
+  const { viewMode, toggleViewMode } = useGameState();
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[9999] p-4">
@@ -80,6 +82,27 @@ export function SettingsModal({ onToggleFullscreen, onOpenFieldSettings, onClose
                   {autoCloseModal
                     ? 'Ответ закрывается автоматически через 2 сек'
                     : 'Ответ остается на экране'
+                  }
+                </div>
+              </div>
+            </button>
+
+            {/* View Mode Toggle */}
+            <button
+              onClick={() => {
+                toggleViewMode();
+              }}
+              className="w-full px-4 py-4 text-left hover:bg-ocean-50 transition-colors flex items-center gap-4 rounded-xl border-2 border-ocean-100 hover:border-ocean-300"
+            >
+              <span className="text-3xl">{viewMode ? '👁️' : '🔒'}</span>
+              <div className="flex-1">
+                <div className="font-semibold text-ocean-700 text-lg">
+                  Режим просмотра {viewMode ? 'включен' : 'выключен'}
+                </div>
+                <div className="text-sm text-ocean-500 mt-1">
+                  {viewMode
+                    ? 'Все корабли и бомбы видны'
+                    : 'Корабли и бомбы скрыты'
                   }
                 </div>
               </div>

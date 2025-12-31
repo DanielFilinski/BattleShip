@@ -10,6 +10,7 @@ export interface GameState {
   clickedCells: string[];
   answeredQuestions: string[]; // IDs of questions that have been answered
   gameStarted: boolean;
+  viewMode: boolean; // View mode to show all ships and bombs
   timestamp: number;
 }
 
