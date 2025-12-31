@@ -4,7 +4,7 @@ import { GameState } from '../types/game';
 
 interface GameStore extends GameState {
   // Actions
-  startGame: (team1Name: string, team2Name: string) => void;
+  startGame: (team1Name: string, team2Name: string, gameMode: string) => void;
   clickCell: (coordinate: string) => void;
   unclickCell: (coordinate: string) => void;
   answerCorrect: (points: number) => void;
@@ -26,6 +26,7 @@ const initialState: GameState = {
   clickedCells: [],
   answeredQuestions: [],
   gameStarted: false,
+  gameMode: 'choir',
   viewMode: false,
   editMode: false,
   timestamp: Date.now(),
@@ -36,7 +37,7 @@ export const useGameState = create<GameStore>()(
     (set) => ({
       ...initialState,
 
-      startGame: (team1Name: string, team2Name: string) =>
+      startGame: (team1Name: string, team2Name: string, gameMode: string) =>
         set({
           team1: { name: team1Name, score: 0 },
           team2: { name: team2Name, score: 0 },
@@ -44,6 +45,7 @@ export const useGameState = create<GameStore>()(
           clickedCells: [],
           answeredQuestions: [],
           gameStarted: true,
+          gameMode: gameMode,
           timestamp: Date.now(),
         }),
 

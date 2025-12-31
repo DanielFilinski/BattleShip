@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useGameState } from './hooks/useGameState';
 import { WelcomeScreen } from './components/WelcomeScreen';
 import { GameBoard } from './components/GameBoard';
@@ -7,12 +7,19 @@ import { Question } from './types/question';
 import { Ship, Bomb } from './types/game';
 
 function App() {
-  const { gameStarted } = useGameState();
+  const { gameStarted, gameMode } = useGameState();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [ships, setShips] = useState<Ship[]>([]);
   const [bombs, setBombs] = useState<Bomb[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Load game data when gameStarted and gameMode are available
+  useEffect(() => {
+    if (gameStarted && gameMode && questions.length === 0) {
+      loadGameData(gameMode);
+    }
+  }, [gameStarted, gameMode]);
 
   const loadGameData = async (mode: string) => {
     try {

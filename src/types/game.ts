@@ -10,6 +10,7 @@ export interface GameState {
   clickedCells: string[];
   answeredQuestions: string[]; // IDs of questions that have been answered
   gameStarted: boolean;
+  gameMode: string; // Current game mode (choir, biblical, etc.)
   viewMode: boolean; // View mode to show all ships and bombs
   editMode: boolean; // Edit mode to move ships and reassign questions
   timestamp: number;

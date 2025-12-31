@@ -32,7 +32,7 @@ export function WelcomeScreen({ onModeSelect }: WelcomeScreenProps) {
       if (onModeSelect) {
         onModeSelect(selectedMode);
       }
-      startGame(team1Name.trim(), team2Name.trim());
+      startGame(team1Name.trim(), team2Name.trim(), selectedMode);
     }
   };
 
@@ -40,6 +40,10 @@ export function WelcomeScreen({ onModeSelect }: WelcomeScreenProps) {
     const savedState = loadGameState();
     if (savedState) {
       loadSavedGame(savedState);
+      // Notify parent about saved mode to load game data
+      if (onModeSelect && savedState.gameMode) {
+        onModeSelect(savedState.gameMode);
+      }
     }
   };
 
