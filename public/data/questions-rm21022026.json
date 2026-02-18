@@ -1,0 +1,283 @@
+{
+  "questions": [
+    {
+      "id": "rm1",
+      "category": "Библия",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "question": "Сколько дней Бог творил мир?",
+      "answer": "6 дней (на 7-й день отдыхал)"
+    },
+    {
+      "id": "rm2",
+      "category": "Библия",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "question": "Как звали сына Авраама, которого он чуть не принёс в жертву?",
+      "answer": "Исаак"
+    },
+    {
+      "id": "rm3",
+      "category": "Библия",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Сколько лет провёл Израиль в египетском рабстве?",
+      "answer": "430 лет"
+    },
+    {
+      "id": "rm4",
+      "category": "Библия",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Как звали пророка, который был взят живым на небо на огненной колеснице?",
+      "answer": "Илия"
+    },
+    {
+      "id": "rm5",
+      "category": "Библия",
+      "type": "text",
+      "difficulty": "hard",
+      "points": 3,
+      "question": "Сколько учеников было у Иисуса Христа?",
+      "answer": "12"
+    },
+    {
+      "id": "rm6",
+      "category": "Библия",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "В какой реке крестил Иоанн Иисуса?",
+      "answer": "В реке Иордан"
+    },
+    {
+      "id": "rm7",
+      "category": "Библия",
+      "type": "text",
+      "difficulty": "hard",
+      "points": 3,
+      "question": "Кто написал Книгу Откровения (Апокалипсис)?",
+      "answer": "Апостол Иоанн"
+    },
+    {
+      "id": "rm8",
+      "category": "Библия",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "question": "Как называется последняя книга Библии?",
+      "answer": "Откровение (Апокалипсис)"
+    },
+    {
+      "id": "rm9",
+      "category": "Музыка",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "question": "Сколько нот в музыкальном звукоряде?",
+      "answer": "7 (до, ре, ми, фа, соль, ля, си)"
+    },
+    {
+      "id": "rm10",
+      "category": "Музыка",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Как называется знак в начале нотного стана, определяющий высоту нот?",
+      "answer": "Ключ (скрипичный ключ)"
+    },
+    {
+      "id": "rm11",
+      "category": "Музыка",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Сколько струн на классической гитаре?",
+      "answer": "6"
+    },
+    {
+      "id": "rm12",
+      "category": "Музыка",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "question": "Как называется самый низкий мужской голос?",
+      "answer": "Бас"
+    },
+    {
+      "id": "rm13",
+      "category": "Музыка",
+      "type": "text",
+      "difficulty": "hard",
+      "points": 3,
+      "question": "Кто из великих композиторов писал музыку, будучи глухим?",
+      "answer": "Людвиг ван Бетховен"
+    },
+    {
+      "id": "rm14",
+      "category": "Музыка",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Как называется итальянское слово, обозначающее умеренный темп в музыке?",
+      "answer": "Анданте"
+    },
+    {
+      "id": "rm15",
+      "category": "Музыка",
+      "type": "text",
+      "difficulty": "hard",
+      "points": 3,
+      "question": "Сколько клавиш на стандартном фортепиано?",
+      "answer": "88"
+    },
+    {
+      "id": "rm16",
+      "category": "Эрудиция",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "question": "Сколько цветов в радуге?",
+      "answer": "7"
+    },
+    {
+      "id": "rm17",
+      "category": "Эрудиция",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Какой химический элемент обозначается символом Au?",
+      "answer": "Золото"
+    },
+    {
+      "id": "rm18",
+      "category": "Эрудиция",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Сколько костей в теле взрослого человека?",
+      "answer": "206"
+    },
+    {
+      "id": "rm19",
+      "category": "Эрудиция",
+      "type": "text",
+      "difficulty": "hard",
+      "points": 3,
+      "question": "Какая планета Солнечной системы самая большая?",
+      "answer": "Юпитер"
+    },
+    {
+      "id": "rm20",
+      "category": "Эрудиция",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "question": "Сколько минут в одном часе?",
+      "answer": "60"
+    },
+    {
+      "id": "rm21",
+      "category": "Эрудиция",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Как называется наука о звёздах и планетах?",
+      "answer": "Астрономия"
+    },
+    {
+      "id": "rm22",
+      "category": "География",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "question": "Какой океан самый большой в мире?",
+      "answer": "Тихий океан"
+    },
+    {
+      "id": "rm23",
+      "category": "География",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "question": "Столица Франции?",
+      "answer": "Париж"
+    },
+    {
+      "id": "rm24",
+      "category": "География",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "На каком материке находится пустыня Сахара?",
+      "answer": "Африка"
+    },
+    {
+      "id": "rm25",
+      "category": "География",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "question": "Какая река самая длинная в мире?",
+      "answer": "Нил (или Амазонка — зависит от метода измерения)"
+    },
+    {
+      "id": "rm26",
+      "category": "География",
+      "type": "text",
+      "difficulty": "hard",
+      "points": 3,
+      "question": "Какая страна занимает наибольшую площадь в мире?",
+      "answer": "Россия"
+    },
+    {
+      "id": "rm27",
+      "category": "Бомба",
+      "type": "together",
+      "difficulty": "hard",
+      "points": 3,
+      "question": "Обе команды вместе: за 1 минуту назовите как можно больше стран мира. За каждые 5 стран — 1 балл обеим командам (максимум 3 балла)",
+      "answer": "Творческое задание — считайте страны и начисляйте баллы!"
+    },
+    {
+      "id": "rm28",
+      "category": "Бомба",
+      "type": "creative",
+      "difficulty": "hard",
+      "points": 3,
+      "question": "Вся команда вместе: изобразите жестами и мимикой музыкальный инструмент, другая команда угадывает. Угадавшая команда получает 3 балла",
+      "answer": "Засчитывается правильное угадывание!"
+    },
+    {
+      "id": "rm29",
+      "category": "Бомба",
+      "type": "creative",
+      "difficulty": "hard",
+      "points": 3,
+      "question": "Каждый участник команды называет по одному библейскому персонажу (без повторов). Сколько назовёте — столько баллов (максимум 3)",
+      "answer": "Засчитываются только правильные ответы!"
+    },
+    {
+      "id": "rm30",
+      "category": "Бомба",
+      "type": "creative",
+      "difficulty": "hard",
+      "points": 3,
+      "question": "Командная задача: назовите столицы 10 стран. За каждые 3 правильных столицы — 1 балл (максимум 3 балла)",
+      "answer": "Засчитываются только правильные ответы — проверьте по карте!"
+    },
+    {
+      "id": "rm31",
+      "category": "Бомба",
+      "type": "together",
+      "difficulty": "hard",
+      "points": 3,
+      "question": "Обе команды вместе: спойте куплет любой известной христианской песни. Жюри оценивает и присуждает от 1 до 3 баллов каждой команде",
+      "answer": "Творческое задание — оценивает жюри!"
+    }
+  ]
+}

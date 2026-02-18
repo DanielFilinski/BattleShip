@@ -1,0 +1,124 @@
+{
+  "ships": [
+    {
+      "id": "ship1",
+      "name": "Линкор",
+      "cells": [
+        "А2",
+        "А3",
+        "А4",
+        "А5"
+      ],
+      "questionIds": [
+        "rm1",
+        "rm9",
+        "rm16",
+        "rm22"
+      ]
+    },
+    {
+      "id": "ship2",
+      "name": "Крейсер",
+      "cells": [
+        "В7",
+        "Г7",
+        "Д7"
+      ],
+      "questionIds": [
+        "rm3",
+        "rm11",
+        "rm24"
+      ]
+    },
+    {
+      "id": "ship3",
+      "name": "Эсминец 1",
+      "cells": [
+        "Ж1",
+        "Ж2"
+      ],
+      "questionIds": [
+        "rm2",
+        "rm10"
+      ]
+    },
+    {
+      "id": "ship4",
+      "name": "Эсминец 2",
+      "cells": [
+        "И4",
+        "И5"
+      ],
+      "questionIds": [
+        "rm7",
+        "rm15"
+      ]
+    },
+    {
+      "id": "ship5",
+      "name": "Подлодка 1",
+      "cells": [
+        "В3"
+      ],
+      "questionIds": [
+        "rm4"
+      ]
+    },
+    {
+      "id": "ship6",
+      "name": "Подлодка 2",
+      "cells": [
+        "Д2"
+      ],
+      "questionIds": [
+        "rm8"
+      ]
+    },
+    {
+      "id": "ship7",
+      "name": "Подлодка 3",
+      "cells": [
+        "Е9"
+      ],
+      "questionIds": [
+        "rm12"
+      ]
+    },
+    {
+      "id": "ship8",
+      "name": "Подлодка 4",
+      "cells": [
+        "З8"
+      ],
+      "questionIds": [
+        "rm19"
+      ]
+    },
+    {
+      "id": "ship9",
+      "name": "Крейсер 2",
+      "cells": [
+        "Ж9",
+        "З9",
+        "И9"
+      ],
+      "questionIds": [
+        "rm13",
+        "rm17",
+        "rm25"
+      ]
+    },
+    {
+      "id": "ship10",
+      "name": "Эсминец 3",
+      "cells": [
+        "Б10",
+        "В10"
+      ],
+      "questionIds": [
+        "rm5",
+        "rm6"
+      ]
+    }
+  ]
+}

@@ -20,8 +20,8 @@ interface QuestionModalProps {
 
 export function QuestionModal({
   question,
-  onCorrect,
-  onWrong,
+  onCorrect: _onCorrect,
+  onWrong: _onWrong,
   onSkip,
   onTransfer,
   onClose,
@@ -33,7 +33,6 @@ export function QuestionModal({
 }: QuestionModalProps) {
   const [showAnswer, setShowAnswer] = useState(viewMode);
   const [answered, setAnswered] = useState(false);
-  const [wasCorrect, setWasCorrect] = useState<boolean | null>(null);
   const [answeringTeam, setAnsweringTeam] = useState<1 | 2 | 0 | null>(null);
   const { autoCloseModal } = useModalSettings();
   const timeoutRef = useRef<number | null>(null);
@@ -65,36 +64,6 @@ export function QuestionModal({
       }
     };
   }, []);
-
-  const handleCorrect = () => {
-    setShowAnswer(true);
-    setAnswered(true);
-    setWasCorrect(true);
-
-    if (autoCloseModal) {
-      timeoutRef.current = window.setTimeout(() => {
-        onCorrect();
-        onClose();
-      }, 2000);
-    }
-    // Если автозакрытие выключено, не вызываем onCorrect() сразу
-    // Это будет сделано при нажатии кнопки "Закрыть"
-  };
-
-  const handleWrong = () => {
-    setShowAnswer(true);
-    setAnswered(true);
-    setWasCorrect(false);
-
-    if (autoCloseModal) {
-      timeoutRef.current = window.setTimeout(() => {
-        onWrong();
-        onClose();
-      }, 2000);
-    }
-    // Если автозакрытие выключено, не вызываем onWrong() сразу
-    // Это будет сделано при нажатии кнопки "Закрыть"
-  };
 
   const handleSkip = () => {
     onSkip();
