@@ -4,6 +4,16 @@ import { MediaPlayer } from './MediaPlayer';
 import { useModalSettings } from '../hooks/useModalSettings';
 import { sendCurrentQuestion } from '../utils/storage';
 
+// Color gradients for team buttons
+const TEAM_BUTTON_STYLES = [
+  'from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600',
+  'from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600',
+  'from-violet-600 to-violet-500 hover:from-violet-700 hover:to-violet-600',
+  'from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600',
+  'from-rose-600 to-rose-500 hover:from-rose-700 hover:to-rose-600',
+  'from-cyan-600 to-cyan-500 hover:from-cyan-700 hover:to-cyan-600',
+];
+
 interface QuestionModalProps {
   question: Question;
   onCorrect: () => void;
@@ -11,11 +21,10 @@ interface QuestionModalProps {
   onSkip: () => void;
   onTransfer: () => void;
   onClose: () => void;
-  team1Name: string;
-  team2Name: string;
-  onTeamAnswer: (teamNumber: 1 | 2 | 0) => void; // 0 = никому
+  teams: { name: string; score: number }[];
+  onTeamAnswer: (teamIndex: number | null) => void; // null = никому
   viewMode?: boolean;
-  currentTurn: 1 | 2;
+  currentTurn: number;
 }
 
 export function QuestionModal({
@@ -25,15 +34,14 @@ export function QuestionModal({
   onSkip,
   onTransfer,
   onClose,
-  team1Name,
-  team2Name,
+  teams,
   onTeamAnswer,
   viewMode = false,
   currentTurn,
 }: QuestionModalProps) {
   const [showAnswer, setShowAnswer] = useState(viewMode);
   const [answered, setAnswered] = useState(false);
-  const [answeringTeam, setAnsweringTeam] = useState<1 | 2 | 0 | null>(null);
+  const [answeringTeamIndex, setAnsweringTeamIndex] = useState<number | null | -1>(-1); // -1 = not yet
   const { autoCloseModal } = useModalSettings();
   const timeoutRef = useRef<number | null>(null);
 
@@ -47,12 +55,11 @@ export function QuestionModal({
   // Save current question to localStorage and API for external display
   useEffect(() => {
     localStorage.setItem('currentQuestion', JSON.stringify(question));
-    sendCurrentQuestion(question); // Отправляем на сервер
-    
+    sendCurrentQuestion(question);
+
     return () => {
-      // Clear when modal closes
       localStorage.removeItem('currentQuestion');
-      sendCurrentQuestion(null); // Очищаем на сервере
+      sendCurrentQuestion(null);
     };
   }, [question]);
 
@@ -72,21 +79,19 @@ export function QuestionModal({
 
   const handleTransfer = () => {
     onTransfer();
-    // НЕ закрываем модал - вопрос остается на экране
+    // Don't close modal — question stays on screen
   };
 
   const handleShowAnswer = () => {
     setShowAnswer(true);
   };
 
-  const handleTeamAnswer = (teamNumber: 1 | 2 | 0) => {
+  const handleTeamAnswer = (teamIndex: number | null) => {
     setAnswered(true);
-    setAnsweringTeam(teamNumber);
-    
-    // Всегда вызываем onTeamAnswer для начисления баллов
-    onTeamAnswer(teamNumber);
+    setAnsweringTeamIndex(teamIndex === null ? -1 : teamIndex);
 
-    // Автозакрытие только если включено
+    onTeamAnswer(teamIndex);
+
     if (autoCloseModal) {
       timeoutRef.current = window.setTimeout(() => {
         onClose();
@@ -174,7 +179,7 @@ export function QuestionModal({
           {question.type === 'together' && (
             <div className="mb-6 bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-300 rounded-xl p-4">
               <p className="text-center text-blue-800 font-semibold text-lg">
-                🤝 Совместное задание! Обе команды получат по {question.points} {question.points === 1 ? 'баллу' : 'балла'}!
+                🤝 Совместное задание! Все команды получат по {question.points} {question.points === 1 ? 'баллу' : 'балла'}!
               </p>
             </div>
           )}
@@ -188,10 +193,12 @@ export function QuestionModal({
                   : 'bg-ocean-50'
               }`}
             >
-              {answeringTeam !== null && (
+              {answeringTeamIndex !== -1 && (
                 <div className="text-center mb-4 p-3 bg-white/50 rounded-xl">
                   <div className="text-lg font-bold text-ocean-800">
-                    {answeringTeam === 1 ? `Отвечает: ${team1Name}` : answeringTeam === 2 ? `Отвечает: ${team2Name}` : 'Никто не ответил правильно'}
+                    {answeringTeamIndex === null
+                      ? 'Никто не ответил правильно'
+                      : `Отвечает: ${teams[answeringTeamIndex as number]?.name}`}
                   </div>
                 </div>
               )}
@@ -258,7 +265,7 @@ export function QuestionModal({
           {/* Host Controls */}
           {!answered && !viewMode && (
             <div className="space-y-4">
-              {/* Show Answer Button - показывается когда ответ не показан */}
+              {/* Show Answer Button */}
               {!showAnswer && (
                 <div className="space-y-3">
                   <button
@@ -267,8 +274,7 @@ export function QuestionModal({
                   >
                     👁️ Показать ответ
                   </button>
-                  
-                  {/* Пропустить и Передать - когда вопрос показан */}
+
                   <div className="flex gap-4">
                     <button
                       onClick={handleSkip}
@@ -286,31 +292,28 @@ export function QuestionModal({
                 </div>
               )}
 
-              {/* Team Answer Buttons - показывается после показа ответа */}
+              {/* Team Answer Buttons */}
               {showAnswer && (
                 <div className="space-y-3">
                   <div className="text-center text-ocean-700 font-semibold text-lg mb-2">
                     Кто ответил правильно?
                   </div>
-                  {/* Кнопки команд в один ряд */}
-                  <div className="flex gap-4">
-                    <button
-                      onClick={() => handleTeamAnswer(1)}
-                      className="flex-1 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white text-2xl font-bold py-5 px-4 rounded-xl hover:from-emerald-700 hover:to-emerald-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
-                    >
-                      {currentTurn === 1 ? '✓ ' : ''}{team1Name}
-                    </button>
-                    <button
-                      onClick={() => handleTeamAnswer(2)}
-                      className="flex-1 bg-gradient-to-r from-blue-600 to-blue-500 text-white text-2xl font-bold py-5 px-4 rounded-xl hover:from-blue-700 hover:to-blue-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
-                    >
-                      {currentTurn === 2 ? '✓ ' : ''}{team2Name}
-                    </button>
+                  {/* Team buttons — wrap in grid for many teams */}
+                  <div className={`grid gap-3 ${teams.length <= 2 ? 'grid-cols-2' : teams.length <= 4 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+                    {teams.map((team, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleTeamAnswer(index)}
+                        className={`bg-gradient-to-r ${TEAM_BUTTON_STYLES[index % TEAM_BUTTON_STYLES.length]} text-white text-xl font-bold py-5 px-4 rounded-xl transition-all transform hover:scale-105 active:scale-95 shadow-lg`}
+                      >
+                        {currentTurn === index ? '✓ ' : ''}{team.name}
+                      </button>
+                    ))}
                   </div>
-                  {/* Никому и Пропустить в один ряд */}
+                  {/* Nobody + Skip */}
                   <div className="flex gap-4">
                     <button
-                      onClick={() => handleTeamAnswer(0)}
+                      onClick={() => handleTeamAnswer(null)}
                       className="flex-1 bg-gradient-to-r from-gray-600 to-gray-500 text-white text-xl font-bold py-4 px-4 rounded-xl hover:from-gray-700 hover:to-gray-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
                     >
                       ✗ Никому

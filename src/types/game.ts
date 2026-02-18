@@ -4,9 +4,8 @@ export interface Team {
 }
 
 export interface GameState {
-  team1: Team;
-  team2: Team;
-  currentTurn: 1 | 2;
+  teams: Team[];
+  currentTurn: number; // index into teams array (0-based)
   clickedCells: string[];
   answeredQuestions: string[]; // IDs of questions that have been answered
   gameStarted: boolean;

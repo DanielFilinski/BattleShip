@@ -8,12 +8,11 @@ interface WelcomeScreenProps {
 }
 
 export function WelcomeScreen({ onModeSelect }: WelcomeScreenProps) {
-  const [team1Name, setTeam1Name] = useState('');
-  const [team2Name, setTeam2Name] = useState('');
+  const [teamNames, setTeamNames] = useState<string[]>(['', '']);
   const [selectedMode, setSelectedMode] = useState<string>('choir');
   const [gameModes, setGameModes] = useState<GameMode[]>([]);
   const { startGame, gameStarted, gameMode } = useGameState();
-  
+
   // Check if there's a saved game from zustand persist
   const canResume = gameStarted;
 
@@ -29,20 +28,40 @@ export function WelcomeScreen({ onModeSelect }: WelcomeScreenProps) {
   }, []);
 
   const handleStart = () => {
-    if (team1Name.trim() && team2Name.trim()) {
+    const validNames = teamNames.map((n) => n.trim()).filter((n) => n.length > 0);
+    if (validNames.length >= 2) {
       if (onModeSelect) {
         onModeSelect(selectedMode);
       }
-      startGame(team1Name.trim(), team2Name.trim(), selectedMode);
+      startGame(validNames, selectedMode);
     }
   };
 
   const handleResume = () => {
-    // Just notify parent to load game data for the saved mode
     if (onModeSelect && gameMode) {
       onModeSelect(gameMode);
     }
   };
+
+  const addTeam = () => {
+    if (teamNames.length < 6) {
+      setTeamNames([...teamNames, '']);
+    }
+  };
+
+  const removeTeam = (index: number) => {
+    if (teamNames.length > 2) {
+      setTeamNames(teamNames.filter((_, i) => i !== index));
+    }
+  };
+
+  const updateTeamName = (index: number, value: string) => {
+    const updated = [...teamNames];
+    updated[index] = value;
+    setTeamNames(updated);
+  };
+
+  const canStart = teamNames.filter((n) => n.trim().length > 0).length >= 2;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-ocean-900 via-ocean-700 to-ocean-500 flex items-center justify-center p-4">
@@ -55,6 +74,7 @@ export function WelcomeScreen({ onModeSelect }: WelcomeScreenProps) {
         </p>
 
         <div className="space-y-6">
+          {/* Game mode selection */}
           <div>
             <label className="block text-lg font-semibold text-ocean-700 mb-2">
               Выберите режим игры
@@ -81,36 +101,59 @@ export function WelcomeScreen({ onModeSelect }: WelcomeScreenProps) {
             </div>
           </div>
 
+          {/* Teams */}
           <div>
-            <label className="block text-lg font-semibold text-ocean-700 mb-2">
-              Название первой команды
-            </label>
-            <input
-              type="text"
-              value={team1Name}
-              onChange={(e) => setTeam1Name(e.target.value)}
-              className="w-full px-6 py-4 text-xl border-2 border-ocean-300 rounded-xl focus:border-ocean-500 focus:outline-none transition-colors"
-              placeholder="Команда 1"
-              autoFocus
-            />
-          </div>
-
-          <div>
-            <label className="block text-lg font-semibold text-ocean-700 mb-2">
-              Название второй команды
-            </label>
-            <input
-              type="text"
-              value={team2Name}
-              onChange={(e) => setTeam2Name(e.target.value)}
-              className="w-full px-6 py-4 text-xl border-2 border-ocean-300 rounded-xl focus:border-ocean-500 focus:outline-none transition-colors"
-              placeholder="Команда 2"
-            />
+            <div className="flex items-center justify-between mb-3">
+              <label className="text-lg font-semibold text-ocean-700">
+                Команды ({teamNames.length})
+              </label>
+              <button
+                onClick={addTeam}
+                disabled={teamNames.length >= 6}
+                className="flex items-center gap-1 px-4 py-2 bg-ocean-100 hover:bg-ocean-200 disabled:opacity-40 disabled:cursor-not-allowed text-ocean-700 font-semibold rounded-xl transition-colors text-sm"
+              >
+                + Добавить команду
+              </button>
+            </div>
+            <div className="space-y-3">
+              {teamNames.map((name, index) => (
+                <div key={index} className="flex items-center gap-3">
+                  <div
+                    className={`w-4 h-4 rounded-full flex-shrink-0`}
+                    style={{
+                      backgroundColor:
+                        index === 0 ? '#10b981' :
+                        index === 1 ? '#3b82f6' :
+                        index === 2 ? '#8b5cf6' :
+                        index === 3 ? '#f59e0b' :
+                        index === 4 ? '#f43f5e' :
+                        '#06b6d4'
+                    }}
+                  />
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => updateTeamName(index, e.target.value)}
+                    className="flex-1 px-5 py-3 text-lg border-2 border-ocean-300 rounded-xl focus:border-ocean-500 focus:outline-none transition-colors"
+                    placeholder={`Команда ${index + 1}`}
+                    autoFocus={index === 0}
+                  />
+                  {teamNames.length > 2 && (
+                    <button
+                      onClick={() => removeTeam(index)}
+                      className="w-10 h-10 flex items-center justify-center bg-red-100 hover:bg-red-200 text-red-600 rounded-xl transition-colors font-bold text-lg flex-shrink-0"
+                    >
+                      ×
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
 
           <button
             onClick={handleStart}
-            disabled={!team1Name.trim() || !team2Name.trim()}
+            disabled={!canStart}
             className="w-full bg-gradient-to-r from-ocean-600 to-ocean-500 text-white text-2xl font-bold py-5 px-8 rounded-xl hover:from-ocean-700 hover:to-ocean-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-105 active:scale-95 shadow-lg"
           >
             🚀 Начать игру

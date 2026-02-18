@@ -1,27 +1,32 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { GameState } from '../types/game';
+import { GameState, Team } from '../types/game';
 
 interface GameStore extends GameState {
   // Actions
-  startGame: (team1Name: string, team2Name: string, gameMode: string) => void;
+  startGame: (teamNames: string[], gameMode: string) => void;
   clickCell: (coordinate: string) => void;
   unclickCell: (coordinate: string) => void;
   answerCorrect: (points: number) => void;
-  answerCorrectBothTeams: (points: number) => void;
-  answerCorrectSpecificTeam: (teamNumber: 1 | 2, points: number) => void;
+  answerCorrectAllTeams: (points: number) => void;
+  answerCorrectSpecificTeam: (teamIndex: number, points: number) => void;
   answerWrong: () => void;
   switchTurn: () => void;
+  setTurn: (teamIndex: number) => void;
   resetGame: () => void;
   markQuestionAnswered: (questionId: string) => void;
   toggleViewMode: () => void;
   toggleEditMode: () => void;
 }
 
+const DEFAULT_TEAMS: Team[] = [
+  { name: '', score: 0 },
+  { name: '', score: 0 },
+];
+
 const initialState: GameState = {
-  team1: { name: '', score: 0 },
-  team2: { name: '', score: 0 },
-  currentTurn: 1,
+  teams: DEFAULT_TEAMS,
+  currentTurn: 0,
   clickedCells: [],
   answeredQuestions: [],
   gameStarted: false,
@@ -36,11 +41,10 @@ export const useGameState = create<GameStore>()(
     (set) => ({
       ...initialState,
 
-      startGame: (team1Name: string, team2Name: string, gameMode: string) =>
+      startGame: (teamNames: string[], gameMode: string) =>
         set({
-          team1: { name: team1Name, score: 0 },
-          team2: { name: team2Name, score: 0 },
-          currentTurn: 1,
+          teams: teamNames.map((name) => ({ name, score: 0 })),
+          currentTurn: 0,
           clickedCells: [],
           answeredQuestions: [],
           gameStarted: true,
@@ -62,57 +66,44 @@ export const useGameState = create<GameStore>()(
 
       answerCorrect: (points: number) =>
         set((state) => {
-          if (state.currentTurn === 1) {
-            return {
-              ...state,
-              team1: { ...state.team1, score: state.team1.score + points },
-              timestamp: Date.now(),
-            };
-          } else {
-            return {
-              ...state,
-              team2: { ...state.team2, score: state.team2.score + points },
-              timestamp: Date.now(),
-            };
-          }
+          const newTeams = state.teams.map((team, idx) =>
+            idx === state.currentTurn ? { ...team, score: team.score + points } : team
+          );
+          return { ...state, teams: newTeams, timestamp: Date.now() };
         }),
 
-      answerCorrectBothTeams: (points: number) =>
+      answerCorrectAllTeams: (points: number) =>
         set((state) => ({
           ...state,
-          team1: { ...state.team1, score: state.team1.score + points },
-          team2: { ...state.team2, score: state.team2.score + points },
+          teams: state.teams.map((team) => ({ ...team, score: team.score + points })),
           timestamp: Date.now(),
         })),
 
-      answerCorrectSpecificTeam: (teamNumber: 1 | 2, points: number) =>
+      answerCorrectSpecificTeam: (teamIndex: number, points: number) =>
         set((state) => {
-          if (teamNumber === 1) {
-            return {
-              ...state,
-              team1: { ...state.team1, score: state.team1.score + points },
-              timestamp: Date.now(),
-            };
-          } else {
-            return {
-              ...state,
-              team2: { ...state.team2, score: state.team2.score + points },
-              timestamp: Date.now(),
-            };
-          }
+          const newTeams = state.teams.map((team, idx) =>
+            idx === teamIndex ? { ...team, score: team.score + points } : team
+          );
+          return { ...state, teams: newTeams, timestamp: Date.now() };
         }),
 
       answerWrong: () =>
         set((state) => ({
-          currentTurn: state.currentTurn === 1 ? 2 : 1,
+          currentTurn: (state.currentTurn + 1) % state.teams.length,
           timestamp: Date.now(),
         })),
 
       switchTurn: () =>
         set((state) => ({
-          currentTurn: state.currentTurn === 1 ? 2 : 1,
+          currentTurn: (state.currentTurn + 1) % state.teams.length,
           timestamp: Date.now(),
         })),
+
+      setTurn: (teamIndex: number) =>
+        set({
+          currentTurn: teamIndex,
+          timestamp: Date.now(),
+        }),
 
       resetGame: () =>
         set({

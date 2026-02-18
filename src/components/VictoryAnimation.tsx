@@ -1,25 +1,18 @@
 import { useEffect, useState } from 'react';
 import confetti from 'canvas-confetti';
+import { Team } from '../types/game';
+
+const PLACE_LABELS = ['🥇', '🥈', '🥉', '4️⃣', '5️⃣', '6️⃣'];
 
 interface VictoryAnimationProps {
-  winnerName: string;
-  winnerScore: number;
-  loserName: string;
-  loserScore: number;
+  teams: Team[]; // sorted by score descending
   onClose: () => void;
 }
 
-export function VictoryAnimation({
-  winnerName,
-  winnerScore,
-  loserName,
-  loserScore,
-  onClose,
-}: VictoryAnimationProps) {
+export function VictoryAnimation({ teams, onClose }: VictoryAnimationProps) {
   const [showFireworks, setShowFireworks] = useState(true);
 
   useEffect(() => {
-    // Launch confetti animation
     const duration = 5000;
     const animationEnd = Date.now() + duration;
     const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
@@ -38,7 +31,6 @@ export function VictoryAnimation({
 
       const particleCount = 50 * (timeLeft / duration);
 
-      // Multiple confetti bursts from different positions
       confetti({
         ...defaults,
         particleCount,
@@ -54,9 +46,12 @@ export function VictoryAnimation({
     return () => clearInterval(interval);
   }, []);
 
+  const winner = teams[0];
+  const rest = teams.slice(1);
+
   return (
-    <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-[9999] animate-in fade-in duration-500">
-      <div className="max-w-4xl w-full text-center">
+    <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-[9999] animate-in fade-in duration-500 overflow-y-auto">
+      <div className="max-w-4xl w-full text-center py-8">
         {/* Trophy Animation */}
         <div className="mb-8 animate-in zoom-in duration-700 delay-300">
           <div className="text-9xl mb-4 animate-bounce">🏆</div>
@@ -66,24 +61,37 @@ export function VictoryAnimation({
         </div>
 
         {/* Winner Card */}
-        <div className="bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-3xl shadow-2xl p-8 mb-6 animate-in slide-in-from-bottom duration-700 delay-500">
-          <div className="text-white">
-            <div className="text-3xl font-bold mb-2">Победитель</div>
-            <div className="text-7xl font-black mb-4">{winnerName}</div>
-            <div className="text-5xl font-bold">
-              {winnerScore} баллов
+        {winner && (
+          <div className="bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-3xl shadow-2xl p-8 mb-6 animate-in slide-in-from-bottom duration-700 delay-500">
+            <div className="text-white">
+              <div className="text-3xl font-bold mb-2">Победитель</div>
+              <div className="text-7xl font-black mb-4">{winner.name}</div>
+              <div className="text-5xl font-bold">
+                {winner.score} баллов
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
-        {/* Runner-up */}
-        <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 animate-in slide-in-from-bottom duration-700 delay-700">
-          <div className="text-white/80">
-            <div className="text-xl font-semibold mb-2">2 место</div>
-            <div className="text-4xl font-bold mb-2">{loserName}</div>
-            <div className="text-3xl font-semibold">{loserScore} баллов</div>
+        {/* Other places */}
+        {rest.length > 0 && (
+          <div className="grid grid-cols-1 gap-3 mb-8 animate-in slide-in-from-bottom duration-700 delay-700">
+            {rest.map((team, index) => (
+              <div
+                key={index}
+                className="bg-white/10 backdrop-blur-sm rounded-2xl p-4"
+              >
+                <div className="text-white/80 flex items-center justify-between px-4">
+                  <div className="flex items-center gap-3">
+                    <span className="text-3xl">{PLACE_LABELS[index + 1] || `${index + 2}`}</span>
+                    <span className="text-2xl font-bold">{team.name}</span>
+                  </div>
+                  <span className="text-2xl font-semibold">{team.score} баллов</span>
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
+        )}
 
         {/* Celebration Messages */}
         <div className="text-white text-2xl font-semibold mb-8 animate-in slide-in-from-bottom duration-700 delay-1000">
@@ -99,7 +107,6 @@ export function VictoryAnimation({
           🎊 Завершить игру
         </button>
 
-        {/* Fireworks Indicator */}
         {showFireworks && (
           <div className="mt-6 text-yellow-400 text-lg animate-pulse">
             ✨ Салют! ✨
