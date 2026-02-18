@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Question } from '../types/question';
 import { MediaPlayer } from './MediaPlayer';
 import { useModalSettings } from '../hooks/useModalSettings';
@@ -42,8 +42,73 @@ export function QuestionModal({
   const [showAnswer, setShowAnswer] = useState(viewMode);
   const [answered, setAnswered] = useState(false);
   const [answeringTeamIndex, setAnsweringTeamIndex] = useState<number | null | -1>(-1); // -1 = not yet
-  const { autoCloseModal } = useModalSettings();
+  const [timeLeft, setTimeLeft] = useState<number | null>(null);
+  const [timerExpired, setTimerExpired] = useState(false);
+  const { autoCloseModal, questionTimer } = useModalSettings();
   const timeoutRef = useRef<number | null>(null);
+  const timerIntervalRef = useRef<number | null>(null);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+
+  const playBeeps = useCallback(() => {
+    try {
+      const ctx = new AudioContext();
+      audioCtxRef.current = ctx;
+      const beepCount = 5;
+      const beepDuration = 0.15;
+      const beepGap = 0.15;
+      for (let i = 0; i < beepCount; i++) {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.value = 880;
+        const startAt = ctx.currentTime + i * (beepDuration + beepGap);
+        gain.gain.setValueAtTime(0.5, startAt);
+        gain.gain.exponentialRampToValueAtTime(0.001, startAt + beepDuration);
+        osc.start(startAt);
+        osc.stop(startAt + beepDuration);
+      }
+    } catch {
+      // AudioContext not available
+    }
+  }, []);
+
+  // Start countdown timer when modal opens (not in viewMode, not answered)
+  useEffect(() => {
+    if (viewMode || questionTimer <= 0) return;
+
+    setTimeLeft(questionTimer);
+    setTimerExpired(false);
+
+    timerIntervalRef.current = window.setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev === null || prev <= 1) {
+          clearInterval(timerIntervalRef.current!);
+          timerIntervalRef.current = null;
+          setTimerExpired(true);
+          playBeeps();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => {
+      if (timerIntervalRef.current) {
+        clearInterval(timerIntervalRef.current);
+        timerIntervalRef.current = null;
+      }
+    };
+  }, [questionTimer, viewMode, playBeeps]);
+
+  // Stop timer when answer is shown or answered
+  useEffect(() => {
+    if ((showAnswer || answered) && timerIntervalRef.current) {
+      clearInterval(timerIntervalRef.current);
+      timerIntervalRef.current = null;
+    }
+  }, [showAnswer, answered]);
 
   // Auto-show answer in view mode
   useEffect(() => {
@@ -137,20 +202,37 @@ export function QuestionModal({
                 </div>
               </div>
             </div>
-            <div
-              className={`px-4 py-2 rounded-full text-sm font-bold ${
-                question.difficulty === 'easy'
-                  ? 'bg-green-100 text-green-700'
+            <div className="flex items-center gap-3">
+              {/* Timer */}
+              {!viewMode && questionTimer > 0 && timeLeft !== null && !answered && !showAnswer && (
+                <div className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold text-xl tabular-nums transition-colors ${
+                  timerExpired
+                    ? 'bg-red-600 text-white animate-pulse'
+                    : timeLeft <= 10
+                    ? 'bg-red-100 text-red-700'
+                    : timeLeft <= 20
+                    ? 'bg-yellow-100 text-yellow-700'
+                    : 'bg-ocean-100 text-ocean-700'
+                }`}>
+                  <span>⏱</span>
+                  <span>{timerExpired ? '0' : timeLeft}</span>
+                </div>
+              )}
+              <div
+                className={`px-4 py-2 rounded-full text-sm font-bold ${
+                  question.difficulty === 'easy'
+                    ? 'bg-green-100 text-green-700'
+                    : question.difficulty === 'medium'
+                    ? 'bg-yellow-100 text-yellow-700'
+                    : 'bg-red-100 text-red-700'
+                }`}
+              >
+                {question.difficulty === 'easy'
+                  ? 'Легкий'
                   : question.difficulty === 'medium'
-                  ? 'bg-yellow-100 text-yellow-700'
-                  : 'bg-red-100 text-red-700'
-              }`}
-            >
-              {question.difficulty === 'easy'
-                ? 'Легкий'
-                : question.difficulty === 'medium'
-                ? 'Средний'
-                : 'Сложный'}
+                  ? 'Средний'
+                  : 'Сложный'}
+              </div>
             </div>
           </div>
 

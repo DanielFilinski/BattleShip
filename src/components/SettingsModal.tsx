@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useModalSettings } from '../hooks/useModalSettings';
 import { useGameState } from '../hooks/useGameState';
 
@@ -9,8 +10,11 @@ interface SettingsModalProps {
 }
 
 export function SettingsModal({ onToggleFullscreen, onOpenFieldSettings, onClose, isFullscreen }: SettingsModalProps) {
-  const { autoCloseModal, toggleAutoCloseModal } = useModalSettings();
+  const { autoCloseModal, toggleAutoCloseModal, questionTimer, setQuestionTimer } = useModalSettings();
   const { viewMode, toggleViewMode, editMode, toggleEditMode } = useGameState();
+  const [timerInput, setTimerInput] = useState(questionTimer.toString());
+
+  const TIMER_PRESETS = [0, 30, 45, 60, 90, 120];
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[9999] p-4">
@@ -86,6 +90,57 @@ export function SettingsModal({ onToggleFullscreen, onOpenFieldSettings, onClose
                 </div>
               </div>
             </button>
+
+            {/* Question Timer */}
+            <div className="px-4 py-4 rounded-xl border-2 border-ocean-100">
+              <div className="flex items-center gap-4 mb-3">
+                <span className="text-3xl">⏱</span>
+                <div className="flex-1">
+                  <div className="font-semibold text-ocean-700 text-lg">
+                    Таймер вопроса
+                  </div>
+                  <div className="text-sm text-ocean-500">
+                    {questionTimer === 0 ? 'Выключен' : `${questionTimer} сек — пикает по истечении`}
+                  </div>
+                </div>
+              </div>
+              {/* Preset buttons */}
+              <div className="flex flex-wrap gap-2 mb-3">
+                {TIMER_PRESETS.map(preset => (
+                  <button
+                    key={preset}
+                    onClick={() => {
+                      setQuestionTimer(preset);
+                      setTimerInput(preset.toString());
+                    }}
+                    className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors ${
+                      questionTimer === preset
+                        ? 'bg-ocean-600 text-white'
+                        : 'bg-ocean-100 text-ocean-700 hover:bg-ocean-200'
+                    }`}
+                  >
+                    {preset === 0 ? 'Выкл' : `${preset}с`}
+                  </button>
+                ))}
+              </div>
+              {/* Custom input */}
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  min="0"
+                  max="600"
+                  value={timerInput}
+                  onChange={e => setTimerInput(e.target.value)}
+                  onBlur={() => {
+                    const val = Math.max(0, Math.min(600, parseInt(timerInput) || 0));
+                    setQuestionTimer(val);
+                    setTimerInput(val.toString());
+                  }}
+                  className="w-24 border-2 border-ocean-200 rounded-lg px-3 py-1.5 text-ocean-800 font-semibold text-center focus:outline-none focus:border-ocean-500"
+                />
+                <span className="text-ocean-600 text-sm">сек (своё значение)</span>
+              </div>
+            </div>
 
             {/* View Mode Toggle */}
             <button
