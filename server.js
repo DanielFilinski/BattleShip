@@ -16,6 +16,10 @@ let gameStarted = false;
 app.use(cors());
 app.use(express.json());
 
+// Раздача статики (для Electron / production режима)
+const distPath = path.join(__dirname, 'dist');
+app.use(express.static(distPath));
+
 // API для получения текущего вопроса
 app.get('/api/current-question', (req, res) => {
   res.json({
@@ -43,7 +47,22 @@ app.post('/api/game-status', (req, res) => {
   res.json({ success: true });
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`✅ API сервер запущен на http://0.0.0.0:${PORT}`);
-  console.log(`📱 Доступен в локальной сети`);
+// SPA fallback — все остальные роуты отдают index.html
+app.get('*', (req, res) => {
+  res.sendFile(path.join(distPath, 'index.html'));
 });
+
+export function startServer(port = PORT) {
+  return new Promise((resolve) => {
+    const server = app.listen(port, '0.0.0.0', () => {
+      console.log(`✅ Сервер запущен на http://localhost:${port}`);
+      console.log(`📱 Доступен в локальной сети`);
+      resolve(server);
+    });
+  });
+}
+
+// Запуск напрямую (не через Electron)
+if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
+  startServer();
+}
