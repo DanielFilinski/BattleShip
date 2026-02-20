@@ -12,4 +12,5 @@ export interface Question {
   mediaPath?: string;
   answerImages?: string | string[]; // Single image path or array of image paths
   answerVideoPath?: string; // Video path to show after answer is revealed
+  thinkingTime?: number; // Custom timer in seconds for this question
 }

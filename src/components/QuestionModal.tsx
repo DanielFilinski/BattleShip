@@ -74,11 +74,14 @@ export function QuestionModal({
     }
   }, []);
 
+  // Effective timer: use question's thinkingTime if set, otherwise fall back to settings
+  const effectiveTimer = question.thinkingTime ?? questionTimer;
+
   // Start countdown timer when modal opens (not in viewMode, not answered)
   useEffect(() => {
-    if (viewMode || questionTimer <= 0) return;
+    if (viewMode || effectiveTimer <= 0) return;
 
-    setTimeLeft(questionTimer);
+    setTimeLeft(effectiveTimer);
     setTimerExpired(false);
 
     timerIntervalRef.current = window.setInterval(() => {
@@ -100,7 +103,7 @@ export function QuestionModal({
         timerIntervalRef.current = null;
       }
     };
-  }, [questionTimer, viewMode, playBeeps]);
+  }, [effectiveTimer, viewMode, playBeeps]);
 
   // Stop timer when answer is shown or answered
   useEffect(() => {
@@ -204,7 +207,7 @@ export function QuestionModal({
             </div>
             <div className="flex items-center gap-3">
               {/* Timer */}
-              {!viewMode && questionTimer > 0 && timeLeft !== null && !answered && !showAnswer && (
+              {!viewMode && effectiveTimer > 0 && timeLeft !== null && !answered && !showAnswer && (
                 <div className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold text-xl tabular-nums transition-colors ${
                   timerExpired
                     ? 'bg-red-600 text-white animate-pulse'
