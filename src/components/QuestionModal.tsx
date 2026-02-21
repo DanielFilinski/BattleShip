@@ -41,9 +41,11 @@ export function QuestionModal({
 }: QuestionModalProps) {
   const [showAnswer, setShowAnswer] = useState(viewMode);
   const [answered, setAnswered] = useState(false);
+  const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
   const [answeringTeamIndex, setAnsweringTeamIndex] = useState<number | null | -1>(-1); // -1 = not yet
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [timerExpired, setTimerExpired] = useState(false);
+  const [timerStarted, setTimerStarted] = useState(false);
   const { autoCloseModal, questionTimer } = useModalSettings();
   const timeoutRef = useRef<number | null>(null);
   const timerIntervalRef = useRef<number | null>(null);
@@ -77,9 +79,9 @@ export function QuestionModal({
   // Effective timer: use question's thinkingTime if set, otherwise fall back to settings
   const effectiveTimer = question.thinkingTime ?? questionTimer;
 
-  // Start countdown timer when modal opens (not in viewMode, not answered)
+  // Start countdown timer when timerStarted becomes true
   useEffect(() => {
-    if (viewMode || effectiveTimer <= 0) return;
+    if (viewMode || effectiveTimer <= 0 || !timerStarted) return;
 
     setTimeLeft(effectiveTimer);
     setTimerExpired(false);
@@ -103,7 +105,7 @@ export function QuestionModal({
         timerIntervalRef.current = null;
       }
     };
-  }, [effectiveTimer, viewMode, playBeeps]);
+  }, [effectiveTimer, viewMode, playBeeps, timerStarted]);
 
   // Stop timer when answer is shown or answered
   useEffect(() => {
@@ -190,6 +192,26 @@ export function QuestionModal({
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
+      {/* Lightbox */}
+      {lightboxSrc && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center cursor-zoom-out"
+          onClick={() => setLightboxSrc(null)}
+        >
+          <img
+            src={lightboxSrc}
+            alt="Полный размер"
+            className="max-w-full max-h-full object-contain select-none"
+            onClick={(e) => e.stopPropagation()}
+          />
+          <button
+            className="absolute top-4 right-4 text-white text-4xl font-bold leading-none hover:text-gray-300 transition-colors"
+            onClick={() => setLightboxSrc(null)}
+          >
+            ✕
+          </button>
+        </div>
+      )}
       <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <div className="p-8">
           {/* Header */}
@@ -207,18 +229,31 @@ export function QuestionModal({
             </div>
             <div className="flex items-center gap-3">
               {/* Timer */}
-              {!viewMode && effectiveTimer > 0 && timeLeft !== null && !answered && !showAnswer && (
-                <div className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold text-xl tabular-nums transition-colors ${
-                  timerExpired
-                    ? 'bg-red-600 text-white animate-pulse'
-                    : timeLeft <= 10
-                    ? 'bg-red-100 text-red-700'
-                    : timeLeft <= 20
-                    ? 'bg-yellow-100 text-yellow-700'
-                    : 'bg-ocean-100 text-ocean-700'
-                }`}>
-                  <span>⏱</span>
-                  <span>{timerExpired ? '0' : timeLeft}</span>
+              {!viewMode && effectiveTimer > 0 && !answered && !showAnswer && (
+                <div className="flex items-center gap-2">
+                  {timerStarted && timeLeft !== null && (
+                    <div className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold text-xl tabular-nums transition-colors ${
+                      timerExpired
+                        ? 'bg-red-600 text-white animate-pulse'
+                        : timeLeft <= 10
+                        ? 'bg-red-100 text-red-700'
+                        : timeLeft <= 20
+                        ? 'bg-yellow-100 text-yellow-700'
+                        : 'bg-ocean-100 text-ocean-700'
+                    }`}>
+                      <span>⏱</span>
+                      <span>{timerExpired ? '0' : timeLeft}</span>
+                    </div>
+                  )}
+                  {!timerStarted && (
+                    <button
+                      onClick={() => setTimerStarted(true)}
+                      className="flex items-center gap-2 px-4 py-2 rounded-full font-bold text-sm bg-ocean-600 hover:bg-ocean-700 text-white transition-colors"
+                    >
+                      <span>▶</span>
+                      <span>Старт</span>
+                    </button>
+                  )}
                 </div>
               )}
               <div
@@ -259,7 +294,8 @@ export function QuestionModal({
               ).map((imagePath, index) => (
                 <div
                   key={index}
-                  className="rounded-xl overflow-hidden shadow-lg bg-white"
+                  className="rounded-xl overflow-hidden shadow-lg bg-white cursor-zoom-in"
+                  onClick={() => setLightboxSrc(`/media/${imagePath}`)}
                 >
                   <img
                     src={`/media/${imagePath}`}
@@ -336,7 +372,8 @@ export function QuestionModal({
                   ).map((imagePath, index) => (
                     <div
                       key={index}
-                      className="rounded-xl overflow-hidden shadow-lg bg-white"
+                      className="rounded-xl overflow-hidden shadow-lg bg-white cursor-zoom-in"
+                      onClick={() => setLightboxSrc(`/media/${imagePath}`)}
                     >
                       <img
                         src={`/media/${imagePath}`}
@@ -348,7 +385,7 @@ export function QuestionModal({
                         }}
                       />
                     </div>
-                  ))};
+                  ))}
                 </div>
               )}
 
