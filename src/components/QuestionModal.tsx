@@ -3,16 +3,7 @@ import { Question } from '../types/question';
 import { MediaPlayer } from './MediaPlayer';
 import { useModalSettings } from '../hooks/useModalSettings';
 import { sendCurrentQuestion } from '../utils/storage';
-
-// Color gradients for team buttons
-const TEAM_BUTTON_STYLES = [
-  'from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600',
-  'from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600',
-  'from-violet-600 to-violet-500 hover:from-violet-700 hover:to-violet-600',
-  'from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600',
-  'from-rose-600 to-rose-500 hover:from-rose-700 hover:to-rose-600',
-  'from-cyan-600 to-cyan-500 hover:from-cyan-700 hover:to-cyan-600',
-];
+import { getTeamButtonStyle, getTeamColor } from '../utils/teamColors';
 
 interface QuestionModalProps {
   question: Question;
@@ -21,7 +12,7 @@ interface QuestionModalProps {
   onSkip: () => void;
   onTransfer: () => void;
   onClose: () => void;
-  teams: { name: string; score: number }[];
+  teams: { name: string; score: number; color?: string }[];
   onTeamAnswer: (teamIndex: number | null) => void; // null = никому
   viewMode?: boolean;
   currentTurn: number;
@@ -455,7 +446,8 @@ export function QuestionModal({
                       <button
                         key={index}
                         onClick={() => handleTeamAnswer(index)}
-                        className={`bg-gradient-to-r ${TEAM_BUTTON_STYLES[index % TEAM_BUTTON_STYLES.length]} text-white text-xl font-bold py-5 px-4 rounded-xl transition-all transform hover:scale-105 active:scale-95 shadow-lg`}
+                        className="text-white text-xl font-bold py-5 px-4 rounded-xl transition-all transform hover:scale-105 hover:brightness-110 active:scale-95 shadow-lg"
+                        style={getTeamButtonStyle(getTeamColor(team, index))}
                       >
                         {currentTurn === index ? '✓ ' : ''}{team.name}
                       </button>

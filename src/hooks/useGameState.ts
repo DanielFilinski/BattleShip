@@ -1,10 +1,11 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { GameState, Team } from '../types/game';
+import { DEFAULT_TEAM_COLORS } from '../utils/teamColors';
 
 interface GameStore extends GameState {
   // Actions
-  startGame: (teamNames: string[], gameMode: string) => void;
+  startGame: (teamNames: string[], gameMode: string, teamColors?: string[]) => void;
   clickCell: (coordinate: string) => void;
   unclickCell: (coordinate: string) => void;
   answerCorrect: (points: number) => void;
@@ -20,8 +21,8 @@ interface GameStore extends GameState {
 }
 
 const DEFAULT_TEAMS: Team[] = [
-  { name: '', score: 0 },
-  { name: '', score: 0 },
+  { name: '', score: 0, color: DEFAULT_TEAM_COLORS[0] },
+  { name: '', score: 0, color: DEFAULT_TEAM_COLORS[1] },
 ];
 
 const initialState: GameState = {
@@ -41,9 +42,13 @@ export const useGameState = create<GameStore>()(
     (set) => ({
       ...initialState,
 
-      startGame: (teamNames: string[], gameMode: string) =>
+      startGame: (teamNames: string[], gameMode: string, teamColors?: string[]) =>
         set({
-          teams: teamNames.map((name) => ({ name, score: 0 })),
+          teams: teamNames.map((name, i) => ({
+            name,
+            score: 0,
+            color: teamColors?.[i] || DEFAULT_TEAM_COLORS[i % DEFAULT_TEAM_COLORS.length],
+          })),
           currentTurn: 0,
           clickedCells: [],
           answeredQuestions: [],
