@@ -10,6 +10,7 @@ export interface Question {
   question: string;
   answer: string;
   mediaPath?: string;
+  questionImages?: string | string[]; // Single image path or array of image paths for the question
   answerImages?: string | string[]; // Single image path or array of image paths
   answerVideoPath?: string; // Video path to show after answer is revealed
   thinkingTime?: number; // Custom timer in seconds for this question

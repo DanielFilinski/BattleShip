@@ -18,6 +18,7 @@ interface Question {
   question: string;
   answer: string;
   mediaPath?: string;
+  questionImages?: string[];
   answerImages?: string[];
 }
 

@@ -241,10 +241,39 @@ export function QuestionModal({
 
           {/* Question */}
           <div className="bg-ocean-50 rounded-2xl p-8 mb-6">
-            <div className="text-3xl font-bold text-ocean-900 text-center leading-relaxed">
+            <div className="text-3xl font-bold text-ocean-900 text-center leading-relaxed whitespace-pre-line">
               {question.question}
             </div>
           </div>
+
+          {/* Question Images */}
+          {question.questionImages && (
+            <div className={`mb-6 ${
+              Array.isArray(question.questionImages) && question.questionImages.length > 1
+                ? 'grid grid-cols-2 gap-4'
+                : 'flex justify-center'
+            }`}>
+              {(Array.isArray(question.questionImages)
+                ? question.questionImages
+                : [question.questionImages]
+              ).map((imagePath, index) => (
+                <div
+                  key={index}
+                  className="rounded-xl overflow-hidden shadow-lg bg-white"
+                >
+                  <img
+                    src={`/media/${imagePath}`}
+                    alt={`Вопрос ${index + 1}`}
+                    className="w-full h-auto object-contain max-h-96"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* Media Player */}
           {question.mediaPath && (
@@ -290,7 +319,7 @@ export function QuestionModal({
               <div className="text-sm font-semibold text-ocean-600 mb-2 uppercase">
                 Правильный ответ:
               </div>
-              <div className="text-2xl font-bold text-ocean-900 mb-4">
+              <div className="text-2xl font-bold text-ocean-900 mb-4 whitespace-pre-line">
                 {question.answer}
               </div>
 
