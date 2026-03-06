@@ -12,8 +12,9 @@ export function WelcomeScreen({ onModeSelect }: WelcomeScreenProps) {
   const [teamNames, setTeamNames] = useState<string[]>(['', '']);
   const [teamColors, setTeamColors] = useState<string[]>([DEFAULT_TEAM_COLORS[0], DEFAULT_TEAM_COLORS[1]]);
   const [openColorPicker, setOpenColorPicker] = useState<number | null>(null);
-  const [selectedMode, setSelectedMode] = useState<string>('choir');
+  const [selectedMode, setSelectedMode] = useState<string>('');
   const [gameModes, setGameModes] = useState<GameMode[]>([]);
+  const [modeListOpen, setModeListOpen] = useState(false);
   const { startGame, gameStarted, gameMode } = useGameState();
 
   // Check if there's a saved game from zustand persist
@@ -50,6 +51,11 @@ export function WelcomeScreen({ onModeSelect }: WelcomeScreenProps) {
     }
   };
 
+  const handleModeSelect = (modeId: string) => {
+    setSelectedMode(modeId);
+    setModeListOpen(false);
+  };
+
   const addTeam = () => {
     if (teamNames.length < 6) {
       setTeamNames([...teamNames, '']);
@@ -79,6 +85,7 @@ export function WelcomeScreen({ onModeSelect }: WelcomeScreenProps) {
   };
 
   const canStart = teamNames.filter((n) => n.trim().length > 0).length >= 2;
+  const currentMode = gameModes.find((m) => m.id === selectedMode);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-ocean-900 via-ocean-700 to-ocean-500 flex items-center justify-center p-4">
@@ -96,29 +103,65 @@ export function WelcomeScreen({ onModeSelect }: WelcomeScreenProps) {
             <label className="block text-lg font-semibold text-ocean-700 mb-2">
               Выберите режим игры
             </label>
-            <div className="grid grid-cols-2 gap-3">
-              {gameModes.map((mode) => (
-                <button
-                  key={mode.id}
-                  onClick={() => setSelectedMode(mode.id)}
-                  className={`p-4 rounded-xl border-2 transition-all text-left ${
-                    selectedMode === mode.id
-                      ? 'border-ocean-500 bg-ocean-50 shadow-md transform scale-105'
-                      : 'border-gray-300 bg-white hover:border-ocean-300'
-                  }`}
-                >
-                  <div
-                    className="w-3 h-3 rounded-full mb-2"
-                    style={{ backgroundColor: mode.color }}
-                  ></div>
-                  <div className="font-bold text-ocean-800">{mode.name}</div>
-                  <div className="text-xs text-ocean-600 mt-1">{mode.description}</div>
-                </button>
-              ))}
-            </div>
+
+            {/* Selected mode card / toggle */}
+            {currentMode && (
+              <button
+                onClick={() => setModeListOpen((v) => !v)}
+                className={`w-full p-4 rounded-xl border-2 text-left transition-all ${
+                  modeListOpen
+                    ? 'border-ocean-500 bg-ocean-50 shadow-md'
+                    : 'border-ocean-400 bg-ocean-50 hover:border-ocean-500'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-4 h-4 rounded-full flex-shrink-0"
+                      style={{ backgroundColor: currentMode.color }}
+                    />
+                    <div>
+                      <div className="font-bold text-ocean-800">{currentMode.name}</div>
+                      <div className="text-xs text-ocean-600 mt-0.5">{currentMode.description}</div>
+                    </div>
+                  </div>
+                  <span className="text-ocean-500 text-lg ml-3">
+                    {modeListOpen ? '▲' : '▼'}
+                  </span>
+                </div>
+              </button>
+            )}
+
+            {/* Expandable list of all modes */}
+            {modeListOpen && (
+              <div className="mt-2 border-2 border-ocean-200 rounded-xl overflow-hidden shadow-lg">
+                {gameModes.map((mode, idx) => (
+                  <button
+                    key={mode.id}
+                    onClick={() => handleModeSelect(mode.id)}
+                    className={`w-full p-4 text-left transition-all flex items-center gap-3 ${
+                      mode.id === selectedMode
+                        ? 'bg-ocean-100'
+                        : 'bg-white hover:bg-ocean-50'
+                    } ${idx !== 0 ? 'border-t border-ocean-100' : ''}`}
+                  >
+                    <div
+                      className="w-3 h-3 rounded-full flex-shrink-0"
+                      style={{ backgroundColor: mode.color }}
+                    />
+                    <div>
+                      <div className="font-bold text-ocean-800">{mode.name}</div>
+                      <div className="text-xs text-ocean-600 mt-0.5">{mode.description}</div>
+                    </div>
+                    {mode.id === selectedMode && (
+                      <span className="ml-auto text-ocean-500">✓</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
-          {/* Teams */}
           <div>
             <div className="flex items-center justify-between mb-3">
               <label className="text-lg font-semibold text-ocean-700">
