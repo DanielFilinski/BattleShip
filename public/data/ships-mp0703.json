@@ -1,0 +1,124 @@
+{
+  "ships": [
+    {
+      "id": "ship1",
+      "name": "Линкор",
+      "cells": [
+        "Г4",
+        "Г5",
+        "Г6",
+        "Г7"
+      ],
+      "questionIds": [
+        "br7_music_01",
+        "br7_geo_01",
+        "br7_gk_01",
+        "br7_riddle_01"
+      ]
+    },
+    {
+      "id": "ship2",
+      "name": "Крейсер 1",
+      "cells": [
+        "А1",
+        "А2",
+        "А3"
+      ],
+      "questionIds": [
+        "br7_music_02",
+        "br7_music_03",
+        "br7_music_04"
+      ]
+    },
+    {
+      "id": "ship3",
+      "name": "Крейсер 2",
+      "cells": [
+        "А7",
+        "А8",
+        "А9"
+      ],
+      "questionIds": [
+        "br7_geo_03",
+        "br7_geo_04",
+        "br7_geo_05"
+      ]
+    },
+    {
+      "id": "ship4",
+      "name": "Эсминец 1",
+      "cells": [
+        "В1",
+        "В2"
+      ],
+      "questionIds": [
+        "br7_music_05",
+        "br7_gk_02"
+      ]
+    },
+    {
+      "id": "ship5",
+      "name": "Эсминец 2",
+      "cells": [
+        "Е5",
+        "Е6"
+      ],
+      "questionIds": [
+        "br7_geo_02",
+        "br7_gk_03"
+      ]
+    },
+    {
+      "id": "ship6",
+      "name": "Эсминец 3",
+      "cells": [
+        "З8",
+        "З9"
+      ],
+      "questionIds": [
+        "br7_riddle_04",
+        "br7_riddle_05"
+      ]
+    },
+    {
+      "id": "ship7",
+      "name": "Подлодка 1",
+      "cells": [
+        "К1"
+      ],
+      "questionIds": [
+        "br7_gk_04"
+      ]
+    },
+    {
+      "id": "ship8",
+      "name": "Подлодка 2",
+      "cells": [
+        "К3"
+      ],
+      "questionIds": [
+        "br7_gk_05"
+      ]
+    },
+    {
+      "id": "ship9",
+      "name": "Подлодка 3",
+      "cells": [
+        "К5"
+      ],
+      "questionIds": [
+        "br7_riddle_02"
+      ]
+    },
+    {
+      "id": "ship10",
+      "name": "Подлодка 4",
+      "cells": [
+        "К7"
+      ],
+      "questionIds": [
+        "br7_riddle_03"
+      ]
+    }
+  ]
+}
