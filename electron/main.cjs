@@ -18,6 +18,7 @@ function createWindow() {
       contextIsolation: true,
     },
     title: 'Battleship Quiz',
+    icon: path.join(__dirname, '..', 'build', 'icon.png'),
     // Убрать стандартное меню
     autoHideMenuBar: true,
   });
