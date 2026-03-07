@@ -62,3 +62,30 @@ export function getShipByCell(coordinate: string, ships: Ship[]): Ship | undefin
   // Find the ship that contains the given cell
   return ships.find(ship => ship.cells.includes(coordinate));
 }
+
+export function getSurroundingCells(ship: Ship, columns: string[], rows: number[]): string[] {
+  const surrounding = new Set<string>();
+  const shipCellSet = new Set(ship.cells);
+
+  for (const cell of ship.cells) {
+    const col = cell[0];
+    const row = parseInt(cell.slice(1));
+    const colIdx = columns.indexOf(col);
+
+    for (let dc = -1; dc <= 1; dc++) {
+      for (let dr = -1; dr <= 1; dr++) {
+        if (dc === 0 && dr === 0) continue;
+        const newColIdx = colIdx + dc;
+        const newRow = row + dr;
+        if (newColIdx >= 0 && newColIdx < columns.length && rows.includes(newRow)) {
+          const neighbor = `${columns[newColIdx]}${newRow}`;
+          if (!shipCellSet.has(neighbor)) {
+            surrounding.add(neighbor);
+          }
+        }
+      }
+    }
+  }
+
+  return Array.from(surrounding);
+}

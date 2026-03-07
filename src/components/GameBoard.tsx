@@ -11,7 +11,7 @@ import { FieldSettingsModal } from './FieldSettingsModal';
 import { VictoryAnimation } from './VictoryAnimation';
 import { ConfirmModal } from './ConfirmModal';
 import { QuestionSelector } from './QuestionSelector';
-import { generateColumns, generateRows, getCellType, isShipSunk, getShipByCell } from '../utils/gameLogic';
+import { generateColumns, generateRows, getCellType, isShipSunk, getShipByCell, getSurroundingCells } from '../utils/gameLogic';
 import { Question } from '../types/question';
 import { Ship, Bomb } from '../types/game';
 import { CellStatus } from '../types/cell';
@@ -207,6 +207,10 @@ export function GameBoard({ questions, ships, bombs, onUpdateShipCell, onUpdateB
     }
 
     if (!clickedCells.includes(coordinate)) {
+      const isAdjacentToSunkShip = ships.some(
+        ship => isShipSunk(ship, clickedCells) && getSurroundingCells(ship, COLUMNS, ROWS).includes(coordinate)
+      );
+      if (isAdjacentToSunkShip) return 'miss';
       return 'untouched';
     }
 

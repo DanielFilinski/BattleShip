@@ -26,8 +26,8 @@
       ],
       "questionIds": [
         "br7_music_02",
-        "br7_music_03",
-        "br7_music_04"
+        "br7_geo_02",
+        "br7_gk_02"
       ]
     },
     {
@@ -39,9 +39,9 @@
         "А9"
       ],
       "questionIds": [
+        "br7_music_03",
         "br7_geo_03",
-        "br7_geo_04",
-        "br7_geo_05"
+        "br7_riddle_02"
       ]
     },
     {
@@ -52,8 +52,8 @@
         "В2"
       ],
       "questionIds": [
-        "br7_music_05",
-        "br7_gk_02"
+        "br7_gk_03",
+        "br7_riddle_03"
       ]
     },
     {
@@ -64,8 +64,8 @@
         "Е6"
       ],
       "questionIds": [
-        "br7_geo_02",
-        "br7_gk_03"
+        "br7_music_04",
+        "br7_geo_04"
       ]
     },
     {
@@ -76,8 +76,8 @@
         "З9"
       ],
       "questionIds": [
-        "br7_riddle_04",
-        "br7_riddle_05"
+        "br7_gk_04",
+        "br7_riddle_04"
       ]
     },
     {
@@ -87,7 +87,7 @@
         "К1"
       ],
       "questionIds": [
-        "br7_gk_04"
+        "br7_music_05"
       ]
     },
     {
@@ -97,7 +97,7 @@
         "К3"
       ],
       "questionIds": [
-        "br7_gk_05"
+        "br7_geo_05"
       ]
     },
     {
@@ -107,7 +107,7 @@
         "К5"
       ],
       "questionIds": [
-        "br7_riddle_02"
+        "br7_gk_05"
       ]
     },
     {
@@ -117,7 +117,7 @@
         "К7"
       ],
       "questionIds": [
-        "br7_riddle_03"
+        "br7_riddle_05"
       ]
     }
   ]
