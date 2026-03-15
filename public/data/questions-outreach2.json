@@ -1,0 +1,254 @@
+{
+  "questions": [
+    {
+      "id": "o2_01",
+      "category": "История",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "thinkingTime": 25,
+      "question": "Кем был Чингисхан?",
+      "answer": "Первым ханом Монгольской империи"
+    },
+    {
+      "id": "o2_02",
+      "category": "История",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "thinkingTime": 25,
+      "question": "Сколько лет длилась Столетняя война?",
+      "answer": "116 лет"
+    },
+    {
+      "id": "o2_03",
+      "category": "История",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "thinkingTime": 25,
+      "question": "В каком городе началась Первая мировая война?",
+      "answer": "Сараево"
+    },
+    {
+      "id": "o2_04",
+      "category": "История",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "thinkingTime": 25,
+      "question": "Чем известен Герострат?",
+      "answer": "Он сжёг храм Артемиды в Эфесе, чтобы прославиться"
+    },
+    {
+      "id": "o2_05",
+      "category": "Наука",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "thinkingTime": 25,
+      "question": "Сколько сердец у осьминога?",
+      "answer": "Три"
+    },
+    {
+      "id": "o2_06",
+      "category": "Наука",
+      "type": "text",
+      "difficulty": "hard",
+      "points": 3,
+      "thinkingTime": 30,
+      "question": "Для чего был выдан патент Эйнштейну и его коллеге в 1930 году?",
+      "answer": "Для холодильника"
+    },
+    {
+      "id": "o2_07",
+      "category": "Наука",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "thinkingTime": 25,
+      "question": "Какой части тела нет у акулы?",
+      "answer": "Плавательного пузыря"
+    },
+    {
+      "id": "o2_08",
+      "category": "Наука",
+      "type": "text",
+      "difficulty": "hard",
+      "points": 3,
+      "thinkingTime": 30,
+      "question": "Кто изобрёл искусственные газированные напитки?",
+      "answer": "Джозеф Пристли"
+    },
+    {
+      "id": "o2_09",
+      "category": "География",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "thinkingTime": 25,
+      "question": "В какой стране находится Ангкор-Ват?",
+      "answer": "Камбоджа"
+    },
+    {
+      "id": "o2_10",
+      "category": "История",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "thinkingTime": 25,
+      "question": "Как назывался корабль Христофора Колумба, на котором он пересёк Атлантику в 1492 году?",
+      "answer": "«Санта-Мария»"
+    },
+    {
+      "id": "o2_11",
+      "category": "История",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "thinkingTime": 25,
+      "question": "Как назывался план Германии по нападению на СССР во Второй мировой войне?",
+      "answer": "Операция «Барбаросса»"
+    },
+    {
+      "id": "o2_12",
+      "category": "Искусство",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "thinkingTime": 20,
+      "question": "Как называется знаменитая картина Эдварда Мунка с искажённым лицом на мосту?",
+      "answer": "«Крик»"
+    },
+    {
+      "id": "o2_13",
+      "category": "Кино",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "thinkingTime": 25,
+      "question": "В каком советском фильме звучит фраза «Какая гадость эта ваша заливная рыба»?",
+      "answer": "«Ирония судьбы, или С лёгким паром!»"
+    },
+    {
+      "id": "o2_14",
+      "category": "Кино",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "thinkingTime": 20,
+      "question": "Как зовут льва-отца из мультфильма «Король Лев»?",
+      "answer": "Муфаса"
+    },
+    {
+      "id": "o2_15",
+      "category": "Литература",
+      "type": "text",
+      "difficulty": "hard",
+      "points": 3,
+      "thinkingTime": 30,
+      "question": "Какова первая строка романа «Моби Дик»?",
+      "answer": "«Зовите меня Измаил»"
+    },
+    {
+      "id": "o2_16",
+      "category": "Литература",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "thinkingTime": 20,
+      "question": "Кто стал мужем Дюймовочки в сказке Андерсена?",
+      "answer": "Эльф (принц эльфов)"
+    },
+    {
+      "id": "o2_17",
+      "category": "Логика",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "thinkingTime": 25,
+      "question": "Чем заканчиваются и день, и ночь?",
+      "answer": "Мягким знаком"
+    },
+    {
+      "id": "o2_18",
+      "category": "Логика",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "thinkingTime": 30,
+      "question": "К лодке с разных сторон идут двое мужчин, но она выдерживает только одного. Оба переплыли. Как?",
+      "answer": "Изначально они были на разных берегах — каждый воспользовался лодкой отдельно"
+    },
+    {
+      "id": "o2_19",
+      "category": "Логика",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "thinkingTime": 25,
+      "question": "Сколько раз из числа 25 можно вычесть 3?",
+      "answer": "Один раз — после этого вычитать придётся уже из 22"
+    },
+    {
+      "id": "o2_20",
+      "category": "Логика",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "thinkingTime": 25,
+      "question": "Вы участвуете в гонке. Вы догнали и обогнали бегуна, занимавшего второе место. Какое место занимаете теперь вы?",
+      "answer": "Второе место"
+    },
+    {
+      "id": "o2_b1",
+      "category": "Наука",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "thinkingTime": 25,
+      "question": "Кто уронил на Луне молоток и перо, чтобы доказать, что без воздуха они падают одинаково?",
+      "answer": "Дэвид Р. Скотт (астронавт миссии Аполлон-15)"
+    },
+    {
+      "id": "o2_b2",
+      "category": "Кино",
+      "type": "text",
+      "difficulty": "hard",
+      "points": 3,
+      "thinkingTime": 30,
+      "question": "Сколько камео Альфред Хичкок сделал в своих собственных фильмах?",
+      "answer": "37"
+    },
+    {
+      "id": "o2_b3",
+      "category": "Литература",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "thinkingTime": 20,
+      "question": "Кто выпустил Хоттабыча из кувшина?",
+      "answer": "Волька"
+    },
+    {
+      "id": "o2_b4",
+      "category": "Логика",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "thinkingTime": 25,
+      "question": "Как бросить сырое яйцо так, чтобы оно не разбилось на протяжении первых трёх метров?",
+      "answer": "Бросить дальше трёх метров"
+    },
+    {
+      "id": "o2_b5",
+      "category": "Логика",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "thinkingTime": 20,
+      "question": "У семи братьев есть по одной сестре. Сколько всего сестёр?",
+      "answer": "Одна — у всех братьев одна общая сестра"
+    }
+  ]
+}
