@@ -2,7 +2,7 @@ import { useGameState } from '../hooks/useGameState';
 import { getTeamActiveStyle, getTeamColor } from '../utils/teamColors';
 
 export function ScoreBoard() {
-  const { teams, currentTurn } = useGameState();
+  const { teams, currentTurn, setTurn } = useGameState();
 
   return (
     <div className="flex justify-between items-center gap-4 mb-8 flex-wrap">
@@ -12,8 +12,10 @@ export function ScoreBoard() {
         return (
           <div
             key={index}
-            className={`flex-1 min-w-[120px] rounded-2xl shadow-xl p-6 border-4 transition-all duration-300 ${
-              isActive ? 'scale-105 shadow-2xl' : 'bg-white border-ocean-200'
+            onClick={() => setTurn(index)}
+            title={isActive ? 'Текущий ход' : 'Передать ход этой команде'}
+            className={`flex-1 min-w-[120px] rounded-2xl shadow-xl p-6 border-4 transition-all duration-300 cursor-pointer ${
+              isActive ? 'scale-105 shadow-2xl' : 'bg-white border-ocean-200 hover:shadow-2xl hover:border-ocean-400 hover:bg-ocean-50'
             }`}
             style={isActive ? getTeamActiveStyle(color) : undefined}
           >

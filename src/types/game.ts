@@ -4,6 +4,13 @@ export interface Team {
   color: string;
 }
 
+export interface GameSnapshot {
+  teams: Team[];
+  currentTurn: number;
+  clickedCells: string[];
+  answeredQuestions: string[];
+}
+
 export interface GameState {
   teams: Team[];
   currentTurn: number; // index into teams array (0-based)
@@ -14,6 +21,7 @@ export interface GameState {
   viewMode: boolean; // View mode to show all ships and bombs
   editMode: boolean; // Edit mode to move ships and reassign questions
   timestamp: number;
+  history: GameSnapshot[];
 }
 
 export interface Ship {

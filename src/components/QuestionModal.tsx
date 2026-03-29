@@ -36,8 +36,10 @@ export function QuestionModal({
   const [answeringTeamIndex, setAnsweringTeamIndex] = useState<number | null | -1>(-1); // -1 = not yet
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [timerExpired, setTimerExpired] = useState(false);
-  const [timerStarted, setTimerStarted] = useState(false);
-  const { autoCloseModal, questionTimer } = useModalSettings();
+  const { autoCloseModal, questionTimer, autoStartTimer } = useModalSettings();
+  // Effective timer: use question's thinkingTime if set, otherwise fall back to settings
+  const effectiveTimer = question.thinkingTime ?? questionTimer;
+  const [timerStarted, setTimerStarted] = useState(!viewMode && effectiveTimer > 0 && autoStartTimer);
   const timeoutRef = useRef<number | null>(null);
   const timerIntervalRef = useRef<number | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
@@ -67,9 +69,6 @@ export function QuestionModal({
     }
   }, []);
 
-  // Effective timer: use question's thinkingTime if set, otherwise fall back to settings
-  const effectiveTimer = question.thinkingTime ?? questionTimer;
-
   // Start countdown timer when timerStarted becomes true
   useEffect(() => {
     if (viewMode || effectiveTimer <= 0 || !timerStarted) return;
@@ -97,6 +96,32 @@ export function QuestionModal({
       }
     };
   }, [effectiveTimer, viewMode, playBeeps, timerStarted]);
+
+  // Resume countdown after +30 when timer was expired
+  useEffect(() => {
+    if (!timerExpired || timerIntervalRef.current) return;
+    if (timeLeft === null || timeLeft <= 0) return;
+    // timeLeft was set > 0 by the +30 button while expired — restart interval
+    setTimerExpired(false);
+    timerIntervalRef.current = window.setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev === null || prev <= 1) {
+          clearInterval(timerIntervalRef.current!);
+          timerIntervalRef.current = null;
+          setTimerExpired(true);
+          playBeeps();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => {
+      if (timerIntervalRef.current) {
+        clearInterval(timerIntervalRef.current);
+        timerIntervalRef.current = null;
+      }
+    };
+  }, [timeLeft, timerExpired, playBeeps]);
 
   // Stop timer when answer is shown or answered
   useEffect(() => {
@@ -223,17 +248,33 @@ export function QuestionModal({
               {!viewMode && effectiveTimer > 0 && !answered && !showAnswer && (
                 <div className="flex items-center gap-2">
                   {timerStarted && timeLeft !== null && (
-                    <div className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold text-xl tabular-nums transition-colors ${
-                      timerExpired
-                        ? 'bg-red-600 text-white animate-pulse'
-                        : timeLeft <= 10
-                        ? 'bg-red-100 text-red-700'
-                        : timeLeft <= 20
-                        ? 'bg-yellow-100 text-yellow-700'
-                        : 'bg-ocean-100 text-ocean-700'
-                    }`}>
-                      <span>⏱</span>
-                      <span>{timerExpired ? '0' : timeLeft}</span>
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => setTimeLeft(prev => prev !== null ? Math.max(0, prev - 30) : prev)}
+                        className="w-8 h-8 rounded-full bg-ocean-100 hover:bg-ocean-200 text-ocean-700 font-bold text-sm flex items-center justify-center transition-colors"
+                        title="-30 сек"
+                      >
+                        −
+                      </button>
+                      <div className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold text-xl tabular-nums transition-colors ${
+                        timerExpired
+                          ? 'bg-red-600 text-white animate-pulse'
+                          : timeLeft <= 10
+                          ? 'bg-red-100 text-red-700'
+                          : timeLeft <= 20
+                          ? 'bg-yellow-100 text-yellow-700'
+                          : 'bg-ocean-100 text-ocean-700'
+                      }`}>
+                        <span>⏱</span>
+                        <span>{timerExpired ? '0' : timeLeft}</span>
+                      </div>
+                      <button
+                        onClick={() => setTimeLeft(prev => prev !== null ? prev + 30 : prev)}
+                        className="w-8 h-8 rounded-full bg-ocean-100 hover:bg-ocean-200 text-ocean-700 font-bold text-sm flex items-center justify-center transition-colors"
+                        title="+30 сек"
+                      >
+                        +
+                      </button>
                     </div>
                   )}
                   {!timerStarted && (

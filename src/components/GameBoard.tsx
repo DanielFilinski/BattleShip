@@ -11,7 +11,7 @@ import { FieldSettingsModal } from './FieldSettingsModal';
 import { VictoryAnimation } from './VictoryAnimation';
 import { ConfirmModal } from './ConfirmModal';
 import { QuestionSelector } from './QuestionSelector';
-import { generateColumns, generateRows, getCellType, isShipSunk, getShipByCell, getSurroundingCells } from '../utils/gameLogic';
+import { generateColumns, generateRows, getCellType, isShipSunk, getShipByCell, getSurroundingCells, getSurroundingCellsForCoordinate } from '../utils/gameLogic';
 import { Question } from '../types/question';
 import { Ship, Bomb } from '../types/game';
 import { CellStatus } from '../types/cell';
@@ -31,6 +31,7 @@ export function GameBoard({ questions, ships, bombs, onUpdateShipCell, onUpdateB
     clickedCells, clickCell, unclickCell,
     answerCorrect, answerCorrectAllTeams, answerCorrectSpecificTeam, answerWrong, setTurn,
     resetGame, teams, currentTurn, answeredQuestions, markQuestionAnswered, viewMode, editMode,
+    history, saveSnapshot, undoLastAction,
   } = useGameState();
   const { playHit, playMiss, playCorrect, playWrong } = useSound();
   const { columns: fieldColumns, rows: fieldRows, cellSize, setFieldSize, setCellSize } = useFieldSettings();
@@ -82,6 +83,7 @@ export function GameBoard({ questions, ships, bombs, onUpdateShipCell, onUpdateB
       return;
     }
 
+    saveSnapshot();
     clickCell(coordinate);
     setCurrentCoordinate(coordinate);
 
@@ -211,6 +213,11 @@ export function GameBoard({ questions, ships, bombs, onUpdateShipCell, onUpdateB
         ship => isShipSunk(ship, clickedCells) && getSurroundingCells(ship, COLUMNS, ROWS).includes(coordinate)
       );
       if (isAdjacentToSunkShip) return 'miss';
+      const isAdjacentToClickedBomb = bombs.some(
+        bomb => clickedCells.includes(bomb.cell) &&
+                getSurroundingCellsForCoordinate(bomb.cell, COLUMNS, ROWS).includes(coordinate)
+      );
+      if (isAdjacentToClickedBomb) return 'miss';
       return 'untouched';
     }
 
@@ -381,8 +388,10 @@ export function GameBoard({ questions, ships, bombs, onUpdateShipCell, onUpdateB
                 return (
                   <div
                     key={index}
-                    className={`backdrop-blur-sm rounded-xl p-3 shadow-lg border-4 transition-all duration-300 ${
-                      isActive ? 'scale-105' : 'bg-white/90 border-ocean-200'
+                    onClick={() => setTurn(index)}
+                    title={isActive ? 'Текущий ход' : 'Передать ход этой команде'}
+                    className={`backdrop-blur-sm rounded-xl p-3 shadow-lg border-4 transition-all duration-300 cursor-pointer ${
+                      isActive ? 'scale-105' : 'bg-white/90 border-ocean-200 hover:shadow-2xl hover:border-ocean-400 hover:bg-ocean-50/90'
                     }`}
                     style={isActive ? getTeamActiveStyle(color) : undefined}
                   >
@@ -416,6 +425,13 @@ export function GameBoard({ questions, ships, bombs, onUpdateShipCell, onUpdateB
                   💾 Экспорт данных
                 </button>
               )}
+              <button
+                onClick={undoLastAction}
+                disabled={history.length === 0}
+                className="w-full bg-gradient-to-r from-amber-600 to-amber-500 text-white text-sm font-semibold py-2 px-4 rounded-xl hover:from-amber-700 hover:to-amber-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none"
+              >
+                ↩ Отменить
+              </button>
               <button
                 onClick={handleReset}
                 className="w-full bg-gradient-to-r from-red-600 to-red-500 text-white text-sm font-semibold py-2 px-4 rounded-xl hover:from-red-700 hover:to-red-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
@@ -495,6 +511,13 @@ export function GameBoard({ questions, ships, bombs, onUpdateShipCell, onUpdateB
                   💾 Экспорт данных
                 </button>
               )}
+              <button
+                onClick={undoLastAction}
+                disabled={history.length === 0}
+                className="bg-gradient-to-r from-amber-600 to-amber-500 text-white text-lg font-semibold py-3 px-8 rounded-xl hover:from-amber-700 hover:to-amber-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none"
+              >
+                ↩ Отменить
+              </button>
               <button
                 onClick={handleReset}
                 className="bg-gradient-to-r from-red-600 to-red-500 text-white text-lg font-semibold py-3 px-8 rounded-xl hover:from-red-700 hover:to-red-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"

@@ -89,3 +89,27 @@ export function getSurroundingCells(ship: Ship, columns: string[], rows: number[
 
   return Array.from(surrounding);
 }
+
+export function getSurroundingCellsForCoordinate(
+  coordinate: string,
+  columns: string[],
+  rows: number[]
+): string[] {
+  const col = coordinate[0];
+  const row = parseInt(coordinate.slice(1));
+  const colIdx = columns.indexOf(col);
+  const surrounding: string[] = [];
+
+  for (let dc = -1; dc <= 1; dc++) {
+    for (let dr = -1; dr <= 1; dr++) {
+      if (dc === 0 && dr === 0) continue;
+      const newColIdx = colIdx + dc;
+      const newRow = row + dr;
+      if (newColIdx >= 0 && newColIdx < columns.length && rows.includes(newRow)) {
+        surrounding.push(`${columns[newColIdx]}${newRow}`);
+      }
+    }
+  }
+
+  return surrounding;
+}

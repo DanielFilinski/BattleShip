@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { GameState, Team } from '../types/game';
+import { GameState, GameSnapshot, Team } from '../types/game';
 import { DEFAULT_TEAM_COLORS } from '../utils/teamColors';
 
 interface GameStore extends GameState {
@@ -18,6 +18,8 @@ interface GameStore extends GameState {
   markQuestionAnswered: (questionId: string) => void;
   toggleViewMode: () => void;
   toggleEditMode: () => void;
+  saveSnapshot: () => void;
+  undoLastAction: () => void;
 }
 
 const DEFAULT_TEAMS: Team[] = [
@@ -35,6 +37,7 @@ const initialState: GameState = {
   viewMode: false,
   editMode: false,
   timestamp: Date.now(),
+  history: [],
 };
 
 export const useGameState = create<GameStore>()(
@@ -135,6 +138,31 @@ export const useGameState = create<GameStore>()(
           viewMode: !state.editMode ? true : state.viewMode,
           timestamp: Date.now(),
         })),
+
+      saveSnapshot: () =>
+        set((state) => {
+          const snapshot: GameSnapshot = {
+            teams: state.teams,
+            currentTurn: state.currentTurn,
+            clickedCells: state.clickedCells,
+            answeredQuestions: state.answeredQuestions,
+          };
+          const newHistory = [...state.history, snapshot];
+          if (newHistory.length > 20) newHistory.shift();
+          return { history: newHistory };
+        }),
+
+      undoLastAction: () =>
+        set((state) => {
+          if (state.history.length === 0) return state;
+          const newHistory = [...state.history];
+          const snapshot = newHistory.pop()!;
+          return {
+            ...snapshot,
+            history: newHistory,
+            timestamp: Date.now(),
+          };
+        }),
     }),
     {
       name: 'battleship-game-state',

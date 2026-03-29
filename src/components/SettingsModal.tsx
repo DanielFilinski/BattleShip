@@ -10,7 +10,7 @@ interface SettingsModalProps {
 }
 
 export function SettingsModal({ onToggleFullscreen, onOpenFieldSettings, onClose, isFullscreen }: SettingsModalProps) {
-  const { autoCloseModal, toggleAutoCloseModal, questionTimer, setQuestionTimer } = useModalSettings();
+  const { autoCloseModal, toggleAutoCloseModal, questionTimer, setQuestionTimer, autoStartTimer, toggleAutoStartTimer } = useModalSettings();
   const { viewMode, toggleViewMode, editMode, toggleEditMode } = useGameState();
   const [timerInput, setTimerInput] = useState(questionTimer.toString());
 
@@ -104,6 +104,22 @@ export function SettingsModal({ onToggleFullscreen, onOpenFieldSettings, onClose
                   </div>
                 </div>
               </div>
+              {/* Auto Start Timer Toggle */}
+              <button
+                onClick={toggleAutoStartTimer}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg mb-3 transition-colors border-2 ${
+                  autoStartTimer
+                    ? 'border-ocean-400 bg-ocean-50'
+                    : 'border-ocean-100 hover:bg-ocean-50'
+                }`}
+              >
+                <div className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
+                  autoStartTimer ? 'bg-ocean-600 border-ocean-600' : 'border-ocean-300'
+                }`}>
+                  {autoStartTimer && <span className="text-white text-xs font-bold">✓</span>}
+                </div>
+                <span className="text-sm text-ocean-700 font-medium">Автостарт таймера при открытии вопроса</span>
+              </button>
               {/* Preset buttons */}
               <div className="flex flex-wrap gap-2 mb-3">
                 {TIMER_PRESETS.map(preset => (
