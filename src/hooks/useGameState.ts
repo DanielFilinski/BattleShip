@@ -11,6 +11,7 @@ interface GameStore extends GameState {
   answerCorrect: (points: number) => void;
   answerCorrectAllTeams: (points: number) => void;
   answerCorrectSpecificTeam: (teamIndex: number, points: number) => void;
+  adjustScore: (teamIndex: number, delta: number) => void;
   answerWrong: () => void;
   switchTurn: () => void;
   setTurn: (teamIndex: number) => void;
@@ -91,6 +92,14 @@ export const useGameState = create<GameStore>()(
         set((state) => {
           const newTeams = state.teams.map((team, idx) =>
             idx === teamIndex ? { ...team, score: team.score + points } : team
+          );
+          return { ...state, teams: newTeams, timestamp: Date.now() };
+        }),
+
+      adjustScore: (teamIndex: number, delta: number) =>
+        set((state) => {
+          const newTeams = state.teams.map((team, idx) =>
+            idx === teamIndex ? { ...team, score: team.score + delta } : team
           );
           return { ...state, teams: newTeams, timestamp: Date.now() };
         }),

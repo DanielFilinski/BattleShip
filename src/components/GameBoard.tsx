@@ -31,7 +31,7 @@ export function GameBoard({ questions, ships, bombs, onUpdateShipCell, onUpdateB
     clickedCells, clickCell, unclickCell,
     answerCorrect, answerCorrectAllTeams, answerCorrectSpecificTeam, answerWrong, setTurn,
     resetGame, teams, currentTurn, answeredQuestions, markQuestionAnswered, viewMode, editMode,
-    history, saveSnapshot, undoLastAction,
+    history, saveSnapshot, undoLastAction, adjustScore,
   } = useGameState();
   const { playHit, playMiss, playCorrect, playWrong } = useSound();
   const { columns: fieldColumns, rows: fieldRows, cellSize, setFieldSize, setCellSize } = useFieldSettings();
@@ -388,14 +388,16 @@ export function GameBoard({ questions, ships, bombs, onUpdateShipCell, onUpdateB
                 return (
                   <div
                     key={index}
-                    onClick={() => setTurn(index)}
-                    title={isActive ? 'Текущий ход' : 'Передать ход этой команде'}
-                    className={`backdrop-blur-sm rounded-xl p-3 shadow-lg border-4 transition-all duration-300 cursor-pointer ${
+                    className={`backdrop-blur-sm rounded-xl p-3 shadow-lg border-4 transition-all duration-300 ${
                       isActive ? 'scale-105' : 'bg-white/90 border-ocean-200 hover:shadow-2xl hover:border-ocean-400 hover:bg-ocean-50/90'
                     }`}
                     style={isActive ? getTeamActiveStyle(color) : undefined}
                   >
-                    <div className="text-center">
+                    <div
+                      className="text-center cursor-pointer"
+                      onClick={() => setTurn(index)}
+                      title={isActive ? 'Текущий ход' : 'Передать ход этой команде'}
+                    >
                       <div className={`text-xs font-semibold mb-1 ${isActive ? 'text-white' : 'text-ocean-600'}`}>
                         {isActive && '▶️ '}КОМАНДА {index + 1}
                       </div>
@@ -409,6 +411,30 @@ export function GameBoard({ questions, ships, bombs, onUpdateShipCell, onUpdateB
                         {team.score}
                       </div>
                       <div className={`text-xs mt-0.5 ${isActive ? 'text-white/80' : 'text-ocean-500'}`}>БАЛЛОВ</div>
+                    </div>
+                    <div className="flex items-center justify-center gap-2 mt-2" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        onClick={() => adjustScore(index, -1)}
+                        className={`w-8 h-8 rounded-lg font-bold text-xl leading-none transition-colors ${
+                          isActive
+                            ? 'bg-white/20 hover:bg-white/40 text-white'
+                            : 'bg-ocean-100 hover:bg-ocean-200 text-ocean-700'
+                        }`}
+                        title="Отнять 1 балл"
+                      >
+                        −
+                      </button>
+                      <button
+                        onClick={() => adjustScore(index, 1)}
+                        className={`w-8 h-8 rounded-lg font-bold text-xl leading-none transition-colors ${
+                          isActive
+                            ? 'bg-white/20 hover:bg-white/40 text-white'
+                            : 'bg-ocean-100 hover:bg-ocean-200 text-ocean-700'
+                        }`}
+                        title="Добавить 1 балл"
+                      >
+                        +
+                      </button>
                     </div>
                   </div>
                 );
