@@ -1,0 +1,244 @@
+{
+  "questions": [
+    {
+      "id": "mms_01",
+      "category": "Новый Завет",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "thinkingTime": 25,
+      "question": "Назовите плоды духа. (Гал. 5:22-23)",
+      "answer": "Любовь, радость, мир, долготерпение, благость, милосердие, вера, кротость, воздержание."
+    },
+    {
+      "id": "mms_02",
+      "category": "Ветхий Завет",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "thinkingTime": 25,
+      "question": "О ком сказано в Библии: «Выходит, как жених из брачного чертога своего, радуется, как исполин, пробежать поприще»? (Пс. 18:6)",
+      "answer": "О Солнце"
+    },
+    {
+      "id": "mms_03",
+      "category": "Ветхий Завет",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "thinkingTime": 20,
+      "question": "Как прозвучала первая ложь, упоминаемая в Библии? (Быт. 3:4)",
+      "answer": "«Нет, не умрёте»"
+    },
+    {
+      "id": "mms_04",
+      "category": "Ветхий Завет",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "thinkingTime": 20,
+      "question": "Какие животные, упоминаемые в Библии, говорили на человеческом языке?",
+      "answer": "Змей в саду Эдемском (Быт. 3:1) и ослица Валаама (Чис. 22:28)"
+    },
+    {
+      "id": "mms_05",
+      "category": "Вся Библия",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "thinkingTime": 25,
+      "question": "Какие книги Ветхого и Нового заветов начинаются одинаково?",
+      "answer": "Бытие и Евангелие от Иоанна — оба начинаются словами «В начале…»"
+    },
+    {
+      "id": "mms_06",
+      "category": "Новый Завет",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "thinkingTime": 20,
+      "question": "На чей вопрос Иисус ответил: «Я есмь путь и истина и жизнь»? (Иоан. 14:5-6)",
+      "answer": "Фомы"
+    },
+    {
+      "id": "mms_07",
+      "category": "Новый Завет",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "thinkingTime": 20,
+      "question": "Приверженцы какой религиозной группы не верили в воскресение из мёртвых? (Деян. 23:8)",
+      "answer": "Саддукеи"
+    },
+    {
+      "id": "mms_08",
+      "category": "Ветхий Завет",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "thinkingTime": 20,
+      "question": "Кем Мардохей приходился Есфирь? (Есф. 2:7)",
+      "answer": "Двоюродным братом"
+    },
+    {
+      "id": "mms_09",
+      "category": "Ветхий Завет",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "thinkingTime": 20,
+      "question": "Сколько детей было у Иова? (Иов 1:2; 42:13)",
+      "answer": "20 (10 в начале + 10 после испытания)"
+    },
+    {
+      "id": "mms_10",
+      "category": "Ветхий Завет",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "thinkingTime": 20,
+      "question": "Сколько лет было Иосии, когда он стал царём? (2 Пар. 34:1)",
+      "answer": "8 лет"
+    },
+    {
+      "id": "mms_11",
+      "category": "Новый Завет",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "thinkingTime": 20,
+      "question": "Кому было адресовано Деяние Апостолов? (Деян. 1:1)",
+      "answer": "Феофилу"
+    },
+    {
+      "id": "mms_12",
+      "category": "Новый Завет",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "thinkingTime": 25,
+      "question": "Кто из Апостолов Христа был убит первым? (Деян. 12:1-2)",
+      "answer": "Иаков"
+    },
+    {
+      "id": "mms_13",
+      "category": "Ветхий Завет",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "thinkingTime": 20,
+      "question": "Кто носил сорок лет одну и ту же обувь? (Вт. 29:5)",
+      "answer": "Народ Израильский в пустыне"
+    },
+    {
+      "id": "mms_14",
+      "category": "Ветхий Завет",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "thinkingTime": 20,
+      "question": "Какой проповедник огорчился, что после его проповеди все покаялись? (Иона 4:1-3)",
+      "answer": "Иона"
+    },
+    {
+      "id": "mms_15",
+      "category": "Ветхий Завет",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "thinkingTime": 25,
+      "question": "Какое слово не могли выговорить ефремляне, и поэтому погибло из них сорок две тысячи? (Суд. 12:5-6)",
+      "answer": "Шибболет"
+    },
+    {
+      "id": "mms_16",
+      "category": "Ветхий Завет",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "thinkingTime": 25,
+      "question": "Как звали брата Голиафа? (1 Пар. 20:5)",
+      "answer": "Лахмий"
+    },
+    {
+      "id": "mms_17",
+      "category": "Загадка",
+      "type": "text",
+      "difficulty": "hard",
+      "points": 3,
+      "thinkingTime": 35,
+      "question": "Он — царь. Его имя читается одинаково как с начала, так и с конца. Чтобы попасть в его царство, надо двигаться от Израиля на север. В название его царства тоже входит его имя. (Иез. 38:2)",
+      "answer": "Гог, царство Магог"
+    },
+    {
+      "id": "mms_18",
+      "category": "Новый Завет",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "thinkingTime": 25,
+      "question": "Имя звезды, которая после третьей трубы пала на третью часть рек. (Откр. 8:10-11)",
+      "answer": "Полынь"
+    },
+    {
+      "id": "mms_19",
+      "category": "Ветхий Завет",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "thinkingTime": 25,
+      "question": "Назовите первого и последнего судей Израиля.",
+      "answer": "Гофониил (Суд. 3:7-11) и Самуил (1 Цар. 7:15)"
+    },
+    {
+      "id": "mms_20",
+      "category": "Ветхий Завет",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "thinkingTime": 20,
+      "question": "Мариам и Аарон упрекали Моисея за то, что его жена была... (Чис. 12:1)",
+      "answer": "Эфиоплянкой"
+    },
+    {
+      "id": "mms_b1",
+      "category": "Ветхий Завет",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "thinkingTime": 25,
+      "question": "Имя мужчины, построившего первый упоминаемый в Библии город, и название этого города. (Быт. 4:17)",
+      "answer": "Каин построил город и назвал его Енох"
+    },
+    {
+      "id": "mms_b2",
+      "category": "Ветхий Завет",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "thinkingTime": 25,
+      "question": "Какое имя дал фараон Иосифу? Как оно переводится? (Быт. 41:45)",
+      "answer": "Цафнаф-панеах, что значит «сохраняющий жизнь»"
+    },
+    {
+      "id": "mms_b3",
+      "category": "Ветхий Завет",
+      "type": "text",
+      "difficulty": "medium",
+      "points": 2,
+      "thinkingTime": 25,
+      "question": "Какое непохвальное сходство мы находим между Иовом и Иеремией?",
+      "answer": "Они оба прокляли свой день рождения (Иов 3:1; Иер. 20:14)"
+    },
+    {
+      "id": "mms_b4",
+      "category": "Ветхий Завет",
+      "type": "text",
+      "difficulty": "easy",
+      "points": 1,
+      "thinkingTime": 20,
+      "question": "Что взял с собой на родину в память об Израиле сирийский военачальник Нееман? (4 Цар. 5:14-17)",
+      "answer": "Землю"
+    }
+  ]
+}
