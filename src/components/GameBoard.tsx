@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useGameState } from '../hooks/useGameState';
 import { useSound } from '../hooks/useSound';
 import { useFieldSettings } from '../hooks/useFieldSettings';
@@ -16,6 +16,7 @@ import { Question } from '../types/question';
 import { Ship, Bomb } from '../types/game';
 import { CellStatus } from '../types/cell';
 import { getTeamActiveStyle, getTeamColor } from '../utils/teamColors';
+import type { RemoteQuestion } from '../hooks/useFirebaseSync';
 
 interface GameBoardProps {
   questions: Question[];
@@ -24,9 +25,22 @@ interface GameBoardProps {
   onUpdateShipCell?: (shipId: string, cellIndex: number, newCell: string, newQuestionId: string) => void;
   onUpdateBomb?: (oldCell: string, newCell: string, newQuestionId: string) => void;
   onExportData?: () => void;
+  // Online multiplayer props (optional — not used in offline/Electron mode)
+  isAdmin?: boolean;
+  myTeamIndex?: number; // -99 = admin, -1 = viewer, 0+ = team index
+  roomId?: string;
+  remoteQuestion?: RemoteQuestion;
+  onWriteSession?: (q: RemoteQuestion) => Promise<void>;
+  onClearSession?: () => Promise<void>;
+  onParticipantShoot?: (coordinate: string, cellType: 'ship' | 'bomb' | 'empty', questionId: string | null) => Promise<void>;
 }
 
-export function GameBoard({ questions, ships, bombs, onUpdateShipCell, onUpdateBomb, onExportData }: GameBoardProps) {
+export function GameBoard({
+  questions, ships, bombs,
+  onUpdateShipCell, onUpdateBomb, onExportData,
+  isAdmin = true, myTeamIndex = -99, roomId,
+  remoteQuestion, onWriteSession, onClearSession, onParticipantShoot,
+}: GameBoardProps) {
   const {
     clickedCells, clickCell, unclickCell,
     answerCorrect, answerCorrectAllTeams, answerCorrectSpecificTeam, answerWrong, setTurn,
@@ -63,8 +77,53 @@ export function GameBoard({ questions, ships, bombs, onUpdateShipCell, onUpdateB
     return allTargetCells.every(cell => clickedCells.includes(cell));
   }, [allTargetCells, clickedCells]);
 
+  // ─── Online: react to participant shot arriving via Firebase ─────────────────
+  // When a participant clicks a cell, it writes to Firebase session.
+  // Admin's useFirebaseSync picks it up → remoteQuestion changes.
+  // This effect processes it as if admin clicked the cell locally.
+  useEffect(() => {
+    if (!isAdmin) return;
+    if (!remoteQuestion?.coordinate || !remoteQuestion.isOpen) return;
+    const { coordinate, cellType, questionId } = remoteQuestion;
+    // Avoid re-processing if cell already clicked (e.g. on mount)
+    if (clickedCells.includes(coordinate)) return;
+
+    saveSnapshot();
+    clickCell(coordinate);
+    setCurrentCoordinate(coordinate);
+
+    if (cellType === 'empty') {
+      playMiss();
+      setTimeout(() => answerWrong(), 1000);
+    } else {
+      playHit();
+      setCurrentCellType(cellType === 'bomb' ? 'bomb' : 'ship');
+      if (questionId) {
+        const question = questions.find(q => q.id === questionId);
+        if (question) {
+          setCurrentQuestion(question);
+          setIsModalOpen(true);
+        }
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [remoteQuestion?.coordinate, remoteQuestion?.isOpen]);
+
   const handleCellClick = (coordinate: string) => {
     const { type, questionId } = getCellType(coordinate, ships, bombs);
+
+    // Online mode: non-admin gating
+    if (!isAdmin) {
+      // Viewers (myTeamIndex === -1) can never click
+      if (myTeamIndex === -1) return;
+      // Participants can only click on their team's turn
+      if (myTeamIndex !== currentTurn) return;
+      // Already clicked
+      if (clickedCells.includes(coordinate)) return;
+      // Delegate to Firebase
+      onParticipantShoot?.(coordinate, type, questionId ?? null);
+      return;
+    }
 
     if (editMode && (type === 'ship' || type === 'bomb')) {
       setEditingCell({ coordinate, currentQuestionId: questionId || '' });
@@ -296,7 +355,7 @@ export function GameBoard({ questions, ships, bombs, onUpdateShipCell, onUpdateB
   }, [teams]);
 
   return (
-    <div className={`bg-gradient-to-br from-ocean-900 via-ocean-700 to-ocean-500 ${isFullscreen ? 'h-screen flex p-0' : 'min-h-screen p-6'}`}>
+    <div className={`bg-gradient-to-br from-ocean-900 via-ocean-700 to-ocean-500 ${isFullscreen ? 'h-screen flex p-0' : `min-h-screen p-6 ${roomId ? 'pt-14' : ''}`}`}>
       {isFullscreen ? (
         <>
           {/* Game Grid - Left Side */}
@@ -578,19 +637,40 @@ export function GameBoard({ questions, ships, bombs, onUpdateShipCell, onUpdateB
         />
       )}
 
-      {/* Question Modal */}
-      {isModalOpen && currentQuestion && (
+      {/* "Question in progress" banner for viewers/participants */}
+      {!isAdmin && remoteQuestion?.isOpen && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-40 bg-amber-500 text-white font-bold px-6 py-3 rounded-2xl shadow-xl animate-pulse text-lg">
+          Вопрос открыт — ждите решения ведущего...
+        </div>
+      )}
+
+      {/* "Your turn" banner for participants */}
+      {!isAdmin && myTeamIndex >= 0 && myTeamIndex === currentTurn && !remoteQuestion?.isOpen && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-40 bg-green-500 text-white font-bold px-6 py-3 rounded-2xl shadow-xl text-lg">
+          Ваш ход! Выберите клетку
+        </div>
+      )}
+
+      {/* Question Modal — only for admin */}
+      {isAdmin && isModalOpen && currentQuestion && (
         <QuestionModal
           question={currentQuestion}
           onCorrect={handleCorrectAnswer}
           onWrong={handleWrongAnswer}
           onSkip={handleSkip}
           onTransfer={handleTransfer}
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => {
+            setIsModalOpen(false);
+            onClearSession?.();
+          }}
           teams={teams}
           onTeamAnswer={handleTeamAnswer}
           viewMode={viewMode}
           currentTurn={currentTurn}
+          isAdmin={isAdmin}
+          roomId={roomId}
+          onWriteSession={onWriteSession}
+          onClearSession={onClearSession}
         />
       )}
 

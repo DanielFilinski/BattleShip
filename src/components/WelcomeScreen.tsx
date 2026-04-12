@@ -6,9 +6,11 @@ import { TEAM_COLOR_OPTIONS, DEFAULT_TEAM_COLORS } from '../utils/teamColors';
 
 interface WelcomeScreenProps {
   onModeSelect?: (mode: string) => void;
+  /** When provided, overrides the default startGame behaviour (used by RoomLobby to create an online room) */
+  onStartGame?: (teamNames: string[], gameMode: string, teamColors: string[]) => void;
 }
 
-export function WelcomeScreen({ onModeSelect }: WelcomeScreenProps) {
+export function WelcomeScreen({ onModeSelect, onStartGame }: WelcomeScreenProps) {
   const [teamNames, setTeamNames] = useState<string[]>(['', '']);
   const [teamColors, setTeamColors] = useState<string[]>([DEFAULT_TEAM_COLORS[0], DEFAULT_TEAM_COLORS[1]]);
   const [openColorPicker, setOpenColorPicker] = useState<number | null>(null);
@@ -38,10 +40,16 @@ export function WelcomeScreen({ onModeSelect }: WelcomeScreenProps) {
       .filter((n) => n.length > 0);
     const validColors = validIndices.map((i) => teamColors[i]);
     if (validNames.length >= 2) {
-      if (onModeSelect) {
-        onModeSelect(selectedMode);
+      if (onStartGame) {
+        // Online mode: delegate to RoomLobby which creates the Firebase room
+        onStartGame(validNames, selectedMode, validColors);
+      } else {
+        // Local mode: standard flow
+        if (onModeSelect) {
+          onModeSelect(selectedMode);
+        }
+        startGame(validNames, selectedMode, validColors);
       }
-      startGame(validNames, selectedMode, validColors);
     }
   };
 

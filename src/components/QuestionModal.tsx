@@ -2,8 +2,10 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { Question } from '../types/question';
 import { MediaPlayer } from './MediaPlayer';
 import { useModalSettings } from '../hooks/useModalSettings';
-import { sendCurrentQuestion } from '../utils/storage';
+import { sendCurrentQuestion } from '../utils/storage'; // kept for offline/Electron mode
 import { getTeamButtonStyle, getTeamColor } from '../utils/teamColors';
+
+import type { RemoteQuestion } from '../hooks/useFirebaseSync';
 
 interface QuestionModalProps {
   question: Question;
@@ -16,6 +18,11 @@ interface QuestionModalProps {
   onTeamAnswer: (teamIndex: number | null) => void; // null = никому
   viewMode?: boolean;
   currentTurn: number;
+  // Online multiplayer (optional)
+  isAdmin?: boolean;
+  roomId?: string;
+  onWriteSession?: (q: RemoteQuestion) => Promise<void>;
+  onClearSession?: () => Promise<void>;
 }
 
 export function QuestionModal({
@@ -29,6 +36,10 @@ export function QuestionModal({
   onTeamAnswer,
   viewMode = false,
   currentTurn,
+  isAdmin = true,
+  roomId: _roomId,
+  onWriteSession,
+  onClearSession: _onClearSession,
 }: QuestionModalProps) {
   const [showAnswer, setShowAnswer] = useState(viewMode);
   const [answered, setAnswered] = useState(false);
@@ -473,6 +484,22 @@ export function QuestionModal({
                     </button>
                   </div>
                 </div>
+              )}
+
+              {/* "Show on display screen" button — only for admin in online mode, after answer is shown */}
+              {isAdmin && showAnswer && onWriteSession && (
+                <button
+                  onClick={() => onWriteSession({
+                    questionId: question.id,
+                    coordinate: null,
+                    cellType: null,
+                    isOpen: true,
+                    answerRevealed: true,
+                  })}
+                  className="w-full bg-gradient-to-r from-indigo-600 to-indigo-500 text-white text-lg font-semibold py-3 px-6 rounded-xl hover:from-indigo-700 hover:to-indigo-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+                >
+                  📺 Показать ответ на экране
+                </button>
               )}
 
               {/* Team Answer Buttons */}
