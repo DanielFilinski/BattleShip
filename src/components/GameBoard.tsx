@@ -261,7 +261,7 @@ export function GameBoard({
   const getCellStatus = (coordinate: string): CellStatus => {
     const { type } = getCellType(coordinate, ships, bombs);
 
-    if (viewMode) {
+    if (viewMode && isAdmin) {
       if (type === 'ship') return 'view-ship';
       if (type === 'bomb') return 'view-bomb';
       return 'untouched';

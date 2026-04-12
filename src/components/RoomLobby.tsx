@@ -153,9 +153,17 @@ export function RoomLobby() {
           </button>
         </div>
 
-        <p className="mt-8 text-ocean-500 text-sm">
-          Нажмите <kbd className="px-2 py-1 bg-ocean-100 rounded text-ocean-700">F11</kbd> для полноэкранного режима
-        </p>
+        <div className="mt-8 flex items-center justify-between">
+          <p className="text-ocean-500 text-sm">
+            Нажмите <kbd className="px-2 py-1 bg-ocean-100 rounded text-ocean-700">F11</kbd> для полноэкранного режима
+          </p>
+          <button
+            onClick={() => navigate('/editor')}
+            className="text-ocean-500 hover:text-ocean-700 text-sm font-medium transition-colors"
+          >
+            ✎ Редактор
+          </button>
+        </div>
       </div>
     </div>
   );
