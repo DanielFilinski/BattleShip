@@ -41,7 +41,9 @@ export function QuestionModal({
   onWriteSession,
   onClearSession: _onClearSession,
 }: QuestionModalProps) {
+  const isOnlineAdmin = isAdmin && !!onWriteSession;
   const [showAnswer, setShowAnswer] = useState(viewMode);
+  const [answerSentToTeams, setAnswerSentToTeams] = useState(false);
   const [answered, setAnswered] = useState(false);
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
   const [answeringTeamIndex, setAnsweringTeamIndex] = useState<number | null | -1>(-1); // -1 = not yet
@@ -136,11 +138,11 @@ export function QuestionModal({
 
   // Stop timer when answer is shown or answered
   useEffect(() => {
-    if ((showAnswer || answered) && timerIntervalRef.current) {
+    if ((showAnswer || answerSentToTeams || answered) && timerIntervalRef.current) {
       clearInterval(timerIntervalRef.current);
       timerIntervalRef.current = null;
     }
-  }, [showAnswer, answered]);
+  }, [showAnswer, answerSentToTeams, answered]);
 
   // Auto-show answer in view mode
   useEffect(() => {
@@ -148,6 +150,19 @@ export function QuestionModal({
       setShowAnswer(true);
     }
   }, [viewMode]);
+
+  // Online admin: immediately publish question to teams when modal opens
+  useEffect(() => {
+    if (!isOnlineAdmin || !onWriteSession) return;
+    onWriteSession({
+      questionId: question.id,
+      coordinate: null,
+      cellType: null,
+      isOpen: true,
+      answerRevealed: false,
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Save current question to localStorage and API for external display
   useEffect(() => {
@@ -239,17 +254,17 @@ export function QuestionModal({
           </button>
         </div>
       )}
-      <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="p-8">
+      <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
+        <div className="p-4 sm:p-8">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <span className="text-4xl">{getCategoryIcon()}</span>
+              <span className="text-3xl sm:text-4xl">{getCategoryIcon()}</span>
               <div>
                 <div className="text-sm font-semibold text-ocean-600 uppercase">
                   {question.category}
                 </div>
-                <div className="text-2xl font-bold text-ocean-800">
+                <div className="text-xl sm:text-2xl font-bold text-ocean-800">
                   {question.points} баллов
                 </div>
               </div>
@@ -318,8 +333,8 @@ export function QuestionModal({
           </div>
 
           {/* Question */}
-          <div className="bg-ocean-50 rounded-2xl p-8 mb-6">
-            <div className="text-3xl font-bold text-ocean-900 text-center leading-relaxed whitespace-pre-line">
+          <div className="bg-ocean-50 rounded-2xl p-4 sm:p-8 mb-4 sm:mb-6">
+            <div className="text-xl sm:text-3xl font-bold text-ocean-900 text-center leading-relaxed whitespace-pre-line">
               {question.question}
             </div>
           </div>
@@ -328,7 +343,7 @@ export function QuestionModal({
           {question.questionImages && (
             <div className={`mb-6 ${
               Array.isArray(question.questionImages) && question.questionImages.length > 1
-                ? 'grid grid-cols-2 gap-4'
+                ? 'grid grid-cols-1 sm:grid-cols-2 gap-4'
                 : 'flex justify-center'
             }`}>
               {(Array.isArray(question.questionImages)
@@ -378,9 +393,9 @@ export function QuestionModal({
           )}
 
           {/* Answer Section */}
-          {showAnswer && (
+          {(showAnswer || isOnlineAdmin) && (
             <div
-              className={`mb-6 rounded-2xl p-6 animate-in slide-in-from-top duration-300 ${
+              className={`mb-4 sm:mb-6 rounded-2xl p-3 sm:p-6 animate-in slide-in-from-top duration-300 ${
                 answered
                   ? 'bg-gradient-to-r from-emerald-50 to-emerald-100 border-2 border-emerald-300'
                   : 'bg-ocean-50'
@@ -398,7 +413,7 @@ export function QuestionModal({
               <div className="text-sm font-semibold text-ocean-600 mb-2 uppercase">
                 Правильный ответ:
               </div>
-              <div className="text-2xl font-bold text-ocean-900 mb-4 whitespace-pre-line">
+              <div className="text-lg sm:text-2xl font-bold text-ocean-900 mb-3 sm:mb-4 whitespace-pre-line">
                 {question.answer}
               </div>
 
@@ -406,7 +421,7 @@ export function QuestionModal({
               {question.answerImages && (
                 <div className={`mt-4 ${
                   Array.isArray(question.answerImages) && question.answerImages.length > 1
-                    ? 'grid grid-cols-2 gap-4'
+                    ? 'grid grid-cols-1 sm:grid-cols-2 gap-4'
                     : 'flex justify-center'
                 }`}>
                   {(Array.isArray(question.answerImages)
@@ -457,14 +472,14 @@ export function QuestionModal({
           )}
 
           {/* Host Controls */}
-          {!answered && !viewMode && (
+          {!answered && (!viewMode || isOnlineAdmin) && (
             <div className="space-y-4">
-              {/* Show Answer Button */}
-              {!showAnswer && (
+              {/* Show Answer Button — offline admin only (not in viewMode) */}
+              {!showAnswer && !isOnlineAdmin && !viewMode && (
                 <div className="space-y-3">
                   <button
                     onClick={handleShowAnswer}
-                    className="w-full bg-gradient-to-r from-purple-600 to-purple-500 text-white text-2xl font-bold py-6 px-8 rounded-xl hover:from-purple-700 hover:to-purple-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+                    className="w-full bg-gradient-to-r from-purple-600 to-purple-500 text-white text-lg sm:text-2xl font-bold py-4 sm:py-6 px-5 sm:px-8 rounded-xl hover:from-purple-700 hover:to-purple-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
                   >
                     👁️ Показать ответ
                   </button>
@@ -486,35 +501,55 @@ export function QuestionModal({
                 </div>
               )}
 
-              {/* "Show on display screen" button — only for admin in online mode, after answer is shown */}
-              {isAdmin && showAnswer && onWriteSession && (
-                <button
-                  onClick={() => onWriteSession({
-                    questionId: question.id,
-                    coordinate: null,
-                    cellType: null,
-                    isOpen: true,
-                    answerRevealed: true,
-                  })}
-                  className="w-full bg-gradient-to-r from-indigo-600 to-indigo-500 text-white text-lg font-semibold py-3 px-6 rounded-xl hover:from-indigo-700 hover:to-indigo-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
-                >
-                  📺 Показать ответ на экране
-                </button>
+              {/* Online admin: reveal answer to teams + skip/transfer */}
+              {isOnlineAdmin && !answerSentToTeams && (
+                <div className="space-y-3">
+                  <button
+                    onClick={() => {
+                      onWriteSession!({
+                        questionId: question.id,
+                        coordinate: null,
+                        cellType: null,
+                        isOpen: true,
+                        answerRevealed: true,
+                      });
+                      setAnswerSentToTeams(true);
+                    }}
+                    className="w-full bg-gradient-to-r from-indigo-600 to-indigo-500 text-white text-lg sm:text-2xl font-bold py-4 sm:py-6 px-5 sm:px-8 rounded-xl hover:from-indigo-700 hover:to-indigo-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+                  >
+                    📺 Показать ответ командам
+                  </button>
+
+                  <div className="flex gap-4">
+                    <button
+                      onClick={handleSkip}
+                      className="flex-1 bg-gradient-to-r from-gray-500 to-gray-400 text-white text-lg font-semibold py-3 px-6 rounded-xl hover:from-gray-600 hover:to-gray-500 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+                    >
+                      ⏭ Пропустить
+                    </button>
+                    <button
+                      onClick={handleTransfer}
+                      className="flex-1 bg-gradient-to-r from-amber-600 to-amber-500 text-white text-lg font-semibold py-3 px-6 rounded-xl hover:from-amber-700 hover:to-amber-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+                    >
+                      ↔ Передать
+                    </button>
+                  </div>
+                </div>
               )}
 
               {/* Team Answer Buttons */}
-              {showAnswer && (
+              {(showAnswer || answerSentToTeams) && (
                 <div className="space-y-3">
                   <div className="text-center text-ocean-700 font-semibold text-lg mb-2">
                     Кто ответил правильно?
                   </div>
                   {/* Team buttons — wrap in grid for many teams */}
-                  <div className={`grid gap-3 ${teams.length <= 2 ? 'grid-cols-2' : teams.length <= 4 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+                  <div className={`grid gap-3 ${teams.length <= 4 ? 'grid-cols-2' : 'grid-cols-2 sm:grid-cols-3'}`}>
                     {teams.map((team, index) => (
                       <button
                         key={index}
                         onClick={() => handleTeamAnswer(index)}
-                        className="text-white text-xl font-bold py-5 px-4 rounded-xl transition-all transform hover:scale-105 hover:brightness-110 active:scale-95 shadow-lg"
+                        className="text-white text-base sm:text-xl font-bold py-3 sm:py-5 px-3 sm:px-4 rounded-xl transition-all transform hover:scale-105 hover:brightness-110 active:scale-95 shadow-lg"
                         style={getTeamButtonStyle(getTeamColor(team, index))}
                       >
                         {currentTurn === index ? '✓ ' : ''}{team.name}
@@ -541,8 +576,8 @@ export function QuestionModal({
             </div>
           )}
 
-          {/* View Mode - Simple Close Button */}
-          {viewMode && (
+          {/* View Mode - Simple Close Button (not for online admin — they have controls above) */}
+          {viewMode && !isOnlineAdmin && (
             <div className="text-center">
               <button
                 onClick={onClose}

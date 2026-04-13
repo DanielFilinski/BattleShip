@@ -63,6 +63,7 @@ export function GameBoard({
   const [savedFieldSettings, setSavedFieldSettings] = useState<{columns: number, rows: number, cellSize: number} | null>(null);
   const [showQuestionSelector, setShowQuestionSelector] = useState(false);
   const [editingCell, setEditingCell] = useState<{ coordinate: string; currentQuestionId: string } | null>(null);
+  const [participantDismissed, setParticipantDismissed] = useState(false);
 
   const COLUMNS = useMemo(() => generateColumns(fieldColumns), [fieldColumns]);
   const ROWS = useMemo(() => generateRows(fieldRows), [fieldRows]);
@@ -77,13 +78,20 @@ export function GameBoard({
     return allTargetCells.every(cell => clickedCells.includes(cell));
   }, [allTargetCells, clickedCells]);
 
+  // Reset dismiss state when a new question opens (new questionId from Firebase)
+  useEffect(() => {
+    if (remoteQuestion?.questionId) {
+      setParticipantDismissed(false);
+    }
+  }, [remoteQuestion?.questionId]);
+
   // ─── Online: react to participant shot arriving via Firebase ─────────────────
   // When a participant clicks a cell, it writes to Firebase session.
   // Admin's useFirebaseSync picks it up → remoteQuestion changes.
   // This effect processes it as if admin clicked the cell locally.
   useEffect(() => {
     if (!isAdmin) return;
-    if (!remoteQuestion?.coordinate || !remoteQuestion.isOpen) return;
+    if (!remoteQuestion?.coordinate) return;
     const { coordinate, cellType, questionId } = remoteQuestion;
     // Avoid re-processing if cell already clicked (e.g. on mount)
     if (clickedCells.includes(coordinate)) return;
@@ -103,8 +111,11 @@ export function GameBoard({
         if (question) {
           setCurrentQuestion(question);
           setIsModalOpen(true);
+          return;
         }
       }
+      // No question found — auto-advance turn so game doesn't get stuck
+      setTimeout(() => answerWrong(), 1000);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [remoteQuestion?.coordinate, remoteQuestion?.isOpen]);
@@ -250,6 +261,7 @@ export function GameBoard({
     setIsModalOpen(false);
     setCurrentQuestion(null);
     setCurrentCellType(null);
+    onClearSession?.();
 
     setTimeout(() => {
       if (isGameCompleted) {
@@ -411,12 +423,14 @@ export function GameBoard({
           {/* Right Sidebar */}
           <div className="w-72 flex flex-col gap-3 p-3 bg-ocean-900/50 overflow-y-auto">
             {/* Settings Menu */}
-            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-3 shadow-lg">
-              <SettingsMenu
-                onOpenSettings={() => setIsSettingsOpen(true)}
-                isFullscreen={isFullscreen}
-              />
-            </div>
+            {isAdmin && (
+              <div className="bg-white/90 backdrop-blur-sm rounded-xl p-3 shadow-lg">
+                <SettingsMenu
+                  onOpenSettings={() => setIsSettingsOpen(true)}
+                  isFullscreen={isFullscreen}
+                />
+              </div>
+            )}
 
             {/* Game Statistics */}
             <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-lg">
@@ -440,7 +454,7 @@ export function GameBoard({
             </div>
 
             {/* Team Scores - Vertical Layout */}
-            <div className="flex flex-col gap-2">
+            {isAdmin && <div className="flex flex-col gap-2">
               {teams.map((team, index) => {
                 const isActive = currentTurn === index;
                 const color = getTeamColor(team, index);
@@ -498,46 +512,50 @@ export function GameBoard({
                   </div>
                 );
               })}
-            </div>
+            </div>}
 
             {/* Action Buttons */}
-            <div className="space-y-2 mt-auto">
-              {editMode && onExportData && (
+            {isAdmin && (
+              <div className="space-y-2 mt-auto">
+                {editMode && onExportData && (
+                  <button
+                    onClick={onExportData}
+                    className="w-full bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm font-semibold py-2 px-4 rounded-xl hover:from-purple-700 hover:to-purple-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+                  >
+                    💾 Экспорт данных
+                  </button>
+                )}
                 <button
-                  onClick={onExportData}
-                  className="w-full bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm font-semibold py-2 px-4 rounded-xl hover:from-purple-700 hover:to-purple-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+                  onClick={undoLastAction}
+                  disabled={history.length === 0}
+                  className="w-full bg-gradient-to-r from-amber-600 to-amber-500 text-white text-sm font-semibold py-2 px-4 rounded-xl hover:from-amber-700 hover:to-amber-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none"
                 >
-                  💾 Экспорт данных
+                  ↩ Отменить
                 </button>
-              )}
-              <button
-                onClick={undoLastAction}
-                disabled={history.length === 0}
-                className="w-full bg-gradient-to-r from-amber-600 to-amber-500 text-white text-sm font-semibold py-2 px-4 rounded-xl hover:from-amber-700 hover:to-amber-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none"
-              >
-                ↩ Отменить
-              </button>
-              <button
-                onClick={handleReset}
-                className="w-full bg-gradient-to-r from-red-600 to-red-500 text-white text-sm font-semibold py-2 px-4 rounded-xl hover:from-red-700 hover:to-red-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
-              >
-                🔄 Новая игра
-              </button>
-            </div>
+                <button
+                  onClick={handleReset}
+                  className="w-full bg-gradient-to-r from-red-600 to-red-500 text-white text-sm font-semibold py-2 px-4 rounded-xl hover:from-red-700 hover:to-red-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+                >
+                  🔄 Новая игра
+                </button>
+              </div>
+            )}
           </div>
         </>
       ) : (
         <div className="max-w-7xl mx-auto">
           {/* Settings Menu - Normal Mode */}
-          <div className="flex justify-end mb-4">
-            <SettingsMenu
-              onOpenSettings={() => setIsSettingsOpen(true)}
-              isFullscreen={isFullscreen}
-            />
-          </div>
+          {isAdmin && (
+            <div className="flex justify-end mb-4">
+              <SettingsMenu
+                onOpenSettings={() => setIsSettingsOpen(true)}
+                isFullscreen={isFullscreen}
+              />
+            </div>
+          )}
 
           {/* Score Board */}
-          <ScoreBoard />
+          {isAdmin && <ScoreBoard />}
 
           {/* Game Grid */}
           <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8">
@@ -587,29 +605,31 @@ export function GameBoard({
             </div>
 
             {/* Action Buttons */}
-            <div className="mt-8 flex justify-center gap-4">
-              {editMode && onExportData && (
+            {isAdmin && (
+              <div className="mt-8 flex justify-center gap-4">
+                {editMode && onExportData && (
+                  <button
+                    onClick={onExportData}
+                    className="bg-gradient-to-r from-purple-600 to-purple-500 text-white text-lg font-semibold py-3 px-8 rounded-xl hover:from-purple-700 hover:to-purple-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+                  >
+                    💾 Экспорт данных
+                  </button>
+                )}
                 <button
-                  onClick={onExportData}
-                  className="bg-gradient-to-r from-purple-600 to-purple-500 text-white text-lg font-semibold py-3 px-8 rounded-xl hover:from-purple-700 hover:to-purple-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+                  onClick={undoLastAction}
+                  disabled={history.length === 0}
+                  className="bg-gradient-to-r from-amber-600 to-amber-500 text-white text-lg font-semibold py-3 px-8 rounded-xl hover:from-amber-700 hover:to-amber-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none"
                 >
-                  💾 Экспорт данных
+                  ↩ Отменить
                 </button>
-              )}
-              <button
-                onClick={undoLastAction}
-                disabled={history.length === 0}
-                className="bg-gradient-to-r from-amber-600 to-amber-500 text-white text-lg font-semibold py-3 px-8 rounded-xl hover:from-amber-700 hover:to-amber-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none"
-              >
-                ↩ Отменить
-              </button>
-              <button
-                onClick={handleReset}
-                className="bg-gradient-to-r from-red-600 to-red-500 text-white text-lg font-semibold py-3 px-8 rounded-xl hover:from-red-700 hover:to-red-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
-              >
-                🔄 Новая игра
-              </button>
-            </div>
+                <button
+                  onClick={handleReset}
+                  className="bg-gradient-to-r from-red-600 to-red-500 text-white text-lg font-semibold py-3 px-8 rounded-xl hover:from-red-700 hover:to-red-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+                >
+                  🔄 Новая игра
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Game Stats */}
@@ -637,17 +657,96 @@ export function GameBoard({
         />
       )}
 
-      {/* "Question in progress" banner for viewers/participants */}
-      {!isAdmin && remoteQuestion?.isOpen && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-40 bg-amber-500 text-white font-bold px-6 py-3 rounded-2xl shadow-xl animate-pulse text-lg">
-          Вопрос открыт — ждите решения ведущего...
+      {/* Question + answer overlay for participants/viewers */}
+      {!isAdmin && remoteQuestion?.isOpen && remoteQuestion?.questionId && !participantDismissed && (() => {
+        const q = questions.find(qq => qq.id === remoteQuestion.questionId);
+        if (!q) return (
+          <div className="fixed top-4 left-1/2 -translate-x-1/2 z-40 bg-amber-500 text-white font-bold px-6 py-3 rounded-2xl shadow-xl animate-pulse text-lg">
+            Вопрос открыт — ждите решения ведущего...
+          </div>
+        );
+        return (
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-40">
+            <div className="bg-white rounded-3xl shadow-2xl max-w-3xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
+              <div className="p-4 sm:p-8">
+                {/* Header */}
+                <div className="flex items-center gap-3 mb-6">
+                  <div>
+                    <div className="text-sm font-semibold text-ocean-600 uppercase">{q.category}</div>
+                    <div className="text-2xl font-bold text-ocean-800">{q.points} баллов</div>
+                  </div>
+                </div>
+
+                {/* Question */}
+                <div className="bg-ocean-50 rounded-2xl p-8 mb-6">
+                  <div className="text-3xl font-bold text-ocean-900 text-center leading-relaxed whitespace-pre-line">
+                    {q.question}
+                  </div>
+                </div>
+
+                {/* Question images */}
+                {q.questionImages && (
+                  <div className={`mb-6 ${
+                    Array.isArray(q.questionImages) && q.questionImages.length > 1
+                      ? 'grid grid-cols-1 sm:grid-cols-2 gap-4'
+                      : 'flex justify-center'
+                  }`}>
+                    {(Array.isArray(q.questionImages) ? q.questionImages : [q.questionImages]).map((src, i) => (
+                      <img key={i} src={`/media/${src}`} alt="" className="w-full h-auto object-contain max-h-72 rounded-xl shadow-lg" />
+                    ))}
+                  </div>
+                )}
+
+                {/* Answer — shown only when admin reveals it */}
+                {remoteQuestion.answerRevealed ? (
+                  <>
+                    <div className="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-3 sm:p-6 animate-in slide-in-from-top duration-300 mb-6">
+                      <div className="text-sm font-semibold text-ocean-600 mb-2 uppercase">Правильный ответ:</div>
+                      <div className="text-lg sm:text-2xl font-bold text-ocean-900 whitespace-pre-line">{q.answer}</div>
+                      {q.answerImages && (
+                        <div className={`mt-4 ${
+                          Array.isArray(q.answerImages) && q.answerImages.length > 1
+                            ? 'grid grid-cols-1 sm:grid-cols-2 gap-4'
+                            : 'flex justify-center'
+                        }`}>
+                          {(Array.isArray(q.answerImages) ? q.answerImages : [q.answerImages]).map((src, i) => (
+                            <img key={i} src={`/media/${src}`} alt="" className="w-full h-auto object-contain max-h-72 rounded-xl shadow-lg mt-2" />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <div className="text-center">
+                      <button
+                        onClick={() => setParticipantDismissed(true)}
+                        className="bg-gradient-to-r from-ocean-600 to-ocean-500 text-white text-xl font-bold py-4 px-10 rounded-xl hover:from-ocean-700 hover:to-ocean-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+                      >
+                        ✓ Закрыть
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-center text-ocean-500 font-semibold text-lg animate-pulse">
+                    Ожидание решения ведущего...
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* Admin notification when participant shot is being processed */}
+      {isAdmin && remoteQuestion?.coordinate && !isModalOpen && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-40 bg-blue-600 text-white font-bold px-6 py-3 rounded-2xl shadow-xl text-lg">
+          Команда выстрелила в {remoteQuestion.coordinate}
+          {remoteQuestion.cellType === 'empty' ? ' — промах!' : remoteQuestion.questionId ? '' : ' — нет вопроса, ход переходит...'}
         </div>
       )}
 
-      {/* "Your turn" banner for participants */}
-      {!isAdmin && myTeamIndex >= 0 && myTeamIndex === currentTurn && !remoteQuestion?.isOpen && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-40 bg-green-500 text-white font-bold px-6 py-3 rounded-2xl shadow-xl text-lg">
-          Ваш ход! Выберите клетку
+      {/* "Your turn" banner for participants — always visible */}
+      {!isAdmin && myTeamIndex >= 0 && myTeamIndex === currentTurn && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-green-500 text-white font-bold px-6 py-3 rounded-2xl shadow-xl text-lg">
+          Ваш ход! {!remoteQuestion?.isOpen && 'Выберите клетку'}
         </div>
       )}
 

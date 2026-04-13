@@ -96,21 +96,21 @@ export function RoomLobby() {
   if (mode === 'join') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-ocean-900 via-ocean-700 to-ocean-500 flex items-center justify-center p-4">
-        <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-10 max-w-md w-full">
+        <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-6 sm:p-10 max-w-md w-full">
           <button
             onClick={() => setMode('choose')}
             className="mb-6 text-ocean-600 hover:text-ocean-800 font-semibold flex items-center gap-2 transition-colors"
           >
             ← Назад
           </button>
-          <h2 className="text-3xl font-bold text-ocean-800 mb-2">Войти в комнату</h2>
-          <p className="text-ocean-600 mb-8">Введите код комнаты, который показал ведущий</p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-ocean-800 mb-2">Войти в комнату</h2>
+          <p className="text-ocean-600 mb-6 sm:mb-8 text-sm sm:text-base">Введите код комнаты, который показал ведущий</p>
           <input
             type="text"
             value={joinCode}
             onChange={e => setJoinCode(e.target.value.toUpperCase())}
             onKeyDown={e => e.key === 'Enter' && handleJoinRoom()}
-            className="w-full px-5 py-4 text-2xl font-bold text-center tracking-widest border-2 border-ocean-300 rounded-xl focus:border-ocean-500 focus:outline-none transition-colors uppercase"
+            className="w-full px-4 py-3 sm:px-5 sm:py-4 text-xl sm:text-2xl font-bold text-center tracking-widest border-2 border-ocean-300 rounded-xl focus:border-ocean-500 focus:outline-none transition-colors uppercase"
             placeholder="АРДУК7"
             maxLength={6}
             autoFocus
@@ -121,7 +121,7 @@ export function RoomLobby() {
           <button
             onClick={handleJoinRoom}
             disabled={joining || joinCode.trim().length === 0}
-            className="mt-6 w-full bg-gradient-to-r from-ocean-600 to-ocean-500 text-white text-xl font-bold py-4 rounded-xl hover:from-ocean-700 hover:to-ocean-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+            className="mt-6 w-full bg-gradient-to-r from-ocean-600 to-ocean-500 text-white text-lg sm:text-xl font-bold py-3 sm:py-4 rounded-xl hover:from-ocean-700 hover:to-ocean-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-105 active:scale-95 shadow-lg"
           >
             {joining ? 'Подключение...' : 'Войти →'}
           </button>
@@ -133,21 +133,21 @@ export function RoomLobby() {
   // Default — choose mode
   return (
     <div className="min-h-screen bg-gradient-to-br from-ocean-900 via-ocean-700 to-ocean-500 flex items-center justify-center p-4">
-      <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-10 max-w-md w-full text-center">
-        <div className="text-7xl mb-4">⚓</div>
-        <h1 className="text-4xl font-bold text-ocean-800 mb-2">Морской Бой</h1>
-        <p className="text-ocean-600 mb-10 text-lg">Онлайн-викторина для команд</p>
+      <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-6 sm:p-10 max-w-md w-full text-center">
+        <div className="text-5xl sm:text-7xl mb-3 sm:mb-4">⚓</div>
+        <h1 className="text-3xl sm:text-4xl font-bold text-ocean-800 mb-2">Морской Бой</h1>
+        <p className="text-ocean-600 mb-6 sm:mb-10 text-base sm:text-lg">Онлайн-викторина для команд</p>
 
         <div className="space-y-4">
           <button
             onClick={() => setMode('create')}
-            className="w-full bg-gradient-to-r from-ocean-600 to-ocean-500 text-white text-xl font-bold py-5 rounded-xl hover:from-ocean-700 hover:to-ocean-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+            className="w-full bg-gradient-to-r from-ocean-600 to-ocean-500 text-white text-base sm:text-xl font-bold py-4 sm:py-5 rounded-xl hover:from-ocean-700 hover:to-ocean-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
           >
             🚀 Создать игру
           </button>
           <button
             onClick={() => setMode('join')}
-            className="w-full bg-gradient-to-r from-emerald-600 to-emerald-500 text-white text-xl font-semibold py-5 rounded-xl hover:from-emerald-700 hover:to-emerald-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+            className="w-full bg-gradient-to-r from-emerald-600 to-emerald-500 text-white text-base sm:text-xl font-semibold py-4 sm:py-5 rounded-xl hover:from-emerald-700 hover:to-emerald-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
           >
             🔗 Войти по коду
           </button>

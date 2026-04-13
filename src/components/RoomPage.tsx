@@ -26,15 +26,19 @@ export function RoomPage() {
   const [error, setError] = useState<string | null>(null);
   const [showTeamModal, setShowTeamModal] = useState(!hasChosen);
 
-  // Load game data when gameMode is known (synced from Firebase for viewers)
+  // Load game data whenever gameMode is known or changes (re-sync from Firebase)
   useEffect(() => {
-    if (!gameMode || questions.length > 0) return;
+    if (!gameMode) return;
     loadGameData(gameMode);
   }, [gameMode]);
 
   const loadGameData = async (mode: string) => {
     try {
       setLoading(true);
+      // Clear stale data from previous mode before loading new
+      setQuestions([]);
+      setShips([]);
+      setBombs([]);
       const [loadedQuestions, loadedShips, loadedBombs] = await Promise.all([
         loadQuestions(mode),
         loadShips(mode),

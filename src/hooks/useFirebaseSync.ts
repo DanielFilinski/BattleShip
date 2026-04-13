@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { ref, set, onValue, serverTimestamp, runTransaction } from 'firebase/database';
 import { db } from '../lib/firebase';
 import { useGameState } from './useGameState';
+import { useFieldSettings } from './useFieldSettings';
 
 export interface RemoteQuestion {
   questionId: string | null;
@@ -41,6 +42,7 @@ export function useFirebaseSync({ roomId, isAdmin }: UseFirebaseSyncOptions): Us
 
     // useGameState.subscribe() runs outside React render cycle — no infinite loop risk
     const unsub = useGameState.subscribe((state) => {
+      const { columns, rows } = useFieldSettings.getState();
       const stateRef = ref(db, `rooms/${roomId}/state`);
       set(stateRef, {
         teams: state.teams,
@@ -51,6 +53,8 @@ export function useFirebaseSync({ roomId, isAdmin }: UseFirebaseSyncOptions): Us
         gameMode: state.gameMode,
         viewMode: state.viewMode,
         editMode: state.editMode,
+        fieldColumns: columns,
+        fieldRows: rows,
         timestamp: serverTimestamp(),
         history: [], // never sync history — admin keeps it locally
       }).catch(console.error);
@@ -81,6 +85,11 @@ export function useFirebaseSync({ roomId, isAdmin }: UseFirebaseSyncOptions): Us
         timestamp: remote.timestamp ?? Date.now(),
         history: [], // viewers never need history
       });
+
+      // Sync field dimensions so participants see the same grid as the admin
+      if (remote.fieldColumns && remote.fieldRows) {
+        useFieldSettings.getState().setFieldSize(remote.fieldColumns, remote.fieldRows);
+      }
     });
 
     return unsub; // Firebase v9: onValue returns unsubscribe function
