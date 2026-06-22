@@ -13,4 +13,10 @@ const firebaseConfig = {
 
 // Guard against double-init in React StrictMode
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-export const db = getDatabase(app);
+
+// В локальном режиме (VITE_BACKEND=local) конфиг Firebase может отсутствовать —
+// не инициализируем базу, чтобы getDatabase не падал без databaseURL.
+// Этот db всё равно не используется: ./rtdb.ts подставляет локальный бэкенд.
+export const db = firebaseConfig.databaseURL
+  ? getDatabase(app)
+  : (undefined as unknown as ReturnType<typeof getDatabase>);

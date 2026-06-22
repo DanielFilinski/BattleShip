@@ -1,5 +1,4 @@
-import { ref, set, get, remove, update } from 'firebase/database';
-import { db } from './firebase';
+import { ref, set, get, remove, update, db } from './rtdb';
 
 export const CUSTOM_MODE_PREFIX = 'custom_';
 

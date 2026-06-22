@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { ref, onValue } from 'firebase/database';
-import { db } from '../lib/firebase';
+import { ref, onValue, db } from '../lib/rtdb';
 import { loadQuestions } from '../utils/loadData';
 import type { Question } from '../types/question';
 import type { Team } from '../types/game';

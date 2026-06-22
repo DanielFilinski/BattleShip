@@ -151,6 +151,12 @@ export function RoomLobby() {
           >
             🔗 Войти по коду
           </button>
+          <button
+            onClick={() => navigate('/solo')}
+            className="w-full bg-gradient-to-r from-indigo-600 to-indigo-500 text-white text-base sm:text-xl font-semibold py-4 sm:py-5 rounded-xl hover:from-indigo-700 hover:to-indigo-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+          >
+            📺 Один экран (трансляция)
+          </button>
         </div>
 
         <div className="mt-8 flex items-center justify-between">

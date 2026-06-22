@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { ref, set, serverTimestamp } from 'firebase/database';
-import { db } from '../lib/firebase';
+import { ref, set, serverTimestamp, db } from '../lib/rtdb';
 import { setParticipantState } from '../lib/participant';
 import { getTeamColor } from '../utils/teamColors';
 import type { Team } from '../types/game';

@@ -1,5 +1,4 @@
-import { db } from './firebase';
-import { ref, set, get, serverTimestamp } from 'firebase/database';
+import { db, ref, set, get, serverTimestamp } from './rtdb';
 import type { GameState } from '../types/game';
 
 // 6-character room ID from unambiguous Cyrillic letters + digits

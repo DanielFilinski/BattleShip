@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { ref, set, onValue, serverTimestamp, runTransaction } from 'firebase/database';
-import { db } from '../lib/firebase';
+import { ref, set, onValue, serverTimestamp, runTransaction, db } from '../lib/rtdb';
 import { useGameState } from './useGameState';
 import { useFieldSettings } from './useFieldSettings';
 

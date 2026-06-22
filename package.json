@@ -9,6 +9,10 @@
     "server": "node server.js",
     "dev:all": "npm run server & npm run dev",
     "build": "tsc && vite build",
+    "build:local": "tsc && VITE_BACKEND=local vite build",
+    "local": "npm run build:local && node local-server.js",
+    "local:serve": "node local-server.js",
+    "export:modes": "node scripts/exportModes.mjs",
     "preview": "vite preview",
     "generate-positions": "tsx scripts/generatePositions.ts",
     "electron": "npm run build && electron .",
@@ -64,6 +68,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.14.0",
+    "ws": "^8.21.0",
     "zustand": "^5.0.2"
   },
   "devDependencies": {
