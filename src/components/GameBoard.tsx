@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useGameState } from '../hooks/useGameState';
 import { useSound } from '../hooks/useSound';
 import { useFieldSettings } from '../hooks/useFieldSettings';
@@ -64,6 +64,20 @@ export function GameBoard({
   const [showQuestionSelector, setShowQuestionSelector] = useState(false);
   const [editingCell, setEditingCell] = useState<{ coordinate: string; currentQuestionId: string } | null>(null);
   const [participantDismissed, setParticipantDismissed] = useState(false);
+  // Блокировка поля, пока разрешается выстрел (особенно промах с задержкой 1с).
+  // Ref — для синхронной проверки в обработчике клика (защита от быстрых повторных кликов),
+  // state — чтобы визуально задизейблить клетки.
+  const [isResolving, setIsResolving] = useState(false);
+  const isResolvingRef = useRef(false);
+
+  const lockBoard = () => {
+    isResolvingRef.current = true;
+    setIsResolving(true);
+  };
+  const unlockBoard = () => {
+    isResolvingRef.current = false;
+    setIsResolving(false);
+  };
 
   const COLUMNS = useMemo(() => generateColumns(fieldColumns), [fieldColumns]);
   const ROWS = useMemo(() => generateRows(fieldRows), [fieldRows]);
@@ -85,6 +99,14 @@ export function GameBoard({
     }
   }, [remoteQuestion?.questionId]);
 
+  // Участник снимает блокировку поля, когда выстрел разрешился:
+  // сменился ход (промах) или открылся/закрылся вопрос (попадание).
+  useEffect(() => {
+    if (isAdmin) return;
+    unlockBoard();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentTurn, remoteQuestion?.isOpen, isAdmin]);
+
   // ─── Online: react to participant shot arriving via Firebase ─────────────────
   // When a participant clicks a cell, it writes to Firebase session.
   // Admin's useFirebaseSync picks it up → remoteQuestion changes.
@@ -101,8 +123,12 @@ export function GameBoard({
     setCurrentCoordinate(coordinate);
 
     if (cellType === 'empty') {
+      lockBoard();
       playMiss();
-      setTimeout(() => answerWrong(), 1000);
+      setTimeout(() => {
+        answerWrong();
+        unlockBoard();
+      }, 1000);
     } else {
       playHit();
       setCurrentCellType(cellType === 'bomb' ? 'bomb' : 'ship');
@@ -115,7 +141,11 @@ export function GameBoard({
         }
       }
       // No question found — auto-advance turn so game doesn't get stuck
-      setTimeout(() => answerWrong(), 1000);
+      lockBoard();
+      setTimeout(() => {
+        answerWrong();
+        unlockBoard();
+      }, 1000);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [remoteQuestion?.coordinate, remoteQuestion?.isOpen]);
@@ -131,7 +161,11 @@ export function GameBoard({
       if (myTeamIndex !== currentTurn) return;
       // Already clicked
       if (clickedCells.includes(coordinate)) return;
-      // Delegate to Firebase
+      // Ждём, пока разрешится предыдущий выстрел (ход ещё не успел смениться) —
+      // иначе можно выстрелить дважды за один ход.
+      if (isResolvingRef.current) return;
+      lockBoard();
+      // Delegate to Firebase (блокировка снимется при смене хода / открытии вопроса)
       onParticipantShoot?.(coordinate, type, questionId ?? null);
       return;
     }
@@ -153,14 +187,20 @@ export function GameBoard({
       return;
     }
 
+    // Поле заблокировано (идёт разрешение предыдущего выстрела) или открыт вопрос —
+    // не даём той же команде нажать второй раз и сбить очередь хода.
+    if (isResolvingRef.current || isModalOpen) return;
+
     saveSnapshot();
     clickCell(coordinate);
     setCurrentCoordinate(coordinate);
 
     if (type === 'empty') {
+      lockBoard();
       playMiss();
       setTimeout(() => {
         answerWrong();
+        unlockBoard();
       }, 1000);
     } else {
       playHit();
@@ -407,7 +447,7 @@ export function GameBoard({
                             coordinate={coordinate}
                             status={getCellStatus(coordinate)}
                             onClick={handleCellClick}
-                            disabled={isModalOpen}
+                            disabled={isModalOpen || isResolving}
                             questionId={questionId}
                             editMode={editMode}
                           />
@@ -592,7 +632,7 @@ export function GameBoard({
                             coordinate={coordinate}
                             status={getCellStatus(coordinate)}
                             onClick={handleCellClick}
-                            disabled={isModalOpen}
+                            disabled={isModalOpen || isResolving}
                             questionId={questionId}
                             editMode={editMode}
                           />
