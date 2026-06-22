@@ -70,6 +70,12 @@ export function GameBoard({
   const [isResolving, setIsResolving] = useState(false);
   const isResolvingRef = useRef(false);
 
+  // Наблюдатель/участник: поле подгоняется под доступную область, чтобы
+  // целиком влезать без прокрутки. Размер ячейки считаем по реальным размерам
+  // левой колонки (ResizeObserver), исходя из меньшего из ограничений ширины/высоты.
+  const viewerFrameRef = useRef<HTMLDivElement>(null);
+  const [viewerCell, setViewerCell] = useState(40);
+
   const lockBoard = () => {
     isResolvingRef.current = true;
     setIsResolving(true);
@@ -81,6 +87,27 @@ export function GameBoard({
 
   const COLUMNS = useMemo(() => generateColumns(fieldColumns), [fieldColumns]);
   const ROWS = useMemo(() => generateRows(fieldRows), [fieldRows]);
+
+  // Подгонка размера ячейки под доступную область (только наблюдатель/участник).
+  useEffect(() => {
+    if (isAdmin) return;
+    const el = viewerFrameRef.current;
+    if (!el) return;
+    const LABEL = 26; // место под подписи строк/столбцов
+    const GAP = 4;    // отступ между ячейками (gap)
+    const recompute = () => {
+      const w = el.clientWidth;
+      const h = el.clientHeight;
+      if (!w || !h) return;
+      const byWidth = (w - LABEL - fieldColumns * GAP) / fieldColumns;
+      const byHeight = (h - LABEL - fieldRows * GAP) / fieldRows;
+      setViewerCell(Math.max(14, Math.floor(Math.min(byWidth, byHeight))));
+    };
+    recompute();
+    const ro = new ResizeObserver(recompute);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [isAdmin, fieldColumns, fieldRows]);
 
   const allTargetCells = useMemo(() => {
     const shipCells = ships.flatMap(ship => ship.cells);
@@ -407,7 +434,13 @@ export function GameBoard({
   }, [teams]);
 
   return (
-    <div className={`bg-gradient-to-br from-ocean-900 via-ocean-700 to-ocean-500 ${isFullscreen ? 'h-screen flex p-0' : `min-h-screen p-6 ${roomId ? 'pt-14' : ''}`}`}>
+    <div className={`bg-gradient-to-br from-ocean-900 via-ocean-700 to-ocean-500 ${
+      isFullscreen
+        ? 'h-screen flex p-0'
+        : !isAdmin
+          ? 'h-screen overflow-hidden flex flex-col lg:flex-row gap-3 p-3'
+          : `min-h-screen p-6 ${roomId ? 'pt-14' : ''}`
+    }`}>
       {isFullscreen ? (
         <>
           {/* Game Grid - Left Side */}
@@ -582,6 +615,110 @@ export function GameBoard({
             )}
           </div>
         </>
+      ) : !isAdmin ? (
+        /* ─── Наблюдатель / участник: поле слева (fit-to-screen), панель справа ─── */
+        <>
+          {/* Поле — слева, занимает максимум места без прокрутки */}
+          <div
+            ref={viewerFrameRef}
+            className="flex-1 min-w-0 min-h-0 bg-white/95 rounded-3xl shadow-2xl p-3 flex items-center justify-center overflow-hidden"
+          >
+            <div>
+              {/* Заголовки колонок */}
+              <div className="flex mb-1">
+                <div style={{ width: 26, flexShrink: 0 }} />
+                {COLUMNS.map(col => (
+                  <div
+                    key={col}
+                    className="px-0.5 text-center font-bold text-ocean-700"
+                    style={{ width: viewerCell, flexShrink: 0, fontSize: Math.max(11, viewerCell * 0.42) }}
+                  >
+                    {col}
+                  </div>
+                ))}
+              </div>
+              {/* Ряды */}
+              {ROWS.map(row => (
+                <div key={row} className="flex mb-1 items-center">
+                  <div
+                    className="flex items-center justify-center font-bold text-ocean-700"
+                    style={{ width: 26, flexShrink: 0, fontSize: Math.max(11, viewerCell * 0.42) }}
+                  >
+                    {row}
+                  </div>
+                  {COLUMNS.map(col => {
+                    const coordinate = `${col}${row}`;
+                    return (
+                      <div key={coordinate} className="px-0.5" style={{ width: viewerCell, flexShrink: 0 }}>
+                        <Cell
+                          coordinate={coordinate}
+                          status={getCellStatus(coordinate)}
+                          onClick={handleCellClick}
+                          disabled={isModalOpen || isResolving}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Панель справа: сначала виджет «осталось», под ним команды со счётом */}
+          <div className="w-full lg:w-72 shrink-0 flex flex-col gap-3 overflow-y-auto">
+            {/* Виджет: осталось кораблей / бомб / вопросов */}
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 shadow-xl">
+              <div className="text-center text-sm font-bold text-ocean-800 mb-3">ОСТАЛОСЬ</div>
+              <div className="grid grid-cols-3 gap-2">
+                <div className="flex flex-col items-center bg-blue-50 rounded-lg px-2 py-2">
+                  <span className="text-xs font-semibold text-ocean-700 whitespace-nowrap">🚢 Кораблей</span>
+                  <span className="text-2xl font-black text-blue-600">{remainingStats.ships}</span>
+                </div>
+                <div className="flex flex-col items-center bg-red-50 rounded-lg px-2 py-2">
+                  <span className="text-xs font-semibold text-ocean-700 whitespace-nowrap">💣 Бомб</span>
+                  <span className="text-2xl font-black text-red-600">{remainingStats.bombs}</span>
+                </div>
+                <div className="flex flex-col items-center bg-purple-50 rounded-lg px-2 py-2">
+                  <span className="text-xs font-semibold text-ocean-700 whitespace-nowrap">❓ Вопросов</span>
+                  <span className="text-2xl font-black text-purple-600">{remainingStats.questions}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Команды со счётом */}
+            <div className="flex flex-row lg:flex-col gap-3 flex-wrap">
+              {teams.map((team, index) => {
+                const isActive = currentTurn === index;
+                const color = getTeamColor(team, index);
+                return (
+                  <div
+                    key={index}
+                    className={`flex-1 min-w-[120px] rounded-2xl shadow-xl p-4 border-4 transition-all duration-300 ${
+                      isActive ? 'scale-[1.02] shadow-2xl' : 'bg-white border-ocean-200'
+                    }`}
+                    style={isActive ? getTeamActiveStyle(color) : undefined}
+                  >
+                    <div className="text-center">
+                      <div className={`text-xs font-semibold mb-1 ${isActive ? 'text-white' : 'text-ocean-600'}`}>
+                        {isActive ? '▶️ ХОД' : `КОМАНДА ${index + 1}`}
+                      </div>
+                      <div className={`text-base font-bold mb-1 truncate ${isActive ? 'text-white' : 'text-ocean-800'}`}>
+                        {team.name}
+                      </div>
+                      <div
+                        className={`text-4xl font-black ${isActive ? 'text-white' : ''}`}
+                        style={!isActive ? { color } : undefined}
+                      >
+                        {team.score}
+                      </div>
+                      <div className={`text-xs mt-0.5 ${isActive ? 'text-white/80' : 'text-ocean-500'}`}>БАЛЛОВ</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </>
       ) : (
         <div className="max-w-7xl mx-auto">
           {/* Settings Menu - Normal Mode */}
@@ -596,63 +733,6 @@ export function GameBoard({
 
           {/* Score Board */}
           {isAdmin && <ScoreBoard />}
-
-          {/* Read-only счёт + статистика для наблюдателей и участников */}
-          {!isAdmin && (
-            <div className="mb-8 space-y-4">
-              {/* Команды */}
-              <div className="flex justify-between items-stretch gap-3 flex-wrap">
-                {teams.map((team, index) => {
-                  const isActive = currentTurn === index;
-                  const color = getTeamColor(team, index);
-                  return (
-                    <div
-                      key={index}
-                      className={`flex-1 min-w-[110px] rounded-2xl shadow-xl p-4 border-4 transition-all duration-300 ${
-                        isActive ? 'scale-105 shadow-2xl' : 'bg-white border-ocean-200'
-                      }`}
-                      style={isActive ? getTeamActiveStyle(color) : undefined}
-                    >
-                      <div className="text-center">
-                        <div className={`text-xs font-semibold mb-1 ${isActive ? 'text-white' : 'text-ocean-600'}`}>
-                          {isActive ? '▶️ ХОД' : `КОМАНДА ${index + 1}`}
-                        </div>
-                        <div className={`text-base font-bold mb-1 truncate ${isActive ? 'text-white' : 'text-ocean-800'}`}>
-                          {team.name}
-                        </div>
-                        <div
-                          className={`text-4xl font-black ${isActive ? 'text-white' : ''}`}
-                          style={!isActive ? { color } : undefined}
-                        >
-                          {team.score}
-                        </div>
-                        <div className={`text-xs mt-0.5 ${isActive ? 'text-white/80' : 'text-ocean-500'}`}>БАЛЛОВ</div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Осталось: корабли / бомбы / вопросы */}
-              <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 shadow-xl max-w-md mx-auto">
-                <div className="text-center text-sm font-bold text-ocean-800 mb-3">ОСТАЛОСЬ</div>
-                <div className="grid grid-cols-3 gap-2">
-                  <div className="flex flex-col items-center bg-blue-50 rounded-lg px-2 py-2">
-                    <span className="text-xs font-semibold text-ocean-700">🚢 Кораблей</span>
-                    <span className="text-2xl font-black text-blue-600">{remainingStats.ships}</span>
-                  </div>
-                  <div className="flex flex-col items-center bg-red-50 rounded-lg px-2 py-2">
-                    <span className="text-xs font-semibold text-ocean-700">💣 Бомб</span>
-                    <span className="text-2xl font-black text-red-600">{remainingStats.bombs}</span>
-                  </div>
-                  <div className="flex flex-col items-center bg-purple-50 rounded-lg px-2 py-2">
-                    <span className="text-xs font-semibold text-ocean-700">❓ Вопросов</span>
-                    <span className="text-2xl font-black text-purple-600">{remainingStats.questions}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
 
           {/* Game Grid */}
           <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8">
