@@ -1,0 +1,24 @@
+{
+  "bombs": [
+    {
+      "cell": "З1",
+      "questionId": "dw_10"
+    },
+    {
+      "cell": "В4",
+      "questionId": "dw_20"
+    },
+    {
+      "cell": "Е5",
+      "questionId": "dw_05"
+    },
+    {
+      "cell": "А9",
+      "questionId": "dw_15"
+    },
+    {
+      "cell": "В10",
+      "questionId": "dw_25"
+    }
+  ]
+}

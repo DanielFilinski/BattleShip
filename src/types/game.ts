@@ -41,6 +41,8 @@ export interface GameMode {
   name: string;
   description: string;
   color: string;
+  /** Время создания (только для пользовательских режимов из редактора) */
+  createdAt?: number;
 }
 
 export interface GameData {

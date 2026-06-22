@@ -9,12 +9,16 @@ export async function loadGameModes(): Promise<GameMode[]> {
       listCustomModes().catch(() => []),
     ]);
     const staticModes: GameMode[] = staticResponse.modes ?? [];
-    const customGameModes: GameMode[] = customModes.map((m) => ({
-      id: m.id,
-      name: m.name,
-      description: m.description,
-      color: m.color,
-    }));
+    const customGameModes: GameMode[] = customModes
+      // Скрываем тестовые режимы из общего списка
+      .filter((m) => !/тест/i.test(m.name))
+      .map((m) => ({
+        id: m.id,
+        name: m.name,
+        description: m.description,
+        color: m.color,
+        createdAt: m.createdAt,
+      }));
     return [...staticModes, ...customGameModes];
   } catch (error) {
     console.error('Failed to load game modes:', error);

@@ -27,7 +27,15 @@ export function WelcomeScreen({ onModeSelect, onStartGame }: WelcomeScreenProps)
       const modes = await loadGameModes();
       setGameModes(modes);
       if (modes.length > 0) {
-        setSelectedMode(modes[0].id);
+        // По умолчанию выбираем последний созданный режим:
+        // среди пользовательских — по максимальному createdAt,
+        // иначе — последний в статическом списке (добавляется в конец).
+        const withDates = modes.filter((m) => typeof m.createdAt === 'number');
+        const latest =
+          withDates.length > 0
+            ? withDates.reduce((a, b) => (b.createdAt! > a.createdAt! ? b : a))
+            : modes[modes.length - 1];
+        setSelectedMode(latest.id);
       }
     }
     loadModes();
