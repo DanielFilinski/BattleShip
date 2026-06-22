@@ -597,6 +597,63 @@ export function GameBoard({
           {/* Score Board */}
           {isAdmin && <ScoreBoard />}
 
+          {/* Read-only счёт + статистика для наблюдателей и участников */}
+          {!isAdmin && (
+            <div className="mb-8 space-y-4">
+              {/* Команды */}
+              <div className="flex justify-between items-stretch gap-3 flex-wrap">
+                {teams.map((team, index) => {
+                  const isActive = currentTurn === index;
+                  const color = getTeamColor(team, index);
+                  return (
+                    <div
+                      key={index}
+                      className={`flex-1 min-w-[110px] rounded-2xl shadow-xl p-4 border-4 transition-all duration-300 ${
+                        isActive ? 'scale-105 shadow-2xl' : 'bg-white border-ocean-200'
+                      }`}
+                      style={isActive ? getTeamActiveStyle(color) : undefined}
+                    >
+                      <div className="text-center">
+                        <div className={`text-xs font-semibold mb-1 ${isActive ? 'text-white' : 'text-ocean-600'}`}>
+                          {isActive ? '▶️ ХОД' : `КОМАНДА ${index + 1}`}
+                        </div>
+                        <div className={`text-base font-bold mb-1 truncate ${isActive ? 'text-white' : 'text-ocean-800'}`}>
+                          {team.name}
+                        </div>
+                        <div
+                          className={`text-4xl font-black ${isActive ? 'text-white' : ''}`}
+                          style={!isActive ? { color } : undefined}
+                        >
+                          {team.score}
+                        </div>
+                        <div className={`text-xs mt-0.5 ${isActive ? 'text-white/80' : 'text-ocean-500'}`}>БАЛЛОВ</div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Осталось: корабли / бомбы / вопросы */}
+              <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 shadow-xl max-w-md mx-auto">
+                <div className="text-center text-sm font-bold text-ocean-800 mb-3">ОСТАЛОСЬ</div>
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="flex flex-col items-center bg-blue-50 rounded-lg px-2 py-2">
+                    <span className="text-xs font-semibold text-ocean-700">🚢 Кораблей</span>
+                    <span className="text-2xl font-black text-blue-600">{remainingStats.ships}</span>
+                  </div>
+                  <div className="flex flex-col items-center bg-red-50 rounded-lg px-2 py-2">
+                    <span className="text-xs font-semibold text-ocean-700">💣 Бомб</span>
+                    <span className="text-2xl font-black text-red-600">{remainingStats.bombs}</span>
+                  </div>
+                  <div className="flex flex-col items-center bg-purple-50 rounded-lg px-2 py-2">
+                    <span className="text-xs font-semibold text-ocean-700">❓ Вопросов</span>
+                    <span className="text-2xl font-black text-purple-600">{remainingStats.questions}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Game Grid */}
           <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8">
             <div className="overflow-x-auto">
@@ -673,11 +730,13 @@ export function GameBoard({
           </div>
 
           {/* Game Stats */}
-          <div className="mt-6 text-center text-white/80 text-sm">
-            <p>
-              Кликнуто ячеек: {clickedCells.length} / {fieldColumns * fieldRows}
-            </p>
-          </div>
+          {isAdmin && (
+            <div className="mt-6 text-center text-white/80 text-sm">
+              <p>
+                Кликнуто ячеек: {clickedCells.length} / {fieldColumns * fieldRows}
+              </p>
+            </div>
+          )}
         </div>
       )}
 
