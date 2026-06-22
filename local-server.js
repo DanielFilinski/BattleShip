@@ -152,6 +152,13 @@ function applyRemove(p) {
 const app = express();
 app.use(express.json({ limit: '5mb' }));
 app.use(express.static(DIST_DIR));
+
+// Адрес сервера в локальной сети — чтобы ссылка/QR указывали на реальный IP,
+// а не на localhost, даже если ведущий открыл игру по адресу localhost.
+app.get('/api/server-info', (req, res) => {
+  res.json({ host: bestLanAddress(), port: PORT, urls: lanAddresses() });
+});
+
 // SPA-fallback: любые маршруты отдают index.html
 app.get('*', (req, res) => res.sendFile(path.join(DIST_DIR, 'index.html')));
 
@@ -234,17 +241,38 @@ function lanAddresses() {
   return out;
 }
 
+// Самый вероятный адрес домашней Wi-Fi сети: 192.168.* и 10.* приоритетнее,
+// docker-сети 172.16–31.* — в самый низ.
+function ipRank(ip) {
+  if (ip.startsWith('192.168.')) return 0;
+  if (ip.startsWith('10.')) return 1;
+  if (/^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(ip)) return 3;
+  return 2;
+}
+
+function bestLanAddress() {
+  const addrs = lanAddresses();
+  if (addrs.length === 0) return 'localhost';
+  return addrs.slice().sort((a, b) => ipRank(a) - ipRank(b))[0];
+}
+
 server.listen(PORT, '0.0.0.0', () => {
   if (!existsSync(DIST_DIR)) {
     console.warn('\n⚠️  Папка dist/ не найдена. Сначала собери приложение: npm run build:local\n');
   }
   console.log(`\n✅ Локальный сервер запущен (порт ${PORT})`);
-  console.log('📡 Адреса для участников в этой Wi-Fi сети:');
   const addrs = lanAddresses();
   if (addrs.length === 0) {
-    console.log(`   http://localhost:${PORT}  (других сетевых адресов не найдено)`);
+    console.log(`📡 http://localhost:${PORT}  (других сетевых адресов не найдено)`);
   } else {
-    for (const ip of addrs) console.log(`   ➜  http://${ip}:${PORT}`);
+    const best = bestLanAddress();
+    console.log('📡 Адрес для участников (открой этот на телефоне):');
+    console.log(`   ➜  http://${best}:${PORT}`);
+    const others = addrs.filter(ip => ip !== best);
+    if (others.length > 0) {
+      console.log('   другие адреса этой машины:');
+      for (const ip of others) console.log(`      http://${ip}:${PORT}`);
+    }
   }
   console.log('\nИнтернет не нужен. Останов — Ctrl+C.\n');
 });

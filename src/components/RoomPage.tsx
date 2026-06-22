@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import QRCode from 'qrcode';
 import { useGameState } from '../hooks/useGameState';
 import { useParticipant } from '../hooks/useParticipant';
 import { useFirebaseSync } from '../hooks/useFirebaseSync';
@@ -162,8 +163,32 @@ export function RoomPage() {
 function RoomCodeBanner({ roomId, isAdmin }: { roomId: string; isAdmin: boolean }) {
   const [copied, setCopied] = useState(false);
   const [showQr, setShowQr] = useState(false);
-  const shareUrl = `${window.location.origin}/room/${roomId}`;
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(shareUrl)}`;
+  const [origin, setOrigin] = useState(window.location.origin);
+  const [qrUrl, setQrUrl] = useState<string | null>(null);
+
+  // Если ведущий открыл игру через localhost, ссылка/QR были бы бесполезны для
+  // телефонов. Спрашиваем у локального сервера его адрес в Wi-Fi сети.
+  useEffect(() => {
+    const host = window.location.hostname;
+    if (host !== 'localhost' && host !== '127.0.0.1') return;
+    fetch('/api/server-info')
+      .then(r => (r.ok ? r.json() : null))
+      .then(info => {
+        if (info?.host) setOrigin(`${window.location.protocol}//${info.host}:${info.port}`);
+      })
+      .catch(() => {
+        /* офлайн-сервер недоступен — оставляем как есть */
+      });
+  }, []);
+
+  const shareUrl = `${origin}/room/${roomId}`;
+
+  // QR генерируется локально (работает офлайн, без внешних сервисов).
+  useEffect(() => {
+    QRCode.toDataURL(shareUrl, { width: 240, margin: 1 })
+      .then(setQrUrl)
+      .catch(() => setQrUrl(null));
+  }, [shareUrl]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(shareUrl).then(() => {
@@ -218,7 +243,13 @@ function RoomCodeBanner({ roomId, isAdmin }: { roomId: string; isAdmin: boolean 
           >
             <div className="text-ocean-800 font-bold text-lg mb-1">Отсканируй для входа</div>
             <div className="text-ocean-500 text-sm mb-4 font-mono">{roomId}</div>
-            <img src={qrUrl} alt="QR код" className="w-48 h-48 mx-auto rounded-xl" />
+            {qrUrl ? (
+              <img src={qrUrl} alt="QR код" className="w-48 h-48 mx-auto rounded-xl" />
+            ) : (
+              <div className="w-48 h-48 mx-auto rounded-xl bg-ocean-50 flex items-center justify-center text-ocean-400 text-sm">
+                Генерация QR…
+              </div>
+            )}
             <p className="mt-4 text-xs text-ocean-400 break-all max-w-xs">{shareUrl}</p>
             <button
               onClick={() => setShowQr(false)}
