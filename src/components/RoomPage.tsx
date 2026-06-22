@@ -159,6 +159,26 @@ export function RoomPage() {
   );
 }
 
+// Запасное копирование для http-адресов, где navigator.clipboard недоступен.
+function fallbackCopy(text: string, onDone: () => void) {
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.top = '0';
+    ta.style.left = '0';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    onDone();
+  } catch {
+    /* совсем не вышло — пользователь скопирует ссылку вручную из QR-окна */
+  }
+}
+
 // ─── Room code banner ─────────────────────────────────────────────────────────
 function RoomCodeBanner({ roomId, isAdmin }: { roomId: string; isAdmin: boolean }) {
   const [copied, setCopied] = useState(false);
@@ -184,17 +204,25 @@ function RoomCodeBanner({ roomId, isAdmin }: { roomId: string; isAdmin: boolean 
   const shareUrl = `${origin}/room/${roomId}`;
 
   // QR генерируется локально (работает офлайн, без внешних сервисов).
+  // Большое разрешение — чтобы оставался чётким на весь экран.
   useEffect(() => {
-    QRCode.toDataURL(shareUrl, { width: 240, margin: 1 })
+    QRCode.toDataURL(shareUrl, { width: 1024, margin: 1 })
       .then(setQrUrl)
       .catch(() => setQrUrl(null));
   }, [shareUrl]);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(shareUrl).then(() => {
+    const markCopied = () => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    });
+    };
+    // navigator.clipboard доступен только в защищённом контексте (https/localhost).
+    // По локальной сети (http://192.168.x.x) его нет — нужен запасной способ.
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(shareUrl).then(markCopied).catch(() => fallbackCopy(shareUrl, markCopied));
+    } else {
+      fallbackCopy(shareUrl, markCopied);
+    }
   };
 
   if (!isAdmin) return null;
@@ -231,33 +259,39 @@ function RoomCodeBanner({ roomId, isAdmin }: { roomId: string; isAdmin: boolean 
         </div>
       </div>
 
-      {/* QR popover */}
+      {/* QR на весь экран */}
       {showQr && (
         <div
-          className="fixed inset-0 z-40 flex items-center justify-center bg-black/50"
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white p-4 sm:p-8"
           onClick={() => setShowQr(false)}
         >
-          <div
-            className="bg-white rounded-3xl p-8 shadow-2xl text-center"
-            onClick={e => e.stopPropagation()}
+          {/* Закрыть — в углу */}
+          <button
+            onClick={() => setShowQr(false)}
+            className="absolute top-4 right-4 sm:top-6 sm:right-6 text-ocean-400 hover:text-ocean-700 text-4xl font-bold leading-none transition-colors"
+            title="Закрыть"
           >
-            <div className="text-ocean-800 font-bold text-lg mb-1">Отсканируй для входа</div>
-            <div className="text-ocean-500 text-sm mb-4 font-mono">{roomId}</div>
-            {qrUrl ? (
-              <img src={qrUrl} alt="QR код" className="w-48 h-48 mx-auto rounded-xl" />
-            ) : (
-              <div className="w-48 h-48 mx-auto rounded-xl bg-ocean-50 flex items-center justify-center text-ocean-400 text-sm">
-                Генерация QR…
-              </div>
-            )}
-            <p className="mt-4 text-xs text-ocean-400 break-all max-w-xs">{shareUrl}</p>
-            <button
-              onClick={() => setShowQr(false)}
-              className="mt-4 bg-ocean-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-ocean-700 transition-colors"
-            >
-              Закрыть
-            </button>
-          </div>
+            ✕
+          </button>
+
+          <div className="text-ocean-800 font-bold text-2xl sm:text-3xl mb-1">Отсканируй для входа</div>
+          <div className="text-ocean-500 text-lg sm:text-xl mb-4 font-mono tracking-widest">{roomId}</div>
+
+          {qrUrl ? (
+            <img
+              src={qrUrl}
+              alt="QR код"
+              className="w-[80vmin] h-[80vmin] max-w-[680px] max-h-[680px] object-contain rounded-2xl"
+              onClick={e => e.stopPropagation()}
+            />
+          ) : (
+            <div className="w-[80vmin] h-[80vmin] max-w-[680px] max-h-[680px] rounded-2xl bg-ocean-50 flex items-center justify-center text-ocean-400 text-xl">
+              Генерация QR…
+            </div>
+          )}
+
+          <p className="mt-4 text-base sm:text-lg text-ocean-500 break-all text-center max-w-xl px-4">{shareUrl}</p>
+          <div className="mt-2 text-ocean-400 text-sm">Нажми в любом месте, чтобы закрыть</div>
         </div>
       )}
     </>
