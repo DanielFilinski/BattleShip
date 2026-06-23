@@ -101,6 +101,17 @@
       "question": "Электропоезд едет на восток, а ветер дует на запад. В какую сторону отклоняется дым из трубы?",
       "answer": "У электропоезда нет дыма"
     },
+    {
+      "id": "dw_26",
+      "category": "Логика, эрудиция, загадки",
+      "type": "image",
+      "difficulty": "medium",
+      "points": 2,
+      "thinkingTime": 30,
+      "question": "Разгадайте ребус",
+      "answer": "Коньки",
+      "mediaPath": "newyear/rebus1.jpg"
+    },
 
     {
       "id": "dw_11",
@@ -151,6 +162,17 @@
       "thinkingTime": 40,
       "question": "Кто написал знаменитую «Лунную сонату»?",
       "answer": "Людвиг ван Бетховен"
+    },
+    {
+      "id": "dw_27",
+      "category": "Музыка",
+      "type": "audio",
+      "difficulty": "easy",
+      "points": 1,
+      "thinkingTime": 20,
+      "question": "Угадайте песню по мелодии",
+      "answer": "Текла река",
+      "mediaPath": "audio/Текла_река.mp3"
     },
 
     {
