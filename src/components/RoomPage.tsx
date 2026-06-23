@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { setCoHostFlag } from '../lib/participant';
 import QRCode from 'qrcode';
 import { useGameState } from '../hooks/useGameState';
 import { useParticipant } from '../hooks/useParticipant';
@@ -13,8 +14,16 @@ import type { Ship, Bomb } from '../types/game';
 export function RoomPage() {
   const { roomId } = useParams<{ roomId: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  // Open /room/{code}?host=1 to join as the second presenter (co-host).
+  // Persist synchronously (lazy init runs once, before useParticipant reads it),
+  // so a refresh keeps co-host mode.
+  useState(() => {
+    if (roomId && searchParams.get('host') === '1') setCoHostFlag(roomId);
+    return null;
+  });
   const { gameStarted, gameMode, teams } = useGameState();
-  const { isAdmin, myTeamIndex, userId, hasChosen } = useParticipant(roomId!);
+  const { isAdmin, isCoHost, myTeamIndex, userId, hasChosen } = useParticipant(roomId!);
   const { remoteQuestion, writeSession, clearSession, participantShoot } = useFirebaseSync({
     roomId: roomId!,
     isAdmin,
@@ -148,6 +157,7 @@ export function RoomPage() {
         onUpdateBomb={updateBomb}
         onExportData={exportGameData}
         isAdmin={isAdmin}
+        isCoHost={isCoHost}
         myTeamIndex={myTeamIndex}
         roomId={roomId!}
         remoteQuestion={remoteQuestion}
@@ -182,6 +192,7 @@ function fallbackCopy(text: string, onDone: () => void) {
 // ─── Room code banner ─────────────────────────────────────────────────────────
 function RoomCodeBanner({ roomId, isAdmin }: { roomId: string; isAdmin: boolean }) {
   const [copied, setCopied] = useState(false);
+  const [coHostCopied, setCoHostCopied] = useState(false);
   const [showQr, setShowQr] = useState(false);
   const [origin, setOrigin] = useState(window.location.origin);
   const [qrUrl, setQrUrl] = useState<string | null>(null);
@@ -202,6 +213,7 @@ function RoomCodeBanner({ roomId, isAdmin }: { roomId: string; isAdmin: boolean 
   }, []);
 
   const shareUrl = `${origin}/room/${roomId}`;
+  const coHostUrl = `${shareUrl}?host=1`;
 
   // QR генерируется локально (работает офлайн, без внешних сервисов).
   // Большое разрешение — чтобы оставался чётким на весь экран.
@@ -211,18 +223,28 @@ function RoomCodeBanner({ roomId, isAdmin }: { roomId: string; isAdmin: boolean 
       .catch(() => setQrUrl(null));
   }, [shareUrl]);
 
-  const handleCopy = () => {
-    const markCopied = () => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    };
+  const copyUrl = (url: string, markCopied: () => void) => {
     // navigator.clipboard доступен только в защищённом контексте (https/localhost).
     // По локальной сети (http://192.168.x.x) его нет — нужен запасной способ.
     if (navigator.clipboard?.writeText) {
-      navigator.clipboard.writeText(shareUrl).then(markCopied).catch(() => fallbackCopy(shareUrl, markCopied));
+      navigator.clipboard.writeText(url).then(markCopied).catch(() => fallbackCopy(url, markCopied));
     } else {
-      fallbackCopy(shareUrl, markCopied);
+      fallbackCopy(url, markCopied);
     }
+  };
+
+  const handleCopy = () => {
+    copyUrl(shareUrl, () => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  const handleCopyCoHost = () => {
+    copyUrl(coHostUrl, () => {
+      setCoHostCopied(true);
+      setTimeout(() => setCoHostCopied(false), 2000);
+    });
   };
 
   if (!isAdmin) return null;
@@ -255,6 +277,13 @@ function RoomCodeBanner({ roomId, isAdmin }: { roomId: string; isAdmin: boolean 
             className="bg-ocean-600 hover:bg-ocean-500 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors"
           >
             {copied ? '✓ Скопировано!' : '🔗 Ссылка'}
+          </button>
+          <button
+            onClick={handleCopyCoHost}
+            className="bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors"
+            title="Ссылка для второго ведущего — он будет видеть ответы"
+          >
+            {coHostCopied ? '✓ Скопировано!' : '👁 Соведущий'}
           </button>
         </div>
       </div>

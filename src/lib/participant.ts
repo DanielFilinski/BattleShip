@@ -16,6 +16,16 @@ export function checkIsAdmin(roomId: string): boolean {
   return localStorage.getItem(`admin_${roomId}`) === 'true';
 }
 
+// Per-room co-host flag: second presenter who sees answers but does NOT control
+// the game (stays a listener in sync, so no write conflicts with the admin).
+export function setCoHostFlag(roomId: string): void {
+  localStorage.setItem(`cohost_${roomId}`, 'true');
+}
+
+export function checkIsCoHost(roomId: string): boolean {
+  return localStorage.getItem(`cohost_${roomId}`) === 'true';
+}
+
 // Per-room participant state
 export interface ParticipantState {
   teamIndex: number; // -1 = viewer only
