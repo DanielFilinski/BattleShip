@@ -49,19 +49,19 @@ export function Cell({ coordinate, status, onClick, disabled, questionId, editMo
     switch (status) {
       case 'miss':
         return (
-          <span className="text-3xl text-ocean-600 animate-miss">✕</span>
+          <span className="leading-none text-[70cqw] text-ocean-600 animate-miss">✕</span>
         );
       case 'hit':
         return (
-          <span className="text-3xl text-white animate-hit"></span>
+          <span className="leading-none text-[70cqw] text-white animate-hit"></span>
         );
       case 'sunk':
         return (
-          <span className="text-3xl text-white animate-hit">❌</span>
+          <span className="leading-none text-[62cqw] text-white animate-hit">❌</span>
         );
       case 'bomb':
         return (
-          <span className="text-3xl text-white animate-hit">💣</span>
+          <span className="leading-none text-[62cqw] text-white animate-hit">💣</span>
         );
       case 'view-ship':
         return (
@@ -91,8 +91,9 @@ export function Cell({ coordinate, status, onClick, disabled, questionId, editMo
     <button
       onClick={handleClick}
       disabled={!isClickable}
+      style={{ containerType: 'inline-size' }}
       className={`
-        w-full aspect-square border-2 rounded-lg flex items-center justify-center
+        w-full aspect-square border-2 rounded-lg flex items-center justify-center overflow-hidden
         transition-all duration-200 transform
         ${getStatusStyles()}
         ${isClickable ? 'cursor-pointer active:scale-95' : 'cursor-not-allowed'}

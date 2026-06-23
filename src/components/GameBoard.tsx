@@ -11,6 +11,7 @@ import { FieldSettingsModal } from './FieldSettingsModal';
 import { VictoryAnimation } from './VictoryAnimation';
 import { ConfirmModal } from './ConfirmModal';
 import { QuestionSelector } from './QuestionSelector';
+import { RoomQrButton } from './RoomQrButton';
 import { generateColumns, generateRows, getCellType, isShipSunk, getShipByCell, getSurroundingCells, getSurroundingCellsForCoordinate } from '../utils/gameLogic';
 import { Question } from '../types/question';
 import { Ship, Bomb } from '../types/game';
@@ -766,6 +767,9 @@ export function GameBoard({
               </div>
             </div>
           )}
+
+          {/* Наблюдатель: QR-код для подключения к комнате — правый нижний угол */}
+          {myTeamIndex === -1 && roomId && <RoomQrButton roomId={roomId} />}
         </>
       ) : (
         <div className="max-w-7xl mx-auto">
@@ -944,14 +948,24 @@ export function GameBoard({
                         </div>
                       )}
                     </div>
-                    <div className="text-center">
-                      <button
-                        onClick={() => setParticipantDismissed(true)}
-                        className="bg-gradient-to-r from-ocean-600 to-ocean-500 text-white text-xl font-bold py-4 px-10 rounded-xl hover:from-ocean-700 hover:to-ocean-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
-                      >
-                        ✓ Закрыть
-                      </button>
-                    </div>
+                    {isCoHost ? (
+                      // Соведущий не стреляет — ему можно дать закрыть оверлей вручную.
+                      <div className="text-center">
+                        <button
+                          onClick={() => setParticipantDismissed(true)}
+                          className="bg-gradient-to-r from-ocean-600 to-ocean-500 text-white text-xl font-bold py-4 px-10 rounded-xl hover:from-ocean-700 hover:to-ocean-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+                        >
+                          ✓ Закрыть
+                        </button>
+                      </div>
+                    ) : (
+                      // Команда НЕ закрывает окно сама — иначе успеет выстрелить ещё раз,
+                      // пока ведущий не распределил баллы. Окно закроется автоматически,
+                      // когда ведущий разрешит вопрос (clearSession → isOpen=false).
+                      <div className="text-center text-ocean-500 font-semibold text-lg animate-pulse">
+                        Ведущий распределяет баллы…
+                      </div>
+                    )}
                   </>
                 ) : (
                   <div className="text-center text-ocean-500 font-semibold text-lg animate-pulse">
