@@ -66,6 +66,16 @@ export function GameBoard({
   const [showQuestionSelector, setShowQuestionSelector] = useState(false);
   const [editingCell, setEditingCell] = useState<{ coordinate: string; currentQuestionId: string } | null>(null);
   const [participantDismissed, setParticipantDismissed] = useState(false);
+  // Таймер для участников: ведущий присылает только дедлайн, отсчёт идёт локально.
+  const timerEndsAt = remoteQuestion?.timerEndsAt ?? null;
+  const [timerNow, setTimerNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!timerEndsAt) return;
+    setTimerNow(Date.now());
+    const id = setInterval(() => setTimerNow(Date.now()), 250);
+    return () => clearInterval(id);
+  }, [timerEndsAt]);
+  const secondsLeft = timerEndsAt ? Math.max(0, Math.ceil((timerEndsAt - timerNow) / 1000)) : null;
   // Мобильный режим наблюдателя/участника: поле во весь экран, а счёт/«осталось»
   // прячутся в модалку, открываемую кнопкой info справа сверху.
   const [showInfo, setShowInfo] = useState(false);
@@ -901,11 +911,27 @@ export function GameBoard({
             <div className="bg-white rounded-3xl shadow-2xl max-w-3xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
               <div className="p-4 sm:p-8">
                 {/* Header */}
-                <div className="flex items-center gap-3 mb-6">
+                <div className="flex items-center justify-between gap-3 mb-6">
                   <div>
                     <div className="text-sm font-semibold text-ocean-600 uppercase">{q.category}</div>
                     <div className="text-2xl font-bold text-ocean-800">{q.points} баллов</div>
                   </div>
+                  {secondsLeft !== null && !remoteQuestion.answerRevealed && (
+                    <div
+                      className={`flex items-center gap-2 font-black text-2xl px-4 py-2 rounded-full tabular-nums transition-colors ${
+                        secondsLeft === 0
+                          ? 'bg-red-600 text-white animate-pulse'
+                          : secondsLeft <= 10
+                          ? 'bg-red-500 text-white'
+                          : secondsLeft <= 20
+                          ? 'bg-yellow-400 text-yellow-900'
+                          : 'bg-ocean-100 text-ocean-700'
+                      }`}
+                    >
+                      <span>⏱</span>
+                      <span>{secondsLeft === 0 ? 'Время!' : secondsLeft}</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Question */}
