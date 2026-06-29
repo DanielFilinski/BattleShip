@@ -85,7 +85,7 @@ export function DisplayScreen() {
   useEffect(() => {
     if (!timerEndsAt) return;
     setNow(Date.now());
-    const id = setInterval(() => setNow(Date.now()), 250);
+    const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, [timerEndsAt]);
   const secondsLeft = timerEndsAt ? Math.max(0, Math.ceil((timerEndsAt - now) / 1000)) : null;

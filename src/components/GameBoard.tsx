@@ -72,7 +72,7 @@ export function GameBoard({
   useEffect(() => {
     if (!timerEndsAt) return;
     setTimerNow(Date.now());
-    const id = setInterval(() => setTimerNow(Date.now()), 250);
+    const id = setInterval(() => setTimerNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, [timerEndsAt]);
   const secondsLeft = timerEndsAt ? Math.max(0, Math.ceil((timerEndsAt - timerNow) / 1000)) : null;
