@@ -47,14 +47,19 @@ export function QuestionModal({
   const [answered, setAnswered] = useState(false);
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
   const [answeringTeamIndex, setAnsweringTeamIndex] = useState<number | null | -1>(-1); // -1 = not yet
-  const [timeLeft, setTimeLeft] = useState<number | null>(null);
-  const [timerExpired, setTimerExpired] = useState(false);
   const { autoCloseModal, questionTimer, autoStartTimer } = useModalSettings();
   // Effective timer: use question's thinkingTime if set, otherwise fall back to settings
   const effectiveTimer = question.thinkingTime ?? questionTimer;
-  const [timerStarted, setTimerStarted] = useState(!viewMode && effectiveTimer > 0 && autoStartTimer);
+  const autoStart = !viewMode && effectiveTimer > 0 && autoStartTimer;
+  const [timeLeft, setTimeLeft] = useState<number | null>(null);
+  const [timerExpired, setTimerExpired] = useState(false);
+  // plannedSeconds — отведённое время, которое ведущий может отредактировать ДО старта (±20).
+  const [plannedSeconds, setPlannedSeconds] = useState(effectiveTimer);
+  // timerStarted — отсчёт запускали хотя бы раз (показываем остаток, а не план).
+  const [timerStarted, setTimerStarted] = useState(autoStart);
+  // running — секундомер сейчас идёт; «Стоп» ставит на паузу, «Старт» возобновляет.
+  const [running, setRunning] = useState(autoStart);
   const timeoutRef = useRef<number | null>(null);
-  const timerIntervalRef = useRef<number | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
 
   const playBeeps = useCallback(() => {
@@ -82,66 +87,29 @@ export function QuestionModal({
     }
   }, []);
 
-  // Start countdown timer when timerStarted becomes true
+  // Один тикающий интервал — работает, пока `running`. timeLeft инициализируют
+  // handleStartStop / эффект монтирования, поэтому здесь его НЕ сбрасываем
+  // (возобновление с паузы сохраняет остаток). Updater чистый — без побочек.
   useEffect(() => {
-    if (viewMode || effectiveTimer <= 0 || !timerStarted) return;
-
-    setTimeLeft(effectiveTimer);
-    setTimerExpired(false);
-
-    timerIntervalRef.current = window.setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev === null || prev <= 1) {
-          clearInterval(timerIntervalRef.current!);
-          timerIntervalRef.current = null;
-          setTimerExpired(true);
-          playBeeps();
-          return 0;
-        }
-        return prev - 1;
-      });
+    if (viewMode || !running) return;
+    const id = window.setInterval(() => {
+      setTimeLeft(prev => (prev === null ? prev : Math.max(0, prev - 1)));
     }, 1000);
+    return () => clearInterval(id);
+  }, [running, viewMode]);
 
-    return () => {
-      if (timerIntervalRef.current) {
-        clearInterval(timerIntervalRef.current);
-        timerIntervalRef.current = null;
-      }
-    };
-  }, [effectiveTimer, viewMode, playBeeps, timerStarted]);
-
-  // Resume countdown after +30 when timer was expired
+  // Истечение времени: ровно один раз, когда остаток дошёл до 0.
   useEffect(() => {
-    if (!timerExpired || timerIntervalRef.current) return;
-    if (timeLeft === null || timeLeft <= 0) return;
-    // timeLeft was set > 0 by the +30 button while expired — restart interval
-    setTimerExpired(false);
-    timerIntervalRef.current = window.setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev === null || prev <= 1) {
-          clearInterval(timerIntervalRef.current!);
-          timerIntervalRef.current = null;
-          setTimerExpired(true);
-          playBeeps();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-    return () => {
-      if (timerIntervalRef.current) {
-        clearInterval(timerIntervalRef.current);
-        timerIntervalRef.current = null;
-      }
-    };
-  }, [timeLeft, timerExpired, playBeeps]);
-
-  // Stop timer when answer is shown or answered
-  useEffect(() => {
-    if ((showAnswer || answerSentToTeams || answered) && timerIntervalRef.current) {
-      clearInterval(timerIntervalRef.current);
-      timerIntervalRef.current = null;
+    if (running && timeLeft === 0) {
+      setRunning(false);
+      setTimerExpired(true);
+      playBeeps();
     }
+  }, [running, timeLeft, playBeeps]);
+
+  // Пауза, когда показан ответ или вопрос закрыт.
+  useEffect(() => {
+    if (showAnswer || answerSentToTeams || answered) setRunning(false);
   }, [showAnswer, answerSentToTeams, answered]);
 
   // Auto-show answer in view mode
@@ -168,11 +136,49 @@ export function QuestionModal({
     [isOnlineAdmin, onWriteSession, question.id]
   );
 
+  // Старт / пауза секундомера (отдельная кнопка). «Старт» также возобновляет с паузы.
+  const handleStartStop = () => {
+    if (running) {
+      setRunning(false);
+      publishSession(false, null); // на паузе у команд таймер скрывается
+      return;
+    }
+    const startFrom = timeLeft ?? plannedSeconds;
+    setTimeLeft(startFrom);
+    setTimerStarted(true);
+    setTimerExpired(false);
+    setRunning(true);
+    publishSession(false, Date.now() + startFrom * 1000);
+  };
+
+  // Кнопки ±20 сек. До старта меняют отведённое время, во время отсчёта — остаток.
+  const adjustTime = (delta: number) => {
+    if (!timerStarted) {
+      setPlannedSeconds(prev => Math.max(0, prev + delta));
+      return;
+    }
+    const next = Math.max(0, (timeLeft ?? plannedSeconds) + delta);
+    setTimeLeft(next);
+    const wasExpired = timerExpired;
+    if (next > 0) setTimerExpired(false);
+    if (running) {
+      publishSession(false, Date.now() + next * 1000);
+    } else if (wasExpired && next > 0) {
+      // время вышло, ведущий добавил — продолжаем отсчёт
+      setRunning(true);
+      publishSession(false, Date.now() + next * 1000);
+    }
+  };
+
   // Online admin: immediately publish question to teams when modal opens.
   // If the timer auto-starts, send its deadline straight away so teams see the countdown.
   useEffect(() => {
-    const autoEndsAt = timerStarted && effectiveTimer > 0 ? Date.now() + effectiveTimer * 1000 : null;
-    publishSession(false, autoEndsAt);
+    if (autoStart) {
+      setTimeLeft(plannedSeconds);
+      publishSession(false, Date.now() + plannedSeconds * 1000);
+    } else {
+      publishSession(false, null);
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -244,6 +250,9 @@ export function QuestionModal({
     return icons[question.category] || '❓';
   };
 
+  // Что показывает таймер: до старта — отведённое время (план), после — остаток.
+  const timerDisplay = timerStarted ? (timerExpired ? 0 : timeLeft ?? plannedSeconds) : plannedSeconds;
+
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
       {/* Lightbox */}
@@ -282,61 +291,44 @@ export function QuestionModal({
               </div>
             </div>
             <div className="flex items-center gap-3">
-              {/* Timer */}
+              {/* Timer — время видно и редактируется до старта; ± по 20 сек; отдельная Старт/Стоп */}
               {!viewMode && effectiveTimer > 0 && !answered && !showAnswer && (
-                <div className="flex items-center gap-2">
-                  {timerStarted && timeLeft !== null && (
-                    <div className="flex items-center gap-1">
-                      <button
-                        onClick={() => {
-                          if (timeLeft === null) return;
-                          const next = Math.max(0, timeLeft - 30);
-                          setTimeLeft(next);
-                          publishSession(false, Date.now() + next * 1000);
-                        }}
-                        className="w-8 h-8 rounded-full bg-ocean-100 hover:bg-ocean-200 text-ocean-700 font-bold text-sm flex items-center justify-center transition-colors"
-                        title="-30 сек"
-                      >
-                        −
-                      </button>
-                      <div className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold text-xl tabular-nums transition-colors ${
-                        timerExpired
-                          ? 'bg-red-600 text-white animate-pulse'
-                          : timeLeft <= 10
-                          ? 'bg-red-100 text-red-700'
-                          : timeLeft <= 20
-                          ? 'bg-yellow-100 text-yellow-700'
-                          : 'bg-ocean-100 text-ocean-700'
-                      }`}>
-                        <span>⏱</span>
-                        <span>{timerExpired ? '0' : timeLeft}</span>
-                      </div>
-                      <button
-                        onClick={() => {
-                          if (timeLeft === null) return;
-                          const next = timeLeft + 30;
-                          setTimeLeft(next);
-                          publishSession(false, Date.now() + next * 1000);
-                        }}
-                        className="w-8 h-8 rounded-full bg-ocean-100 hover:bg-ocean-200 text-ocean-700 font-bold text-sm flex items-center justify-center transition-colors"
-                        title="+30 сек"
-                      >
-                        +
-                      </button>
-                    </div>
-                  )}
-                  {!timerStarted && (
-                    <button
-                      onClick={() => {
-                        setTimerStarted(true);
-                        publishSession(false, Date.now() + effectiveTimer * 1000);
-                      }}
-                      className="flex items-center gap-2 px-4 py-2 rounded-full font-bold text-sm bg-ocean-600 hover:bg-ocean-700 text-white transition-colors"
-                    >
-                      <span>▶</span>
-                      <span>Старт</span>
-                    </button>
-                  )}
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => adjustTime(-20)}
+                    className="w-8 h-8 rounded-full bg-ocean-100 hover:bg-ocean-200 text-ocean-700 font-bold text-lg flex items-center justify-center transition-colors"
+                    title="−20 секунд"
+                  >
+                    −
+                  </button>
+                  <div className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold text-xl tabular-nums transition-colors ${
+                    timerExpired
+                      ? 'bg-red-600 text-white animate-pulse'
+                      : timerDisplay <= 10
+                      ? 'bg-red-100 text-red-700'
+                      : timerDisplay <= 20
+                      ? 'bg-yellow-100 text-yellow-700'
+                      : 'bg-ocean-100 text-ocean-700'
+                  }`}>
+                    <span>⏱</span>
+                    <span>{timerDisplay}</span>
+                  </div>
+                  <button
+                    onClick={() => adjustTime(20)}
+                    className="w-8 h-8 rounded-full bg-ocean-100 hover:bg-ocean-200 text-ocean-700 font-bold text-lg flex items-center justify-center transition-colors"
+                    title="+20 секунд"
+                  >
+                    +
+                  </button>
+                  <button
+                    onClick={handleStartStop}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold text-sm text-white transition-colors ${
+                      running ? 'bg-amber-600 hover:bg-amber-700' : 'bg-ocean-600 hover:bg-ocean-700'
+                    }`}
+                  >
+                    <span>{running ? '⏸' : '▶'}</span>
+                    <span>{running ? 'Стоп' : 'Старт'}</span>
+                  </button>
                 </div>
               )}
               <div

@@ -6,7 +6,7 @@
       "type": "audio",
       "difficulty": "easy",
       "points": 1,
-      "thinkingTime": 20,
+      "thinkingTime": 60,
       "question": "Угадай мелодию: назовите песню (гимн) по проигранной мелодии.",
       "answer": "«Дружной, радостной семьёю»",
       "mediaPath": "newyear/song3.mp3"
@@ -17,7 +17,7 @@
       "type": "text",
       "difficulty": "medium",
       "points": 2,
-      "thinkingTime": 30,
+      "thinkingTime": 60,
       "question": "Назовите три духовых инструмента, упоминаемых в Библии.",
       "answer": "Шофар, труба, флейта"
     },
@@ -113,7 +113,7 @@
       "type": "image",
       "difficulty": "medium",
       "points": 2,
-      "thinkingTime": 30,
+      "thinkingTime": 60,
       "question": "Кто написал эту знаменитую картину «Звёздная ночь»?",
       "answer": "Винсент Ван Гог",
       "mediaPath": "newyear/starry_night.jpg"
@@ -124,7 +124,7 @@
       "type": "text",
       "difficulty": "medium",
       "points": 2,
-      "thinkingTime": 30,
+      "thinkingTime": 60,
       "question": "На каком материке находится самая длинная горная цепь суши в мире?",
       "answer": "В Южной Америке (Анды, протяжённость около 9000 км)"
     },
@@ -134,7 +134,7 @@
       "type": "text",
       "difficulty": "hard",
       "points": 3,
-      "thinkingTime": 40,
+      "thinkingTime": 60,
       "question": "Какой город является столицей Австралии?",
       "answer": "Канберра (а не Сидней или Мельбурн)"
     },
@@ -144,7 +144,7 @@
       "type": "text",
       "difficulty": "medium",
       "points": 2,
-      "thinkingTime": 30,
+      "thinkingTime": 60,
       "question": "Чем больше из неё берёшь, тем больше она становится. Что это?",
       "answer": "Яма"
     },
@@ -154,7 +154,7 @@
       "type": "text",
       "difficulty": "hard",
       "points": 3,
-      "thinkingTime": 40,
+      "thinkingTime": 60,
       "question": "У меня есть города, но нет домов; есть леса, но нет деревьев; есть вода, но нет рыбы. Что я?",
       "answer": "Карта"
     },
@@ -165,7 +165,7 @@
       "type": "text",
       "difficulty": "hard",
       "points": 3,
-      "thinkingTime": 40,
+      "thinkingTime": 60,
       "question": "Сколько костей в теле акулы?",
       "answer": "0 (ноль) костей. Акулы относятся к хрящевым рыбам — их скелет целиком состоит из гибкой и лёгкой хрящевой ткани."
     },
@@ -175,7 +175,7 @@
       "type": "text",
       "difficulty": "easy",
       "points": 1,
-      "thinkingTime": 20,
+      "thinkingTime": 60,
       "question": "Как называется автономный аппарат, позволяющий дайверу дышать под водой?",
       "answer": "Акваланг"
     },
@@ -185,7 +185,7 @@
       "type": "text",
       "difficulty": "hard",
       "points": 3,
-      "thinkingTime": 40,
+      "thinkingTime": 60,
       "question": "Сколько сердец у осьминога?",
       "answer": "Три. Главное сердце гонит кровь по всему телу, а два жаберных перекачивают кровь через жабры, где она насыщается кислородом."
     },
@@ -195,7 +195,7 @@
       "type": "text",
       "difficulty": "medium",
       "points": 2,
-      "thinkingTime": 30,
+      "thinkingTime": 60,
       "question": "Какую примерно часть поверхности Земли покрывает вода?",
       "answer": "Около 71% (примерно три четверти)"
     },
