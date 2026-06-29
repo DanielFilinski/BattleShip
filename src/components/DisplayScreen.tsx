@@ -78,6 +78,18 @@ export function DisplayScreen() {
     ? questions.find(q => q.id === remoteQuestion.questionId) ?? null
     : null;
 
+  // ─── Таймер: ведущий присылает только дедлайн, отсчёт считаем локально ───────
+  // Нет посекундной синхронизации по сети — нагрузки на Firebase ноль.
+  const timerEndsAt = remoteQuestion?.timerEndsAt ?? null;
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!timerEndsAt) return;
+    setNow(Date.now());
+    const id = setInterval(() => setNow(Date.now()), 250);
+    return () => clearInterval(id);
+  }, [timerEndsAt]);
+  const secondsLeft = timerEndsAt ? Math.max(0, Math.ceil((timerEndsAt - now) / 1000)) : null;
+
   // Статус клетки — публичный вид (как видят зрители): без раскрытия позиций кораблей.
   const getCellStatus = (coordinate: string): CellStatus => {
     const { type } = getCellType(coordinate, ships, bombs);
@@ -222,6 +234,22 @@ export function DisplayScreen() {
               <span className="bg-white/20 text-white font-black text-2xl px-4 py-2 rounded-xl">
                 {currentQuestion.points} балл(а)
               </span>
+              {secondsLeft !== null && (
+                <span
+                  className={`flex items-center gap-2 font-black text-3xl px-5 py-2 rounded-xl tabular-nums transition-colors ${
+                    secondsLeft === 0
+                      ? 'bg-red-600 text-white animate-pulse'
+                      : secondsLeft <= 10
+                      ? 'bg-red-500 text-white'
+                      : secondsLeft <= 20
+                      ? 'bg-yellow-400 text-yellow-900'
+                      : 'bg-white text-ocean-800'
+                  }`}
+                >
+                  <span>⏱</span>
+                  <span>{secondsLeft === 0 ? 'Время!' : secondsLeft}</span>
+                </span>
+              )}
             </div>
             <div className="bg-white/95 rounded-3xl p-12 shadow-2xl text-center">
               <div className="text-4xl font-bold text-ocean-900 leading-tight whitespace-pre-line">

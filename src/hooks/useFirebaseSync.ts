@@ -9,6 +9,9 @@ export interface RemoteQuestion {
   cellType: 'ship' | 'bomb' | 'empty' | null;
   isOpen: boolean;
   answerRevealed: boolean;
+  /** Wall-clock ms (Date.now) when the countdown ends. null = no timer.
+   *  Передаётся один раз на старт/±30, команды отсчитывают локально. */
+  timerEndsAt?: number | null;
 }
 
 const EMPTY_REMOTE_QUESTION: RemoteQuestion = {
@@ -17,6 +20,7 @@ const EMPTY_REMOTE_QUESTION: RemoteQuestion = {
   cellType: null,
   isOpen: false,
   answerRevealed: false,
+  timerEndsAt: null,
 };
 
 interface UseFirebaseSyncOptions {
@@ -109,6 +113,7 @@ export function useFirebaseSync({ roomId, isAdmin }: UseFirebaseSyncOptions): Us
         cellType: q.cellType ?? null,
         isOpen: q.isOpen ?? false,
         answerRevealed: q.answerRevealed ?? false,
+        timerEndsAt: q.timerEndsAt ?? null,
       });
     });
 
@@ -147,6 +152,7 @@ export function useFirebaseSync({ roomId, isAdmin }: UseFirebaseSyncOptions): Us
       cellType,
       isOpen: cellType !== 'empty',
       answerRevealed: false,
+      timerEndsAt: null,
     });
   }, [roomId]);
 

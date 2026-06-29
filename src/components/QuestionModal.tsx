@@ -151,16 +151,28 @@ export function QuestionModal({
     }
   }, [viewMode]);
 
-  // Online admin: immediately publish question to teams when modal opens
+  // Publish the question session to teams. answerRevealed/endsAt vary by action;
+  // the rest of the shape stays constant. Only online admin writes to Firebase.
+  const publishSession = useCallback(
+    (answerRevealed: boolean, timerEndsAt: number | null) => {
+      if (!isOnlineAdmin || !onWriteSession) return;
+      onWriteSession({
+        questionId: question.id,
+        coordinate: null,
+        cellType: null,
+        isOpen: true,
+        answerRevealed,
+        timerEndsAt,
+      });
+    },
+    [isOnlineAdmin, onWriteSession, question.id]
+  );
+
+  // Online admin: immediately publish question to teams when modal opens.
+  // If the timer auto-starts, send its deadline straight away so teams see the countdown.
   useEffect(() => {
-    if (!isOnlineAdmin || !onWriteSession) return;
-    onWriteSession({
-      questionId: question.id,
-      coordinate: null,
-      cellType: null,
-      isOpen: true,
-      answerRevealed: false,
-    });
+    const autoEndsAt = timerStarted && effectiveTimer > 0 ? Date.now() + effectiveTimer * 1000 : null;
+    publishSession(false, autoEndsAt);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -276,7 +288,12 @@ export function QuestionModal({
                   {timerStarted && timeLeft !== null && (
                     <div className="flex items-center gap-1">
                       <button
-                        onClick={() => setTimeLeft(prev => prev !== null ? Math.max(0, prev - 30) : prev)}
+                        onClick={() => {
+                          if (timeLeft === null) return;
+                          const next = Math.max(0, timeLeft - 30);
+                          setTimeLeft(next);
+                          publishSession(false, Date.now() + next * 1000);
+                        }}
                         className="w-8 h-8 rounded-full bg-ocean-100 hover:bg-ocean-200 text-ocean-700 font-bold text-sm flex items-center justify-center transition-colors"
                         title="-30 сек"
                       >
@@ -295,7 +312,12 @@ export function QuestionModal({
                         <span>{timerExpired ? '0' : timeLeft}</span>
                       </div>
                       <button
-                        onClick={() => setTimeLeft(prev => prev !== null ? prev + 30 : prev)}
+                        onClick={() => {
+                          if (timeLeft === null) return;
+                          const next = timeLeft + 30;
+                          setTimeLeft(next);
+                          publishSession(false, Date.now() + next * 1000);
+                        }}
                         className="w-8 h-8 rounded-full bg-ocean-100 hover:bg-ocean-200 text-ocean-700 font-bold text-sm flex items-center justify-center transition-colors"
                         title="+30 сек"
                       >
@@ -305,7 +327,10 @@ export function QuestionModal({
                   )}
                   {!timerStarted && (
                     <button
-                      onClick={() => setTimerStarted(true)}
+                      onClick={() => {
+                        setTimerStarted(true);
+                        publishSession(false, Date.now() + effectiveTimer * 1000);
+                      }}
                       className="flex items-center gap-2 px-4 py-2 rounded-full font-bold text-sm bg-ocean-600 hover:bg-ocean-700 text-white transition-colors"
                     >
                       <span>▶</span>
@@ -506,13 +531,7 @@ export function QuestionModal({
                 <div className="space-y-3">
                   <button
                     onClick={() => {
-                      onWriteSession!({
-                        questionId: question.id,
-                        coordinate: null,
-                        cellType: null,
-                        isOpen: true,
-                        answerRevealed: true,
-                      });
+                      publishSession(true, null);
                       setAnswerSentToTeams(true);
                     }}
                     className="w-full bg-gradient-to-r from-indigo-600 to-indigo-500 text-white text-lg sm:text-2xl font-bold py-4 sm:py-6 px-5 sm:px-8 rounded-xl hover:from-indigo-700 hover:to-indigo-600 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
